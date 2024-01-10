@@ -5,7 +5,13 @@ import {
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { IS_PUBLIC_KEY } from '../../permissions/permissions.decorator.js'
+import { type AccessTokenInterface } from '../entities/accesstoken.entity.js'
 import { AuthService } from '../services/auth.service.js'
+import { KnownError } from '../../../utils/Exceptions/errors.js'
+
+export interface Request {
+  auth: AccessTokenInterface
+}
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -27,8 +33,13 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
     const response = context.switchToHttp().getResponse()
 
-    request.auth = await this.authService.authenticate(request, response)
+    try {
+      const authentication = await this.authService.authenticate(request, response)
+      request.auth = authentication
 
-    return true
+      return true
+    } catch (error) {
+      throw new KnownError('unauthorized')
+    }
   }
 }

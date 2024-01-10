@@ -5,9 +5,11 @@ import request from 'supertest'
 import bcrypt from 'bcryptjs'
 import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
+import { HttpAdapterHost } from '@nestjs/core'
 import { AppModule } from '../../../app.module.js'
 import { Role } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
+import { HttpExceptionFilter } from '../../../utils/Exceptions/http-exception.filter.js'
 import { UserSeeder } from './user.seeder.js'
 import { UserSeederModule } from './user-seeder.module.js'
 
@@ -35,6 +37,9 @@ describe('Users', async () => {
         }
       })
     )
+
+    const httpAdapterHost = app.get(HttpAdapterHost)
+    app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
 
     userSeeder = moduleRef.get(UserSeeder)
     userRepository = moduleRef.get(UserRepository)

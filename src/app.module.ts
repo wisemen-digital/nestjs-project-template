@@ -9,6 +9,7 @@ import { UserModule } from './modules/users/modules/user.module.js'
 import { sslHelper } from './utils/typeorm.js'
 import { RoleGuard } from './modules/auth/guards/role.guard.js'
 import { ErrorsInterceptor } from './errors.interceptor.js'
+import { mainMigrations } from './config/sql/migrations/index.js'
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { ErrorsInterceptor } from './errors.interceptor.js'
       ssl: sslHelper(process.env.TYPEORM_SSL),
       extra: { max: 50 },
       logging: false,
-      synchronize: true,
+      synchronize: false,
+      migrations: mainMigrations,
       migrationsRun: true,
       autoLoadEntities: true
     }),

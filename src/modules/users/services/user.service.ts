@@ -1,10 +1,11 @@
 import bcrypt from 'bcryptjs'
-import { HttpException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { type CreateUserDto } from '../dtos/create-user.dto.js'
 import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
+import { KnownError } from '../../../utils/Exceptions/errors.js'
 
 @Injectable()
 export class UserService {
@@ -20,19 +21,19 @@ export class UserService {
     const user = await this.userRepository.findOne({ where: { uuid } })
 
     if (user == null) {
-      throw new HttpException('not_found', 404)
+      throw new KnownError('not_found')
     }
 
     return user
   }
 
   async findOneByEmail (email: string): Promise<User> {
-    if (email == null) throw new HttpException('missing_parameters', 400)
+    if (email == null) throw new KnownError('missing_parameters')
 
     email = email.toLowerCase()
     const user = await this.userRepository.findOne({ where: { email } })
 
-    if (user == null) throw new HttpException('not_found', 404)
+    if (user == null) throw new KnownError('not_found')
 
     return user
   }
@@ -42,7 +43,7 @@ export class UserService {
       where: { email: dto.email }
     })
 
-    if (exists !== null) throw new HttpException('email_exists', 409)
+    if (exists !== null) throw new KnownError('already_exists')
 
     dto.email = dto.email.toLowerCase()
 
@@ -65,13 +66,13 @@ export class UserService {
     })
 
     if (user === undefined) {
-      throw new HttpException('not_found', 404)
+      throw new KnownError('not_found')
     }
 
     const match = await bcrypt.compare(dto.oldPassword, user.password)
 
     if (!match) {
-      throw new HttpException('invalid_credentials', 401)
+      throw new KnownError('invalid_credentials')
     }
 
     user.password = await bcrypt.hash(dto.password, 10)

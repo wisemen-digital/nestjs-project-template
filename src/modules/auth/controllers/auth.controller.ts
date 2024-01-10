@@ -1,16 +1,23 @@
-import { Controller, Post, Req, Res } from '@nestjs/common'
-import { Request, Response } from 'express'
-import { Public } from '../../permissions/permissions.decorator.js'
-import { AuthTransformer } from '../transformers/auth.transformer.js'
+import { Controller, Get, Post, Req, Res } from '@nestjs/common'
+import { Response } from 'express'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { AuthService } from '../services/auth.service.js'
+import { Public } from '../../permissions/permissions.decorator.js'
+import { Request } from '../guards/auth.guard.js'
+import { AuthTransformer } from '../transformers/auth.transformer.js'
+import { UserTransformer, UserTransformerType } from '../../users/transformers/user.transformer.js'
 
-@Controller('auth')
+@ApiTags('Auth')
+@Controller({
+  path: 'auth',
+  version: ''
+})
 export class AuthController {
   constructor (
     private readonly authService: AuthService
   ) { }
 
-  @Post()
+  @Post('/token')
   @Public()
   public async createToken (@Req() req: Request, @Res() res: Response): Promise<void> {
     try {
@@ -23,5 +30,16 @@ export class AuthController {
         error_description: err.message
       })
     }
+  }
+
+  @Get('/userinfo')
+  @ApiResponse({
+    status: 200,
+    description: 'The user info has been successfully retrieved.',
+    type: UserTransformerType
+  })
+  public async getUserInfo (@Req() req: Request): Promise<UserTransformerType> {
+    const user = await this.authService.getUserInfo(req)
+    return new UserTransformer().item(user)
   }
 }
