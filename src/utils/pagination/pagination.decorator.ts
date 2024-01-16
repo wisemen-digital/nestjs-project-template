@@ -4,7 +4,7 @@ import { IsArray } from 'class-validator'
 
 class PaginatedEntityMeta {
   @ApiProperty()
-  readonly count: number
+  readonly total: number
 }
 class PaginatedEntity<T> {
   @IsArray()
@@ -15,9 +15,9 @@ class PaginatedEntity<T> {
   readonly meta: PaginatedEntityMeta
 }
 
-export const ApiPaginatedResponse = <T extends Type<unknown>>(entityType: T): MethodDecorator => {
+export const PaginationResponse = <T extends Type<unknown>>(entityType: T): MethodDecorator => {
   return applyDecorators(
-    ApiExtraModels(PaginatedEntity),
+    ApiExtraModels(PaginatedEntity, entityType),
     ApiOkResponse({
       description: 'pagination response',
       schema: {
