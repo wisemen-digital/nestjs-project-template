@@ -84,6 +84,9 @@ devDependencies:
   '@nestjs/testing':
     specifier: ^10.2.4
     version: 10.2.4(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(@nestjs/platform-express@10.2.4)
+  '@sentry/types':
+    specifier: ^7.37.1
+    version: 7.91.0
   '@types/bcryptjs':
     specifier: ^2.4.6
     version: 2.4.6
