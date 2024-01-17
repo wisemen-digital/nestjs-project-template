@@ -3,7 +3,7 @@ name: NestJs CICD Development
 on:
   push:
     branches:
-      - development
+      - main
 #      - test
 #      - staging
 #      - production
@@ -38,13 +38,13 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ github.ref_name }}
-      
+
     steps:
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DOCTL_TOKEN }}
-          
+
       - name: Save DigitalOcean kubeconfig
         run: doctl -t ${{ secrets.DOCTL_TOKEN }} k8s cluster kubeconfig show ${{ vars.K8S_CLUSTER }} > kubeconfig.yml
 
