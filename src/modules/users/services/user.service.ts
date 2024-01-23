@@ -6,11 +6,14 @@ import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { KnownError } from '../../../utils/Exceptions/errors.js'
+import { forgotPasswordMailContent } from '../../../templates/content/forgot-password.content.js'
+import { MailService } from './mail.service.js'
 
 @Injectable()
 export class UserService {
   constructor (
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly mailService: MailService
   ) {}
 
   async findAll (): Promise<User[]> {
@@ -78,6 +81,20 @@ export class UserService {
     user.password = await bcrypt.hash(dto.password, 10)
 
     return await this.userRepository.save(user)
+  }
+
+  async forgotPassword (email: string): Promise<void> {
+    const mailingContent = forgotPasswordMailContent()
+
+    mailingContent.nl.headerSection.title = 'Wachtwoord vergeten'
+    mailingContent.nl.headerSection.p1 = 'Je hebt een verzoek ingediend om je wachtwoord te resetten.'
+    mailingContent.nl.headerSection.p2 = 'Klik op de onderstaande knop om je wachtwoord te resetten.'
+    mailingContent.nl.headerSection.p3 = 'Als je dit niet hebt aangevraagd, negeer deze e-mail.'
+    mailingContent.nl.resetPasswordLink = ''
+    mailingContent.nl.footerSection.text = 'Bedankt voor het gebruik van onze applicatie.'
+    mailingContent.nl.footerSection.email = email
+
+    await this.mailService.sendForgotPasswordMail(mailingContent)
   }
 
   async delete (uuid: string): Promise<User> {

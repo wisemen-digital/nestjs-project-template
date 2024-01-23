@@ -8,6 +8,7 @@ import { UpdateUserDto } from '../dtos/update-user.dto.js'
 import { UserService } from '../services/user.service.js'
 import { UserTransformerType, UserTransformer } from '../transformers/user.transformer.js'
 import { UpdateUserGuard } from '../guards/user-update.guard.js'
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto.js'
 
 @ApiTags('User')
 @Controller('users')
@@ -102,5 +103,18 @@ export class UserController {
     const user = await this.userService.findOne(userUuid)
 
     await this.userService.updatePassword(user.uuid, updatePasswordDto)
+  }
+
+  @Post('forgot-password')
+  @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'An email was sent to reset your password.'
+  })
+  async forgotUserPassword (
+    @Body('email') forgotPasswordDto: ForgotPasswordDto
+  ): Promise<void> {
+    const user = await this.userService.findOneByEmail(forgotPasswordDto.email)
+    await this.userService.forgotPassword(user.email)
   }
 }
