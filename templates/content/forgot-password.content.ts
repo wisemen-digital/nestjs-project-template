@@ -6,8 +6,7 @@ export const forgotPasswordMailContent = (): ForgotPasswordContentType => {
       headerSection: {
         title: '',
         p1: '',
-        p2: '',
-        p3: ''
+        p2: ''
       },
       resetPasswordLink: '',
       footerSection: {
