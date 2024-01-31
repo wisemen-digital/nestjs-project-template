@@ -16,19 +16,16 @@ import { RefreshTokenRepository } from '../repositories/refresh-token.repository
 import { PkceRepository } from '../repositories/pkce.repository.js'
 import { ClientRepository } from '../repositories/client.repository.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
+import { getPrivateKey, getPublicKey } from '../../../utils/auth/keys.js'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Client, Pkce, RefreshToken]),
     JwtModule.registerAsync({
       useFactory: () => {
-        if (process.env.RSA_PRIVATE == null || process.env.RSA_PUBLIC == null) {
-          throw new Error('RSA_PRIVATE or RSA_PUBLIC not set in environment')
-        }
-
         return {
-          privateKey: Buffer.from(process.env.RSA_PRIVATE, 'base64').toString(),
-          publicKey: Buffer.from(process.env.RSA_PUBLIC, 'base64').toString()
+          privateKey: getPrivateKey(),
+          publicKey: getPublicKey()
         }
       }
     }),
