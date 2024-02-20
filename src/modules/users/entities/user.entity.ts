@@ -6,15 +6,13 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
-  UpdateDateColumn
+  UpdateDateColumn,
+  JoinColumn,
+  ManyToOne
 } from 'typeorm'
 import { Client } from '../../auth/entities/client.entity.js'
 import { RefreshToken } from '../../auth/entities/refreshtoken.entity.js'
-
-export enum Role {
-  ADMIN = 'admin',
-  USER = 'user',
-}
+import { Role } from '../../roles/entities/role.entity.js'
 
 @Entity()
 export class User {
@@ -40,8 +38,12 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   lastName: string | null
 
-  @Column({ type: 'enum', enum: Role, default: Role.USER })
-  role: Role
+  @Column({ type: 'uuid', nullable: true })
+  roleUuid: string | null
+
+  @ManyToOne(() => Role, role => role.users, { onDelete: 'SET NULL' })
+  @JoinColumn({ name: 'roleUuid' })
+  role?: Relation<Role> | null
 
   @OneToMany(() => Client, client => client.user)
   clients?: Array<Relation<Client>>

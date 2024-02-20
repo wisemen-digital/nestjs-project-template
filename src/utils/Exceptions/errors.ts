@@ -6,6 +6,10 @@ export const knownErrors = {
   example_error: {
     detail: 'This is an example description',
     status: 400
+  },
+  not_editable: {
+    detail: 'This object is not editable',
+    status: 400
   }
 }
 
