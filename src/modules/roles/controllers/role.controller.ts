@@ -43,7 +43,7 @@ export class RoleController {
     return new RoleTransformer().item(role)
   }
 
-  @Post('/bulk')
+  @Post('bulk')
   @ApiResponse({
     status: 201,
     description: 'The roles has been successfully created.',

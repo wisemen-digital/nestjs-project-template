@@ -29,11 +29,9 @@ export class RoleService {
 
   async create (dto: CreateRoleDto): Promise<Role> {
     let role = await this.findByName(dto.name)
-
     if (role != null) throw new KnownError('already_exists').setDesc('Role already exists')
 
     role = this.roleRepository.create(dto)
-
     await this.roleRepository.save(role)
 
     await this.cache.clearRolePermissions(role.uuid)
@@ -43,13 +41,10 @@ export class RoleService {
 
   async update (uuid: string, dto: CreateRoleDto): Promise<Role> {
     const exists = await this.findByName(dto.name)
-
     if (exists != null) throw new KnownError('already_exists').setDesc('Role already exists')
 
     const role = await this.findOne(uuid)
-
     role.name = dto.name
-
     await this.roleRepository.save(role)
 
     await this.cache.clearRolePermissions(role.uuid)

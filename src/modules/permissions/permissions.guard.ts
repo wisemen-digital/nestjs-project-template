@@ -26,8 +26,10 @@ export class PermissionsGuard implements CanActivate {
     if (auth.user != null) {
       const userPermissions = await this.cache.getUserPermissions(auth.user.uuid)
 
-      if (requiredPermissions.every(permission => userPermissions.includes(permission)) ||
-        userPermissions.includes(Permission.ADMIN)) {
+      if (
+        requiredPermissions.every(permission => userPermissions.includes(permission)) ||
+        userPermissions.includes(Permission.ADMIN)
+      ) {
         return true
       }
     }
