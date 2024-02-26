@@ -6,11 +6,13 @@ import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { KnownError } from '../../../utils/Exceptions/errors.js'
+import { MailService } from '../../mail/services/mail.service.js'
 
 @Injectable()
 export class UserService {
   constructor (
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly mailService: MailService
   ) {}
 
   async findAll (): Promise<User[]> {

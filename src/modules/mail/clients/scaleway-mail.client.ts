@@ -1,19 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import axios, { type AxiosInstance } from 'axios'
 import { type SendMailOptions, type MailClient } from './mail.client.js'
-import { HandlebarsClient } from './handlebars.client.js'
 
 @Injectable()
 export class ScalewayMailClient implements MailClient {
   private readonly api: AxiosInstance
   private readonly region: string = process.env.SCW_REGION ?? 'fr-par'
 
-  constructor (
-    private readonly handlebarsClient: HandlebarsClient
-  ) {
+  constructor () {
     this.api = axios.create({
       headers: {
-        'X-Auth-Token': process.env.SCW_APIKEY
+        'X-Auth-Token': process.env.SCW_API_KEY
       }
     })
   }
@@ -32,10 +29,6 @@ export class ScalewayMailClient implements MailClient {
       ? options.bcc.map(email => ({ email }))
       : (options.bcc != null ? [{ email: options.bcc }] : options.bcc)
 
-    const html = options.hbsTemplate != null
-      ? this.handlebarsClient.renderHtml(options.hbsTemplate, options.hbsContext)
-      : options.html
-
     const body = {
       from,
       to,
@@ -43,7 +36,7 @@ export class ScalewayMailClient implements MailClient {
       bcc,
       subject: options.subject,
       text: options.text,
-      html,
+      html: options.html,
       project_id: process.env.SCW_PROJECT_ID
     }
 

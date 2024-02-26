@@ -6,8 +6,6 @@ export interface SendMailOptions {
   subject: string
   text?: string
   html?: string
-  hbsTemplate?: string
-  hbsContext?: Record<string, unknown>
 }
 
 export interface MailClient {
