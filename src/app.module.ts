@@ -10,6 +10,7 @@ import { sslHelper } from './utils/typeorm.js'
 import { RoleGuard } from './modules/auth/guards/role.guard.js'
 import { ErrorsInterceptor } from './errors.interceptor.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
+import { TypesenseModule } from './modules/typesense/modules/typesense.module.js'
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { mainMigrations } from './config/sql/migrations/index.js'
       autoLoadEntities: true
     }),
     AuthModule,
+    TypesenseModule,
     UserModule
   ],
   controllers: [],

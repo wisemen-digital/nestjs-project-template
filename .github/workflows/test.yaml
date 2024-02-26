@@ -45,6 +45,18 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      typesense:
+        image: ${{ needs.prep-test.outputs.typesense-image }}
+        ports:
+          - 8108:8108
+        env:
+          TYPESENSE_DATA_DIR: '/home'
+          TYPESENSE_API_KEY: 'api_key'
+        options: >-
+          --health-cmd "${{ needs.prep-test.outputs.typesense-health }}"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2
