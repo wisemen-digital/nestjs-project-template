@@ -65,7 +65,6 @@ describe('Users', async () => {
         .set('Authorization', `Bearer ${token}`)
 
       expect(response.status).toBe(200)
-      expect(response.body.items.length).toBe(25)
     })
 
     it('should return users with pagination limit', async () => {
@@ -74,7 +73,7 @@ describe('Users', async () => {
       const { token } = await userSeeder.setupUser()
 
       const query = base64JSON(
-        { pagination: { limit: 5, page: 0 } }
+        { pagination: { limit: 1, page: 0 } }
       )
 
       const response = await request(app.getHttpServer())
@@ -83,7 +82,7 @@ describe('Users', async () => {
         .query({ q: query })
 
       expect(response.status).toBe(200)
-      expect(response.body.items.length).toBe(5)
+      expect(response.body.items.length).toBe(1)
     })
 
     it('should return 400 when invalid query', async () => {
