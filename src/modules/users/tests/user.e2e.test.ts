@@ -10,6 +10,7 @@ import { AppModule } from '../../../app.module.js'
 import { Role } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { HttpExceptionFilter } from '../../../utils/Exceptions/http-exception.filter.js'
+import { base64JSON } from '../../../utils/conversion/base64-json.js'
 import { UserSeeder } from './user.seeder.js'
 import { UserSeederModule } from './user-seeder.module.js'
 
@@ -64,6 +65,42 @@ describe('Users', async () => {
         .set('Authorization', `Bearer ${token}`)
 
       expect(response.status).toBe(200)
+      expect(response.body.items.length).toBe(25)
+    })
+
+    it('should return users with pagination limit', async () => {
+      await userSeeder.createRandomUser()
+
+      const { token } = await userSeeder.setupUser()
+
+      const query = base64JSON(
+        { pagination: { limit: 5, page: 0 } }
+      )
+
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .query({ q: query })
+
+      expect(response.status).toBe(200)
+      expect(response.body.items.length).toBe(5)
+    })
+
+    it('should return 400 when invalid query', async () => {
+      await userSeeder.createRandomUser()
+
+      const { token } = await userSeeder.setupUser()
+
+      const query = base64JSON(
+        { p: { limit: 5, page: 0 } }
+      )
+
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', `Bearer ${token}`)
+        .query({ q: query })
+
+      expect(response.status).toBe(400)
     })
   })
 
