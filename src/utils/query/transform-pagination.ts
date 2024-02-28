@@ -1,8 +1,8 @@
 import { type PaginationQuery } from './pagination-query.dto.js'
 
 export interface TypeORMPaginationType {
-  skip: number
-  take: number
+  page: number
+  limit: number
 }
 
 export function transformPaginationForTypeORM (
@@ -13,7 +13,7 @@ export function transformPaginationForTypeORM (
   const page = query?.page ?? 0
 
   return {
-    skip: page * limit,
-    take: limit
+    page,
+    limit
   }
 }

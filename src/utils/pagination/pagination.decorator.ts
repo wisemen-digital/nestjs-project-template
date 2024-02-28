@@ -4,6 +4,12 @@ import { IsArray } from 'class-validator'
 
 class PaginatedEntityMeta {
   @ApiProperty()
+  readonly limit: number
+
+  @ApiProperty()
+  readonly page: number
+
+  @ApiProperty()
   readonly total: number
 }
 class PaginatedEntity<T> {
