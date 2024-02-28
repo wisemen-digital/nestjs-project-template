@@ -3,7 +3,7 @@ import { type ClassConstructor, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { CustomError } from '@appwise/express-dto-router'
 import { type SearchQuery } from '../search-query.dto.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
+import { KnownError } from '../../exceptions/errors.js'
 
 @Injectable()
 export class ParseQueryPipe<Query extends SearchQuery>
