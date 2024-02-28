@@ -1,13 +1,13 @@
 import bcrypt from 'bcryptjs'
 import { Injectable } from '@nestjs/common'
 import { type PaginatedSearchQuery } from 'src/utils/query/paginated-search-query.dto.js'
-import { type PaginatedResult } from 'src/utils/pagination/paginated-result.interface.js'
+import { KnownError } from '../../../utils/exceptions/errors.js'
+import { type PaginatedResult } from '../../../utils/pagination/paginated-result.interface.js'
 import { type CreateUserDto } from '../dtos/create-user.dto.js'
 import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
 
 @Injectable()
 export class UserService {

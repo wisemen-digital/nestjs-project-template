@@ -2,8 +2,8 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { AppModule } from './app.module.js'
-import { HttpExceptionFilter } from './utils/exceptions/http-exception.filter.js'
 import { initSentry } from './helpers/sentry.js'
+import { HttpExceptionFilter } from './utils/exceptions/http-exception.filter.js'
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(AppModule)
