@@ -10,7 +10,7 @@ import { AppModule } from '../../../app.module.js'
 import { Role } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { base64JSON } from '../../../utils/conversion/base64-json.js'
-import { HttpExceptionFilter } from '../../../utils/exceptions/http-exception.filter.js'
+import { HttpExceptionFilter } from '../../../utils/Exceptions/http-exception.filter.js'
 import { UserSeeder } from './user.seeder.js'
 import { UserSeederModule } from './user-seeder.module.js'
 

@@ -7,7 +7,7 @@ import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { type PaginatedSearchQuery } from '../../../utils/query/paginated-search-query.dto.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
+import { KnownError } from '../../../utils/Exceptions/errors.js'
 
 @Injectable()
 export class UserService {
