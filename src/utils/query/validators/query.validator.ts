@@ -2,8 +2,8 @@ import { Injectable, type PipeTransform, type ArgumentMetadata } from '@nestjs/c
 import { type ClassConstructor, plainToInstance } from 'class-transformer'
 import { validate } from 'class-validator'
 import { CustomError } from '@appwise/express-dto-router'
-import { KnownError } from '../../../utils/exceptions/errors.js'
-import { type SearchQuery } from '../../../utils/query/search-query.dto.js'
+import { KnownError } from '../../exceptions/errors.js'
+import { type SearchQuery } from '../search-query.dto.js'
 
 @Injectable()
 export class ParseQueryPipe<Query extends SearchQuery>
