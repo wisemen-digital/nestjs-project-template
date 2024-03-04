@@ -11,6 +11,7 @@ import { RoleGuard } from './modules/auth/guards/role.guard.js'
 import { ErrorsInterceptor } from './errors.interceptor.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
 import { TypesenseModule } from './modules/typesense/modules/typesense.module.js'
+import { MailModule } from './modules/mail/modules/mail.module.js'
 
 @Module({
   imports: [
@@ -30,7 +31,8 @@ import { TypesenseModule } from './modules/typesense/modules/typesense.module.js
     }),
     AuthModule,
     TypesenseModule,
-    UserModule
+    UserModule,
+    MailModule
   ],
   controllers: [],
   providers: [
