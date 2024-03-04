@@ -1,4 +1,4 @@
-import { type PaginationQuery } from './pagination-query.dto.js'
+import { type PaginationQuery } from './pagination/pages/pagination-query.dto.js'
 
 export interface TypeORMPaginationType {
   skip: number
