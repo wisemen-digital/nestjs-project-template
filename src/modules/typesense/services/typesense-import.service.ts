@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { type CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
 import { type CollectionCreateSchema } from 'typesense/lib/Typesense/Collections.js'
-import moment from 'moment'
 import { type CollectionAliasSchema } from 'typesense/lib/Typesense/Aliases.js'
 import { captureException } from '@sentry/node'
 import { type EntityManager } from 'typeorm'
+import dayjs from 'dayjs'
 import { TypesenseClient } from '../clients/typesense.client.js'
 import { typesenseCollections, TypesenseAliasName } from '../collections/typesense.collections.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
@@ -28,7 +28,7 @@ export class TypesenseImportService {
     aliasName: TypesenseAliasName,
     collection: CollectionCreateSchema
   ): Promise<CollectionSchema> {
-    collection.name = `${aliasName}_${moment().toISOString()}`
+    collection.name = `${aliasName}_${dayjs().toISOString()}`
     return await this.typesenseClient.client.collections().create(collection)
   }
 
