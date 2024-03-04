@@ -4,11 +4,14 @@ import { type CollectionAliasSchema } from 'typesense/lib/Typesense/Aliases.js'
 import { TypesenseImportService } from '../services/typesense-import.service.js'
 import { MigrateTypesenseQueryDto } from '../dtos/migrate-typesense-query.dto.js'
 import { ImportTypesenseQueryDto } from '../dtos/import-typesense-query.dto.js'
+import { Permissions } from '../../permissions/permissions.decorator.js'
+import { Permission } from '../../permissions/permission.enum.js'
 
 @Controller('typesense')
 export class TypesenseController {
   constructor (private readonly typesenseImportService: TypesenseImportService) {}
   @Get('migrate')
+  @Permissions(Permission.TYPESENSE)
   async migrate (
     @Query() query: MigrateTypesenseQueryDto
   ): Promise<void> {
@@ -16,6 +19,7 @@ export class TypesenseController {
   }
 
   @Get('import')
+  @Permissions(Permission.TYPESENSE)
   async import (
     @Query() query: ImportTypesenseQueryDto
   ): Promise<void> {
@@ -23,11 +27,13 @@ export class TypesenseController {
   }
 
   @Get('collections')
+  @Permissions(Permission.TYPESENSE)
   async getCollections (): Promise<CollectionSchema[]> {
     return await this.typesenseImportService.retrieveCollections()
   }
 
   @Get('aliases')
+  @Permissions(Permission.TYPESENSE)
   async getAliases (): Promise<CollectionAliasSchema[]> {
     return await this.typesenseImportService.retrieveAliases()
   }
