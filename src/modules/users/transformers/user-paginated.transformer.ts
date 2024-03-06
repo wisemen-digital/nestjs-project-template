@@ -6,13 +6,13 @@ export class UserPaginatedTransformerType {
   @ApiProperty({ type: String, format: 'uuid' })
   uuid: string
 
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   createdAt: Date
 
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   updatedAt: Date
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   email: string
 
   @ApiProperty({ type: String, nullable: true })

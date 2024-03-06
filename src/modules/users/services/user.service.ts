@@ -20,7 +20,7 @@ export class UserService {
   }
 
   async findPaginated (q: PaginatedSearchQuery): Promise<PaginatedResult<User>> {
-    return await this.userRepository.findPaginated(q)
+    return await this.userRepository.findPaginated(q.pagination)
   }
 
   async findOne (uuid: string): Promise<User> {

@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common'
 import { InjectEntityManager } from '@nestjs/typeorm'
 import { type PaginatedResult } from '../../../utils/pagination/paginated-result.interface.js'
 import { transformPaginationForTypeORM } from '../../../utils/query/transform-pagination.js'
-import { type PaginatedSearchQuery } from '../../../utils/query/paginated-search-query.dto.js'
 import { User } from '../entities/user.entity.js'
+import { type PaginationQuery } from '../../../utils/query/pagination-query.dto.js'
 
 @Injectable()
 export class UserRepository extends Repository<User> {
@@ -12,8 +12,8 @@ export class UserRepository extends Repository<User> {
     super(User, entityManager)
   }
 
-  async findPaginated (q: PaginatedSearchQuery): Promise<PaginatedResult<User>> {
-    const pagination = transformPaginationForTypeORM(q.pagination)
+  async findPaginated (q: PaginationQuery): Promise<PaginatedResult<User>> {
+    const pagination = transformPaginationForTypeORM(q)
 
     const userQuery = this.createQueryBuilder('user')
       .take(pagination.limit)
