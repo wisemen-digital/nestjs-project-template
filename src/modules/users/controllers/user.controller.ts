@@ -1,5 +1,8 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common'
-import { ApiResponse, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common'
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ParseQueryPipe } from '../../../utils/query/validators/query.validator.js'
+import { PaginationResponse } from '../../../utils/pagination/pagination.decorator.js'
+import { type PaginatedResult } from '../../../utils/pagination/paginated-result.interface.js'
 import { Permissions, Public } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { CreateUserDto } from '../dtos/create-user.dto.js'
@@ -8,6 +11,9 @@ import { UpdateUserDto } from '../dtos/update-user.dto.js'
 import { UserService } from '../services/user.service.js'
 import { UserTransformerType, UserTransformer } from '../transformers/user.transformer.js'
 import { UpdateUserGuard } from '../guards/user-update.guard.js'
+import { UserPaginatedTransformer, UserPaginatedTransformerType } from '../transformers/user-paginated.transformer.js'
+import { PaginationQuery } from '../../../utils/query/query.decorator.js'
+import { UserQuery } from '../queries/user.query.js'
 
 @ApiTags('User')
 @Controller('users')
@@ -30,16 +36,21 @@ export class UserController {
   }
 
   @Get()
-  @ApiResponse({
-    status: 200,
-    description: 'The users has been successfully received.',
-    type: [UserTransformerType]
+  @ApiOperation({
+    summary: 'Get all the users. (Paginated data)'
   })
+  @PaginationResponse(UserPaginatedTransformerType)
+  @PaginationQuery(UserQuery)
   @Permissions(Permission.USER_READ)
-  async getUsers (): Promise<UserTransformerType[]> {
-    const users = await this.userService.findAll()
+  async getUsers (
+    @Query('q', new ParseQueryPipe(UserQuery)) query
+  ): Promise<PaginatedResult<UserPaginatedTransformerType>> {
+    const users = await this.userService.findPaginated(query)
 
-    return new UserTransformer().array(users)
+    return {
+      items: new UserPaginatedTransformer().array(users.items),
+      meta: users.meta
+    }
   }
 
   @Get(':user')

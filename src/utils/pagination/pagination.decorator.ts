@@ -3,7 +3,13 @@ import { ApiExtraModels, ApiOkResponse, ApiProperty, getSchemaPath } from '@nest
 import { IsArray } from 'class-validator'
 
 class PaginatedEntityMeta {
-  @ApiProperty()
+  @ApiProperty({ type: Number })
+  readonly limit: number
+
+  @ApiProperty({ type: Number })
+  readonly page: number
+
+  @ApiProperty({ type: Number })
   readonly total: number
 }
 class PaginatedEntity<T> {
