@@ -9,6 +9,7 @@ import { UserModule } from './modules/users/modules/user.module.js'
 import { sslHelper } from './utils/typeorm.js'
 import { ErrorsInterceptor } from './errors.interceptor.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
+import { MailModule } from './modules/mail/modules/mail.module.js'
 import { RoleModule } from './modules/roles/role.module.js'
 import { PermissionModule } from './modules/permissions/permissions.module.js'
 import { RedisCacheModule } from './utils/cache/cache.module.js'
@@ -31,6 +32,7 @@ import { RedisCacheModule } from './utils/cache/cache.module.js'
     }),
     AuthModule,
     UserModule,
+    MailModule,
     RoleModule,
     PermissionModule,
     RedisCacheModule
