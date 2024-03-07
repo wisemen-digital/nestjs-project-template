@@ -71,7 +71,9 @@ export class RoleService {
   async delete (uuid: string): Promise<void> {
     const role = await this.findOne(uuid)
 
-    if (role.name === 'admin' || role.name === 'readonly') throw new KnownError('not_editable').setDesc('Cannot delete this role')
+    if (role.name === 'admin' || role.name === 'readonly') {
+      throw new KnownError('not_editable').setDesc('Cannot delete this role')
+    }
 
     const readOnlyRole = await this.roleRepository.findOneOrFail({
       where: { name: 'readonly' }
