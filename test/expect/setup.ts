@@ -4,8 +4,8 @@ import { HttpAdapterHost } from '@nestjs/core'
 import { Test, type TestingModule } from '@nestjs/testing'
 import { AppModule } from '../../src/app.module.js'
 import { UserSeederModule } from '../../src/modules/users/tests/user-seeder.module.js'
-import { HttpExceptionFilter } from '../../src/utils/exceptions/http-exception.filter.js'
 import { RoleSeederModule } from '../../src/modules/roles/tests/role-seeder.module.js'
+import { HttpExceptionFilter } from '../../src/utils/Exceptions/http-exception.filter.js'
 
 export async function setupTest (dataSource: DataSource): Promise<void> {
   if (process.env.NODE_ENV !== 'test') throw new Error('NODE_ENV must be set to test')
