@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nest
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { RoleTransformer, RoleTransformerType } from '../transformers/role.transformer.js'
 import { CreateRoleDto } from '../dtos/create-role.dto.js'
-import { RoleCountType } from '../transformers/role-count.type.js'
+import { RoleCount } from '../transformers/role-count.type.js'
 import { RoleService } from '../services/role.service.js'
 import { UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
 import { Permissions } from '../../permissions/permissions.decorator.js'
@@ -105,12 +105,12 @@ export class RoleController {
   @ApiResponse({
     status: 200,
     description: 'The role count has been successfully received.',
-    type: RoleCountType
+    type: RoleCount
   })
   @Permissions(Permission.ROLE_READ)
   async getRoleCount (
     @Param('role', ParseUUIDPipe) uuid: string
-  ): Promise<RoleCountType> {
+  ): Promise<RoleCount> {
     const count = await this.roleService.count(uuid)
 
     return { count }

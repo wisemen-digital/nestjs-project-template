@@ -6,7 +6,7 @@ import { Permission } from '../permission.enum.js'
 @Controller('permissions')
 export class PermissionController {
   @Get()
-  async getPermissions (): Promise<Permission[]> {
+  getPermissions (): Permission[] {
     return Object.values(Permission)
   }
 }

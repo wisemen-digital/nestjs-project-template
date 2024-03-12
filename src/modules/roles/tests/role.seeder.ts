@@ -7,7 +7,7 @@ import { Permission } from '../../permissions/permission.enum.js'
 import { type CreateRoleDto } from '../dtos/create-role.dto.js'
 
 export interface RoleSeederOptions extends SeederOptions {
-  name?: string | null
+  name: string
   permissions?: Permission[] | null
 }
 
@@ -17,9 +17,9 @@ export class RoleSeeder {
     private readonly roleRepository: RoleRepository
   ) {}
 
-  async createRandomRole (options?: RoleSeederOptions): Promise<Role> {
+  async createRandomRole (options: RoleSeederOptions): Promise<Role> {
     const role = this.roleRepository.create({
-      name: options?.name ?? this.createRandomName(),
+      name: options?.name,
       permissions: options?.permissions ?? []
     })
 
@@ -28,9 +28,9 @@ export class RoleSeeder {
     return role
   }
 
-  async createRandomRoleDto (options?: RoleSeederOptions): Promise<DeepPartial<CreateRoleDto>> {
+  async createRandomRoleDto (options: RoleSeederOptions): Promise<DeepPartial<CreateRoleDto>> {
     const dto: DeepPartial<CreateRoleDto> = {
-      name: options?.name ?? this.createRandomName()
+      name: options?.name
     }
 
     return dto
@@ -75,5 +75,12 @@ export class RoleSeeder {
     const randomCharacters =
       Array.from({ length: 100 }, () => characters[Math.floor(Math.random() * characters.length)])
     return randomCharacters.join('')
+  }
+
+  createRandomEmail (): string {
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    const randomCharacters =
+      Array.from({ length: 30 }, () => characters[Math.floor(Math.random() * characters.length)])
+    return randomCharacters.join('') + '@test.com'
   }
 }

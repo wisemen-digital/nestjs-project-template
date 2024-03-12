@@ -38,6 +38,7 @@ export class User {
   @Column({ type: 'varchar', nullable: true })
   lastName: string | null
 
+  @Index()
   @Column({ type: 'uuid', nullable: true })
   roleUuid: string | null
 

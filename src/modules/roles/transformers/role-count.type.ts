@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class RoleCountType {
+export class RoleCount {
   @ApiProperty({ type: Number, description: 'The count of the roles' })
   count: number
 }

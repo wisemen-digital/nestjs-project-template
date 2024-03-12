@@ -1,23 +1,21 @@
 import { before, describe, it, after } from 'node:test'
-import { type INestApplication, ValidationPipe } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
+import { type INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import bcrypt from 'bcryptjs'
 import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
-import { HttpAdapterHost } from '@nestjs/core'
-import { AppModule } from '../../../app.module.js'
+import { type TestingModule } from '@nestjs/testing'
 import { UserRepository } from '../repositories/user.repository.js'
-import { HttpExceptionFilter } from '../../../utils/Exceptions/http-exception.filter.js'
 import { type Role } from '../../roles/entities/role.entity.js'
-import { RoleSeederModule } from '../../roles/tests/role-seeder.module.js'
 import { RoleSeeder } from '../../roles/tests/role.seeder.js'
+import { globalTestSetup } from '../../../../test/expect/setup.js'
 import { UserSeeder } from './user.seeder.js'
-import { UserSeederModule } from './user-seeder.module.js'
 import { type SetupUserType } from './setup-user.type.js'
 
 describe('Users', async () => {
   let app: INestApplication
+  let moduleRef: TestingModule
+
   let userSeeder: UserSeeder
   let roleSeeder: RoleSeeder
   let userRepository: UserRepository
@@ -29,39 +27,23 @@ describe('Users', async () => {
   let readonlyUser: SetupUserType
 
   before(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [
-        AppModule,
-        UserSeederModule,
-        RoleSeederModule
-      ]
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-        transformOptions: {
-          enableImplicitConversion: true
-        }
-      })
-    )
-
-    const httpAdapterHost = app.get(HttpAdapterHost)
-    app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
+    ({ app, moduleRef } = await globalTestSetup())
 
     userSeeder = moduleRef.get(UserSeeder)
     roleSeeder = moduleRef.get(RoleSeeder)
     userRepository = moduleRef.get(UserRepository)
-    await app.init()
 
     adminRole = await roleSeeder.createAdminRole()
     readonlyRole = await roleSeeder.createReadonlyRole()
 
-    adminUser = await userSeeder.setupUser({ roleUuid: adminRole.uuid })
-    readonlyUser = await userSeeder.setupUser({ roleUuid: readonlyRole.uuid })
+    adminUser = await userSeeder.setupUser({
+      roleUuid: adminRole.uuid,
+      email: roleSeeder.createRandomEmail()
+    })
+    readonlyUser = await userSeeder.setupUser({
+      roleUuid: readonlyRole.uuid,
+      email: roleSeeder.createRandomEmail()
+    })
   })
 
   describe('Get users', () => {
@@ -73,7 +55,7 @@ describe('Users', async () => {
     })
 
     it('should return users', async () => {
-      await userSeeder.createRandomUser()
+      await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
         .get('/users')
@@ -152,7 +134,7 @@ describe('Users', async () => {
     })
 
     it('should return 201', async () => {
-      const dto = await userSeeder.createRandomUserDto()
+      const dto = await userSeeder.createRandomUserDto({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
         .post('/users')
@@ -251,7 +233,7 @@ describe('Users', async () => {
     })
 
     it('should return 200 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser()
+      const { user, token } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
         .delete(`/users/${user.uuid}`)
@@ -294,7 +276,7 @@ describe('Users', async () => {
     })
 
     it('should return 201 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser()
+      const { user, token } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
 
       user.password = await bcrypt.hash('password', 10)
 
@@ -312,7 +294,7 @@ describe('Users', async () => {
     })
 
     it('should return 201 when admin can change other users password', async () => {
-      const user = await userSeeder.createRandomUser()
+      const user = await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
 
       user.password = await bcrypt.hash('password', 10)
 
@@ -330,7 +312,7 @@ describe('Users', async () => {
     })
 
     it('should return 403 when non-admin user wants to change other users password', async () => {
-      const user = await userSeeder.createRandomUser()
+      const user = await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
 
       user.password = await bcrypt.hash('password', 10)
 
@@ -348,7 +330,7 @@ describe('Users', async () => {
     })
 
     it('should return 400 when password is missing', async () => {
-      const { user, token } = await userSeeder.setupUser()
+      const { user, token } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)

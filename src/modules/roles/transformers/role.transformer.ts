@@ -27,9 +27,7 @@ export class RoleTransformer extends Transformer<Role, RoleTransformerType> {
       createdAt: role.createdAt,
       updatedAt: role.updatedAt,
       name: role.name,
-      permissions: role.permissions.filter(permission => {
-        return Object.values(Permission).includes(permission)
-      })
+      permissions: role.permissions
     }
   }
 }

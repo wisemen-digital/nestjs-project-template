@@ -40,8 +40,11 @@ export class RedisCacheService {
   }
 
   async clearRolePermissions (roleUuid?: string): Promise<void> {
-    if (roleUuid == null) await this.cacheManager.del(rolePermissionsCache)
-    else await this.cacheManager.del(`${rolePermissionsCache}:${roleUuid}`)
+    if (roleUuid == null) {
+      await this.cacheManager.del(rolePermissionsCache)
+    } else {
+      await this.cacheManager.del(`${rolePermissionsCache}:${roleUuid}`)
+    }
   }
 
   async getUserRole (userUuid: string): Promise<string | null> {

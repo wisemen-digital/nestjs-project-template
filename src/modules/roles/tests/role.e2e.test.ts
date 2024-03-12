@@ -1,26 +1,23 @@
 import { before, describe, it, after } from 'node:test'
-import { type INestApplication, ValidationPipe } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
+import { type INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { HttpAdapterHost } from '@nestjs/core'
 import { randWord } from '@ngneat/falso'
 import { In } from 'typeorm'
-import { AppModule } from '../../../app.module.js'
-import { HttpExceptionFilter } from '../../../utils/Exceptions/http-exception.filter.js'
+import { type TestingModule } from '@nestjs/testing'
 import { type SetupUserType } from '../../users/tests/setup-user.type.js'
-import { UserSeederModule } from '../../users/tests/user-seeder.module.js'
 import { UserSeeder } from '../../users/tests/user.seeder.js'
 import { type Role } from '../entities/role.entity.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { Permission } from '../../permissions/permission.enum.js'
-import { RoleSeederModule } from './role-seeder.module.js'
+import { globalTestSetup } from '../../../../test/expect/setup.js'
 import { RoleSeeder } from './role.seeder.js'
 
 describe('Roles', async () => {
   let app: INestApplication
 
   let userRepository: UserRepository
+  let moduleRef: TestingModule
 
   let userSeeder: UserSeeder
   let roleSeeder: RoleSeeder
@@ -31,40 +28,23 @@ describe('Roles', async () => {
   let readonlyUser: SetupUserType
 
   before(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [
-        AppModule,
-        UserSeederModule,
-        RoleSeederModule
-      ]
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-        transformOptions: {
-          enableImplicitConversion: true
-        }
-      })
-    )
-
-    const httpAdapterHost = app.get(HttpAdapterHost)
-    app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
+    ({ app, moduleRef } = await globalTestSetup())
 
     userRepository = moduleRef.get(UserRepository)
 
     userSeeder = moduleRef.get(UserSeeder)
     roleSeeder = moduleRef.get(RoleSeeder)
 
-    await app.init()
-
     adminRole = await roleSeeder.createAdminRole()
     readonlyRole = await roleSeeder.createReadonlyRole()
-    adminUser = await userSeeder.setupUser({ roleUuid: adminRole.uuid })
-    readonlyUser = await userSeeder.setupUser({ roleUuid: readonlyRole.uuid })
+    adminUser = await userSeeder.setupUser({
+      roleUuid: adminRole.uuid,
+      email: roleSeeder.createRandomEmail()
+    })
+    readonlyUser = await userSeeder.setupUser({
+      roleUuid: readonlyRole.uuid,
+      email: roleSeeder.createRandomEmail()
+    })
   })
 
   after(async () => {
@@ -97,10 +77,14 @@ describe('Roles', async () => {
 
     it('should return roles when having ROLE_READ permission', async () => {
       const roleReadRole = await roleSeeder.createRandomRole({
+        name: roleSeeder.createRandomName(),
         permissions: [Permission.ROLE_READ]
       })
 
-      const user = await userSeeder.setupUser({ roleUuid: roleReadRole.uuid })
+      const user = await userSeeder.setupUser({
+        roleUuid: roleReadRole.uuid,
+        email: roleSeeder.createRandomEmail()
+      })
 
       const response = await request(app.getHttpServer())
         .get('/roles')
@@ -112,7 +96,7 @@ describe('Roles', async () => {
 
   describe('Create role', () => {
     it('should return 401 when not authenticated', async () => {
-      const roleDto = await roleSeeder.createRandomRoleDto()
+      const roleDto = await roleSeeder.createRandomRoleDto({ name: roleSeeder.createRandomName() })
 
       const response = await request(app.getHttpServer())
         .post('/roles')
@@ -122,7 +106,7 @@ describe('Roles', async () => {
     })
 
     it('should return 403 when not authorized', async () => {
-      const roleDto = await roleSeeder.createRandomRole()
+      const roleDto = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
 
       const response = await request(app.getHttpServer())
         .post('/roles')
@@ -133,7 +117,7 @@ describe('Roles', async () => {
     })
 
     it('should create role', async () => {
-      const roleDto = await roleSeeder.createRandomRoleDto()
+      const roleDto = await roleSeeder.createRandomRoleDto({ name: roleSeeder.createRandomName() })
 
       const response = await request(app.getHttpServer())
         .post('/roles')
@@ -146,7 +130,7 @@ describe('Roles', async () => {
     })
 
     it('should create role not a second time', async () => {
-      const roleDto = await roleSeeder.createRandomRoleDto()
+      const roleDto = await roleSeeder.createRandomRoleDto({ name: roleSeeder.createRandomName() })
 
       await request(app.getHttpServer())
         .post('/roles')
@@ -163,7 +147,7 @@ describe('Roles', async () => {
     })
 
     it('should not create role with invalid name', async () => {
-      const roleDto = await roleSeeder.createRandomRoleDto()
+      const roleDto = await roleSeeder.createRandomRoleDto({ name: roleSeeder.createRandomName() })
 
       roleDto.name = ''
 
@@ -178,7 +162,7 @@ describe('Roles', async () => {
 
   describe('Update role', () => {
     it('should return 401 when not authenticated', async () => {
-      const role = await roleSeeder.createRandomRole()
+      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
 
       const response = await request(app.getHttpServer())
         .post(`/roles/${role.uuid}`)
@@ -188,7 +172,7 @@ describe('Roles', async () => {
     })
 
     it('should return 403 when not authorized', async () => {
-      const role = await roleSeeder.createRandomRole()
+      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
 
       const response = await request(app.getHttpServer())
         .post(`/roles/${role.uuid}`)
@@ -199,7 +183,7 @@ describe('Roles', async () => {
     })
 
     it('should update role', async () => {
-      const role = await roleSeeder.createRandomRole()
+      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
 
       const response = await request(app.getHttpServer())
         .post(`/roles/${role.uuid}`)
@@ -211,7 +195,7 @@ describe('Roles', async () => {
     })
 
     it('should not update role with invalid name', async () => {
-      const role = await roleSeeder.createRandomRole()
+      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
 
       const response = await request(app.getHttpServer())
         .post(`/roles/${role.uuid}`)
@@ -224,7 +208,7 @@ describe('Roles', async () => {
 
   describe('Delete role', () => {
     it('should return 401 when not authenticated', async () => {
-      const role = await roleSeeder.createRandomRole()
+      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
 
       const response = await request(app.getHttpServer())
         .delete(`/roles/${role.uuid}`)
@@ -233,7 +217,7 @@ describe('Roles', async () => {
     })
 
     it('should return 403 when not authorized', async () => {
-      const role = await roleSeeder.createRandomRole()
+      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
 
       const response = await request(app.getHttpServer())
         .delete(`/roles/${role.uuid}`)
@@ -256,12 +240,21 @@ describe('Roles', async () => {
     })
 
     it('should delete role and replace all staff roles to readonly', async () => {
-      const randomRole = await roleSeeder.createRandomRole()
+      const randomRole = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
       await roleSeeder.createReadonlyRole()
 
-      const user1 = await userSeeder.setupUser({ roleUuid: randomRole.uuid })
-      const user2 = await userSeeder.setupUser({ roleUuid: randomRole.uuid })
-      const user3 = await userSeeder.setupUser({ roleUuid: randomRole.uuid })
+      const user1 = await userSeeder.setupUser({
+        roleUuid: randomRole.uuid,
+        email: roleSeeder.createRandomEmail()
+      })
+      const user2 = await userSeeder.setupUser({
+        roleUuid: randomRole.uuid,
+        email: roleSeeder.createRandomEmail()
+      })
+      const user3 = await userSeeder.setupUser({
+        roleUuid: randomRole.uuid,
+        email: roleSeeder.createRandomEmail()
+      })
 
       const users = [user1, user2, user3]
 

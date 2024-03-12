@@ -15,10 +15,6 @@ export class UpdateUserGuard implements CanActivate {
 
     const userPermissions = await this.cache.getUserPermissions(auth.user.uuid)
 
-    if (auth.user.uuid === params.user || userPermissions.includes(Permission.ADMIN)) {
-      return true
-    }
-
-    return false
+    return auth.user.uuid === params.user || userPermissions.includes(Permission.ADMIN)
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { randEmail, randFirstName, randLastName, randPassword } from '@ngneat/falso'
+import { randFirstName, randLastName, randPassword } from '@ngneat/falso'
 import bcrypt from 'bcryptjs'
 import { type DeepPartial } from 'typeorm'
 import { type SeederOptions } from '../../../../test/utils/setup.js'
@@ -14,7 +14,7 @@ export interface UserSeederOptions extends SeederOptions {
   password?: string | null
   roleUuid?: string | null
   companyName?: string | null
-  email?: string | null
+  email: string
 }
 
 @Injectable()
@@ -25,7 +25,7 @@ export class UserSeeder {
     private readonly userRepository: UserRepository
   ) {}
 
-  async setupUser (options?: UserSeederOptions): Promise<{
+  async setupUser (options: UserSeederOptions): Promise<{
     user: User
     client: Client
     token: string
@@ -39,11 +39,11 @@ export class UserSeeder {
     return { user, client, token }
   }
 
-  async createRandomUser (options?: UserSeederOptions): Promise<User> {
+  async createRandomUser (options: UserSeederOptions): Promise<User> {
     const password = randPassword()
 
     const user = this.userRepository.create({
-      email: randEmail(),
+      email: options?.email,
       password: await bcrypt.hash(password, 10),
       firstName: randFirstName(),
       lastName: randLastName(),
@@ -55,11 +55,11 @@ export class UserSeeder {
     return user
   }
 
-  async createRandomUserDto (options?: UserSeederOptions): Promise<DeepPartial<CreateUserDto>> {
+  async createRandomUserDto (options: UserSeederOptions): Promise<DeepPartial<CreateUserDto>> {
     const password = randPassword()
 
     const userDto: DeepPartial<CreateUserDto> = {
-      email: options?.email ?? randEmail(),
+      email: options?.email,
       password: await bcrypt.hash(password, 10),
       firstName: randFirstName(),
       lastName: randLastName()

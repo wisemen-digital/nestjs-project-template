@@ -36,6 +36,8 @@ lerna-debug.log*
 
 ~/
 
+.postgres/
+
 .env
 .env.local
 .env.development
