@@ -1,18 +1,20 @@
 import { Injectable } from '@nestjs/common'
-import { randEmail, randFirstName, randLastName, randPassword } from '@ngneat/falso'
+import { randFirstName, randLastName, randPassword } from '@ngneat/falso'
 import bcrypt from 'bcryptjs'
+import { type DeepPartial } from 'typeorm'
 import { type SeederOptions } from '../../../../test/utils/setup.js'
-import { type User, type Role } from '../entities/user.entity.js'
+import { type User } from '../entities/user.entity.js'
 import { type Client } from '../../auth/entities/client.entity.js'
 import { TokenService } from '../../auth/services/token.service.js'
 import { ClientSeeder } from '../../auth/tests/client.seeder.js'
 import { UserRepository } from '../repositories/user.repository.js'
+import { type CreateUserDto } from '../dtos/create-user.dto.js'
 
 export interface UserSeederOptions extends SeederOptions {
   password?: string | null
-  role?: Role | null
+  roleUuid?: string | null
   companyName?: string | null
-  email?: string | null
+  email: string
 }
 
 @Injectable()
@@ -23,29 +25,29 @@ export class UserSeeder {
     private readonly userRepository: UserRepository
   ) {}
 
-  async setupUser (role?: Role): Promise<{
+  async setupUser (options: UserSeederOptions): Promise<{
     user: User
     client: Client
     token: string
   }> {
     const client = await this.clientSeeder.getTestClient()
 
-    const user = await this.createRandomUser(role)
+    const user = await this.createRandomUser(options)
 
     const token = await this.tokenService.generateAccessToken(client, user, ['read', 'write'])
 
     return { user, client, token }
   }
 
-  async createRandomUser (role?: Role): Promise<User> {
+  async createRandomUser (options: UserSeederOptions): Promise<User> {
     const password = randPassword()
 
     const user = this.userRepository.create({
-      email: randEmail(),
+      email: options?.email,
       password: await bcrypt.hash(password, 10),
       firstName: randFirstName(),
       lastName: randLastName(),
-      role
+      roleUuid: options?.roleUuid ?? null
     })
 
     await this.userRepository.save(user)
@@ -53,17 +55,16 @@ export class UserSeeder {
     return user
   }
 
-  async createRandomUserDto (role?: Role): Promise<User> {
+  async createRandomUserDto (options: UserSeederOptions): Promise<DeepPartial<CreateUserDto>> {
     const password = randPassword()
 
-    const user = this.userRepository.create({
-      email: randEmail(),
+    const userDto: DeepPartial<CreateUserDto> = {
+      email: options?.email,
       password: await bcrypt.hash(password, 10),
       firstName: randFirstName(),
-      lastName: randLastName(),
-      role
-    })
+      lastName: randLastName()
+    }
 
-    return user
+    return userDto
   }
 }

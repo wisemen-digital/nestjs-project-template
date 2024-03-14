@@ -1,49 +1,49 @@
 import { before, describe, it, after } from 'node:test'
-import { type INestApplication, ValidationPipe } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
+import { type INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import bcrypt from 'bcryptjs'
 import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
-import { HttpAdapterHost } from '@nestjs/core'
-import { AppModule } from '../../../app.module.js'
-import { Role } from '../entities/user.entity.js'
+import { type TestingModule } from '@nestjs/testing'
 import { UserRepository } from '../repositories/user.repository.js'
-import { HttpExceptionFilter } from '../../../utils/Exceptions/http-exception.filter.js'
+import { type Role } from '../../roles/entities/role.entity.js'
+import { RoleSeeder } from '../../roles/tests/role.seeder.js'
+import { globalTestSetup } from '../../../../test/expect/setup.js'
 import { UserSeeder } from './user.seeder.js'
-import { UserSeederModule } from './user-seeder.module.js'
+import { type SetupUserType } from './setup-user.type.js'
 
 describe('Users', async () => {
   let app: INestApplication
+  let moduleRef: TestingModule
+
   let userSeeder: UserSeeder
+  let roleSeeder: RoleSeeder
   let userRepository: UserRepository
 
+  let adminRole: Role
+  let readonlyRole: Role
+
+  let adminUser: SetupUserType
+  let readonlyUser: SetupUserType
+
   before(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [
-        AppModule,
-        UserSeederModule
-      ]
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-        transformOptions: {
-          enableImplicitConversion: true
-        }
-      })
-    )
-
-    const httpAdapterHost = app.get(HttpAdapterHost)
-    app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
+    ({ app, moduleRef } = await globalTestSetup())
 
     userSeeder = moduleRef.get(UserSeeder)
+    roleSeeder = moduleRef.get(RoleSeeder)
     userRepository = moduleRef.get(UserRepository)
-    await app.init()
+
+    adminRole = await roleSeeder.createAdminRole()
+    readonlyRole = await roleSeeder.createReadonlyRole()
+
+    adminUser = await userSeeder.setupUser({
+      roleUuid: adminRole.uuid,
+      email: roleSeeder.createRandomEmail()
+    })
+    readonlyUser = await userSeeder.setupUser({
+      roleUuid: readonlyRole.uuid,
+      email: roleSeeder.createRandomEmail()
+    })
   })
 
   describe('Get users', () => {
@@ -55,13 +55,11 @@ describe('Users', async () => {
     })
 
     it('should return users', async () => {
-      await userSeeder.createRandomUser()
-
-      const { token } = await userSeeder.setupUser()
+      await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
         .get('/users')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.status).toBe(200)
     })
@@ -69,64 +67,48 @@ describe('Users', async () => {
 
   describe('Get user', () => {
     it('should return 401 when not authenticated', async () => {
-      const { user } = await userSeeder.setupUser()
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}`)
+        .get(`/users/${adminUser.user.uuid}`)
 
       expect(response.status).toBe(401)
     })
 
     it('should return 404 when user not found', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
         .get(`/users/${randUuid()}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.status).toBe(404)
     })
 
     it('should return 400 when invalid uuid', async () => {
-      const { user, token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}s`)
-        .set('Authorization', `Bearer ${token}`)
+        .get(`/users/${adminUser.user.uuid}s`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.status).toBe(400)
     })
 
     it('should return user', async () => {
-      const { user, token } = await userSeeder.setupUser()
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .get(`/users/${adminUser.user.uuid}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.status).toBe(200)
     })
 
     it('should return 403 when user is not admin', async () => {
-      const { token } = await userSeeder.setupUser()
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .get(`/users/${adminUser.user.uuid}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
 
       expect(response.status).toBe(403)
     })
 
     it('should return user when user is admin', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .get(`/users/${readonlyUser.user.uuid}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.status).toBe(200)
     })
@@ -152,7 +134,7 @@ describe('Users', async () => {
     })
 
     it('should return 201', async () => {
-      const dto = await userSeeder.createRandomUserDto()
+      const dto = await userSeeder.createRandomUserDto({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
         .post('/users')
@@ -172,11 +154,9 @@ describe('Users', async () => {
     })
 
     it('should return 201 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser()
-
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${readonlyUser.user.uuid}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send({
           firstName: 'John',
           lastName: 'Doe'
@@ -186,24 +166,18 @@ describe('Users', async () => {
     })
 
     it('should return 404 when user not found', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
         .post(`/users/${randUuid()}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send({})
 
       expect(response.status).toBe(404)
     })
 
     it('should return 403 when user is not admin', async () => {
-      const { token } = await userSeeder.setupUser()
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${adminUser.user.uuid}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send({
           firstName: 'John',
           lastName: 'Doe'
@@ -213,13 +187,9 @@ describe('Users', async () => {
     })
 
     it('should return 201 when user is admin', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${readonlyUser.user.uuid}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send({
           firstName: 'John',
           lastName: 'Doe'
@@ -239,41 +209,31 @@ describe('Users', async () => {
     })
 
     it('should return 404 when user not found', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
         .delete(`/users/${randUuid()}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.status).toBe(404)
     })
 
     it('should return 403 when user is not admin', async () => {
-      const { token } = await userSeeder.setupUser()
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .delete(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .delete(`/users/${adminUser.user.uuid}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
 
       expect(response.status).toBe(403)
     })
 
     it('should return 200 when user is admin', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .delete(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .delete(`/users/${readonlyUser.user.uuid}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.status).toBe(200)
     })
 
     it('should return 200 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser()
+      const { user, token } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
         .delete(`/users/${user.uuid}`)
@@ -293,11 +253,9 @@ describe('Users', async () => {
     })
 
     it('should return 404 when user not found', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
         .post(`/users/${randUuid()}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send({
           password: 'newPassword',
           oldPassword: 'password'
@@ -307,13 +265,9 @@ describe('Users', async () => {
     })
 
     it('should return 403 when user is not admin', async () => {
-      const { token } = await userSeeder.setupUser()
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${adminUser.user.uuid}/password`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send({
           password: 'newPassword',
           oldPassword: 'password'
@@ -322,7 +276,7 @@ describe('Users', async () => {
     })
 
     it('should return 201 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser()
+      const { user, token } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
 
       user.password = await bcrypt.hash('password', 10)
 
@@ -340,9 +294,7 @@ describe('Users', async () => {
     })
 
     it('should return 201 when admin can change other users password', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
-      const user = await userSeeder.createRandomUser()
+      const user = await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
 
       user.password = await bcrypt.hash('password', 10)
 
@@ -350,7 +302,7 @@ describe('Users', async () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send({
           password: 'newPassword',
           oldPassword: 'password'
@@ -360,9 +312,7 @@ describe('Users', async () => {
     })
 
     it('should return 403 when non-admin user wants to change other users password', async () => {
-      const { token } = await userSeeder.setupUser(Role.USER)
-
-      const user = await userSeeder.createRandomUser()
+      const user = await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
 
       user.password = await bcrypt.hash('password', 10)
 
@@ -370,7 +320,7 @@ describe('Users', async () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send({
           password: 'newPassword',
           oldPassword: 'password'
@@ -380,7 +330,7 @@ describe('Users', async () => {
     })
 
     it('should return 400 when password is missing', async () => {
-      const { user, token } = await userSeeder.setupUser()
+      const { user, token } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)

@@ -6,10 +6,7 @@ export interface RefreshTokenInterface {
   tid: string
   uid: string
   cid: string
-  user: {
-    uuid: string
-    role: string
-  }
+  user: User
   client: {
     uuid: string
     id: string

@@ -7,10 +7,12 @@ import { AuthModule } from './modules/auth/modules/auth.module.js'
 import { PermissionsGuard } from './modules/permissions/permissions.guard.js'
 import { UserModule } from './modules/users/modules/user.module.js'
 import { sslHelper } from './utils/typeorm.js'
-import { RoleGuard } from './modules/auth/guards/role.guard.js'
 import { ErrorsInterceptor } from './errors.interceptor.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
 import { MailModule } from './modules/mail/modules/mail.module.js'
+import { RoleModule } from './modules/roles/role.module.js'
+import { PermissionModule } from './modules/permissions/permissions.module.js'
+import { RedisCacheModule } from './utils/cache/cache.module.js'
 
 @Module({
   imports: [
@@ -30,7 +32,10 @@ import { MailModule } from './modules/mail/modules/mail.module.js'
     }),
     AuthModule,
     UserModule,
-    MailModule
+    MailModule,
+    RoleModule,
+    PermissionModule,
+    RedisCacheModule
   ],
   controllers: [],
   providers: [
@@ -41,10 +46,6 @@ import { MailModule } from './modules/mail/modules/mail.module.js'
     {
       provide: APP_GUARD,
       useClass: PermissionsGuard
-    },
-    {
-      provide: APP_GUARD,
-      useClass: RoleGuard
     },
     {
       provide: APP_INTERCEPTOR,
