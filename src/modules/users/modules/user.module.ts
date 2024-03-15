@@ -6,9 +6,14 @@ import { User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { TypesenseModule } from '../../typesense/modules/typesense.module.js'
 import { UserSubscriber } from '../subscribers/user.subscriber.js'
+import { RedisCacheModule } from '../../../utils/cache/cache.module.js'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), TypesenseModule],
+  imports: [
+    TypeOrmModule.forFeature([User]), 
+    RedisCacheModule, 
+    TypesenseModule
+  ],
   controllers: [UserController],
   providers: [
     UserService,

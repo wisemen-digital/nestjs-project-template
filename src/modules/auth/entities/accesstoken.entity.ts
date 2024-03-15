@@ -4,7 +4,6 @@ export class AccessTokenInterface {
   scope: string[]
   user: {
     uuid: string
-    role: string
   }
 
   client: {
@@ -22,6 +21,5 @@ export interface AccessTokenPayload {
   uid: string
   cid: string
   scope: string[]
-  role: string
   exp: number
 }
