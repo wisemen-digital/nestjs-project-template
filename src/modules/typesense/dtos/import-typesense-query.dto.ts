@@ -2,7 +2,7 @@ import {
   IsEnum,
   IsOptional
 } from 'class-validator'
-import { TypesenseAliasName } from '../collections/typesense.collections.js'
+import { TypesenseAliasName } from '../enums/typesense-collection.index.enum.js'
 
 export class ImportTypesenseQueryDto {
   @IsOptional()

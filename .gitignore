@@ -46,3 +46,6 @@ lerna-debug.log*
 .DS_Store
 .vscode
 *.pem
+
+/.postgres
+/.typesense

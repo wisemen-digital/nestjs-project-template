@@ -1,49 +1,26 @@
 import { before, describe, it, after } from 'node:test'
-import { type INestApplication, ValidationPipe } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
+import { type INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import bcrypt from 'bcryptjs'
 import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
-import { HttpAdapterHost } from '@nestjs/core'
-import { AppModule } from '../../../app.module.js'
+import { type TestingModule } from '@nestjs/testing'
 import { Role } from '../entities/user.entity.js'
+import { globalTestSetup } from '../../../test/setup.js'
 import { UserRepository } from '../repositories/user.repository.js'
-import { HttpExceptionFilter } from '../../../utils/Exceptions/http-exception.filter.js'
 import { UserSeeder } from './user.seeder.js'
-import { UserSeederModule } from './user-seeder.module.js'
 
 describe('Users', async () => {
   let app: INestApplication
+  let moduleRef: TestingModule
   let userSeeder: UserSeeder
   let userRepository: UserRepository
 
   before(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [
-        AppModule,
-        UserSeederModule
-      ]
-    }).compile()
-
-    app = moduleRef.createNestApplication()
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-        transformOptions: {
-          enableImplicitConversion: true
-        }
-      })
-    )
-
-    const httpAdapterHost = app.get(HttpAdapterHost)
-    app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
+    ({ app, moduleRef } = await globalTestSetup())
 
     userSeeder = moduleRef.get(UserSeeder)
     userRepository = moduleRef.get(UserRepository)
-    await app.init()
   })
 
   describe('Get users', () => {
@@ -54,16 +31,19 @@ describe('Users', async () => {
       expect(response.status).toBe(401)
     })
 
-    it('should return users', async () => {
-      await userSeeder.createRandomUser()
-
-      const { token } = await userSeeder.setupUser()
+    it('should return users with typesense search', async () => {
+      const { token, user } = await userSeeder.setupUser()
+      const user2 = await userSeeder.setupUser()
 
       const response = await request(app.getHttpServer())
-        .get('/users')
+        .get(`/users?q=${user.email}`)
         .set('Authorization', `Bearer ${token}`)
 
       expect(response.status).toBe(200)
+      expect(response.body.items.map(item => item.uuid))
+        .toContain(user.uuid)
+      expect(response.body.items.map(item => item.uuid))
+        .not.toContain(user2.user.uuid)
     })
   })
 

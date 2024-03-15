@@ -4,14 +4,17 @@ import { UserController } from '../controllers/user.controller.js'
 import { UserService } from '../services/user.service.js'
 import { User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
+import { TypesenseModule } from '../../typesense/modules/typesense.module.js'
+import { UserSubscriber } from '../subscribers/user.subscriber.js'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User])],
+  imports: [TypeOrmModule.forFeature([User]), TypesenseModule],
   controllers: [UserController],
   providers: [
     UserService,
-    UserRepository
+    UserRepository,
+    UserSubscriber
   ],
-  exports: [UserService]
+  exports: [UserService, TypesenseModule]
 })
 export class UserModule {}

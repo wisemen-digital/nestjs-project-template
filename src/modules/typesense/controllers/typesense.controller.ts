@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { type CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
 import { type CollectionAliasSchema } from 'typesense/lib/Typesense/Aliases.js'
-import { TypesenseImportService } from '../services/typesense-import.service.js'
+import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
 import { MigrateTypesenseQueryDto } from '../dtos/migrate-typesense-query.dto.js'
 import { ImportTypesenseQueryDto } from '../dtos/import-typesense-query.dto.js'
 import { Permissions } from '../../permissions/permissions.decorator.js'
@@ -9,7 +9,7 @@ import { Permission } from '../../permissions/permission.enum.js'
 
 @Controller('typesense')
 export class TypesenseController {
-  constructor (private readonly typesenseImportService: TypesenseImportService) {}
+  constructor (private readonly typesenseImportService: TypesenseInitializationService) {}
   @Get('migrate')
   @Permissions(Permission.TYPESENSE)
   async migrate (

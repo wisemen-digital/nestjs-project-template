@@ -1,22 +1,26 @@
 import { captureException } from '@sentry/node'
 import { Injectable } from '@nestjs/common'
 import { type SearchParams } from 'typesense/lib/Typesense/Documents.js'
-import { type PaginatedResult } from 'src/utils/pagination/paginated-result.interface.js'
 import { TypesenseClient } from '../clients/typesense.client.js'
-import { typesenseCollections, type TypesenseAliasName } from '../collections/typesense.collections.js'
+import { type MultiSearchResult, type TypesenseAliasName } from '../enums/typesense-collection.index.enum.js'
+import { userCollection, type UserSearchSchema } from '../collections/user.collection.js'
 
 @Injectable()
-export class TypesenseService {
+export class TypesenseQueryService {
   constructor (
     private readonly typesenseClient: TypesenseClient
   ) {}
 
-  public async searchAll (query: string): Promise<unknown> {
+  static COLLECTIONS = [
+    userCollection
+  ]
+
+  public async searchAll (query: string): Promise<MultiSearchResult> {
     const results = await Promise.all(
-      typesenseCollections.map(async collection => {
-        return await this.search(collection.name, {
+      TypesenseQueryService.COLLECTIONS.map(async collection => {
+        return await this.search(collection.name as TypesenseAliasName, {
           q: query,
-          query_by: collection.createSchema.fields?.map(f => f.name).join(',') ?? ''
+          query_by: collection.fields?.map(f => f.name).join(',') ?? ''
         })
       })
     )
@@ -29,7 +33,7 @@ export class TypesenseService {
   public async search (
     aliasName: TypesenseAliasName,
     searchParams: SearchParams
-  ): Promise<Record<string, PaginatedResult<unknown>>> {
+  ): Promise<MultiSearchResult> {
     try {
       const collectionName = (await this.typesenseClient.client.aliases(aliasName).retrieve())
         .collection_name
@@ -39,8 +43,8 @@ export class TypesenseService {
         .search(searchParams)
 
       return {
-        [collectionName]: {
-          items: result.hits?.map(hit => hit.document) ?? [],
+        [aliasName]: {
+          items: result.hits?.map(hit => hit.document) as UserSearchSchema[] ?? [],
           meta: {
             total: result.found
           }
