@@ -9,6 +9,8 @@ import { UserRepository } from '../repositories/user.repository.js'
 import { type Role } from '../../roles/entities/role.entity.js'
 import { RoleSeeder } from '../../roles/tests/role.seeder.js'
 import { globalTestSetup } from '../../../../test/expect/setup.js'
+import { TypesenseInitializationService } from '../../typesense/services/typesense-initialization.service.js'
+import { TypesenseAliasName } from '../../typesense/enums/typesense-collection.index.enum.js'
 import { UserSeeder } from './user.seeder.js'
 import { type SetupUserType } from './setup-user.type.js'
 
@@ -31,6 +33,12 @@ describe('Users', async () => {
     userSeeder = moduleRef.get(UserSeeder)
     roleSeeder = moduleRef.get(RoleSeeder)
     userRepository = moduleRef.get(UserRepository)
+
+    const typesenseImportService = moduleRef.get(TypesenseInitializationService)
+    typesenseImportService.migrate(
+      true,
+      [TypesenseAliasName.USER]
+    )
 
     adminRole = await roleSeeder.createAdminRole()
     readonlyRole = await roleSeeder.createReadonlyRole()
