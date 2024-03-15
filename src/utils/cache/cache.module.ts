@@ -4,6 +4,7 @@ import { type RedisClientOptions } from 'redis'
 import { redisStore } from 'cache-manager-redis-store'
 import { RoleRepository } from '../../modules/roles/repositories/role.repository.js'
 import { UserRepository } from '../../modules/users/repositories/user.repository.js'
+import { TypesenseModule } from '../../modules/typesense/modules/typesense.module.js'
 import { RedisCacheService } from './cache.js'
 
 @Module({
@@ -12,9 +13,11 @@ import { RedisCacheService } from './cache.js'
     store: redisStore,
     host: process.env.REDIS_HOST,
     port: process.env.REDIS_PORT
-  })],
+  }),
+  TypesenseModule
+  ],
   controllers: [],
   providers: [RedisCacheService, RoleRepository, UserRepository],
-  exports: [RedisCacheService]
+  exports: [RedisCacheService, TypesenseModule]
 })
 export class RedisCacheModule {}

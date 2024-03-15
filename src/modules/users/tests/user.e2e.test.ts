@@ -6,10 +6,10 @@ import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
 import { type TestingModule } from '@nestjs/testing'
 import { UserRepository } from '../repositories/user.repository.js'
-import { UserSeeder } from './user.seeder.js'
 import { type Role } from '../../roles/entities/role.entity.js'
 import { RoleSeeder } from '../../roles/tests/role.seeder.js'
 import { globalTestSetup } from '../../../../test/expect/setup.js'
+import { UserSeeder } from './user.seeder.js'
 import { type SetupUserType } from './setup-user.type.js'
 
 describe('Users', async () => {
@@ -54,12 +54,12 @@ describe('Users', async () => {
     })
 
     it('should return users with typesense search', async () => {
-      const { token, user } = await userSeeder.setupUser()
-      const user2 = await userSeeder.setupUser()
+      const { user } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
+      const user2 = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
         .get(`/users?q=${user.email}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.status).toBe(200)
       expect(response.body.items.map(item => item.uuid))

@@ -10,8 +10,8 @@ import { RedisCacheModule } from '../../../utils/cache/cache.module.js'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]), 
-    RedisCacheModule, 
+    TypeOrmModule.forFeature([User]),
+    RedisCacheModule,
     TypesenseModule
   ],
   controllers: [UserController],
