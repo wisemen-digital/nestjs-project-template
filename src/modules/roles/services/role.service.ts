@@ -7,6 +7,7 @@ import { UserRepository } from '../../users/repositories/user.repository.js'
 import { KnownError } from '../../../utils/Exceptions/errors.js'
 import { RedisCacheService } from '../../../utils/cache/cache.js'
 import { type UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
+import { TypesenseQueryService } from '../../typesense/services/typesense-query.service.js'
 
 @Injectable()
 export class RoleService {
@@ -14,7 +15,8 @@ export class RoleService {
     private readonly dataSource: DataSource,
     private readonly roleRepository: RoleRepository,
     private readonly userRepository: UserRepository,
-    private readonly cache: RedisCacheService
+    private readonly cache: RedisCacheService,
+    private readonly typesense: TypesenseQueryService
   ) {}
 
   async findAll (): Promise<Role[]> {
@@ -83,7 +85,8 @@ export class RoleService {
         user.roleUuid = readOnlyRole.uuid
 
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        new UserRepository(manager).update({ roleUuid: uuid }, { roleUuid: readOnlyRole.uuid })
+        new UserRepository(manager, this.typesense)
+          .update({ roleUuid: uuid }, { roleUuid: readOnlyRole.uuid })
       }))
 
       await manager.remove(role)

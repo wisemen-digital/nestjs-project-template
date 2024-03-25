@@ -11,4 +11,6 @@ export enum Permission {
   ROLE_CREATE = 'role.create',
   ROLE_UPDATE = 'role.update',
   ROLE_DELETE = 'role.delete',
+  
+  TYPESENSE = 'typesense'
 }

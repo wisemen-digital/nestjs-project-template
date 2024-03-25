@@ -10,6 +10,7 @@ import { RefreshToken } from '../../auth/entities/refreshtoken.entity.js'
 import { ClientRepository } from '../../auth/repositories/client.repository.js'
 import { RefreshTokenRepository } from '../../auth/repositories/refresh-token.repository.js'
 import { getPrivateKey, getPublicKey } from '../../../utils/auth/keys.js'
+import { TypesenseModule } from '../../typesense/modules/typesense.module.js'
 import { UserSeeder } from './user.seeder.js'
 
 @Module({
@@ -22,7 +23,8 @@ import { UserSeeder } from './user.seeder.js'
           publicKey: getPublicKey()
         }
       }
-    })
+    }),
+    TypesenseModule
   ],
   providers: [
     UserSeeder,

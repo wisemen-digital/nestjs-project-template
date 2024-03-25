@@ -9,13 +9,14 @@ import { UserRepository } from '../repositories/user.repository.js'
 import { type Role } from '../../roles/entities/role.entity.js'
 import { RoleSeeder } from '../../roles/tests/role.seeder.js'
 import { globalTestSetup } from '../../../../test/expect/setup.js'
+import { TypesenseInitializationService } from '../../typesense/services/typesense-initialization.service.js'
+import { TypesenseAliasName } from '../../typesense/enums/typesense-collection.index.enum.js'
 import { UserSeeder } from './user.seeder.js'
 import { type SetupUserType } from './setup-user.type.js'
 
 describe('Users', async () => {
   let app: INestApplication
   let moduleRef: TestingModule
-
   let userSeeder: UserSeeder
   let roleSeeder: RoleSeeder
   let userRepository: UserRepository
@@ -32,6 +33,12 @@ describe('Users', async () => {
     userSeeder = moduleRef.get(UserSeeder)
     roleSeeder = moduleRef.get(RoleSeeder)
     userRepository = moduleRef.get(UserRepository)
+
+    const typesenseImportService = moduleRef.get(TypesenseInitializationService)
+    typesenseImportService.migrate(
+      true,
+      [TypesenseAliasName.USER]
+    )
 
     adminRole = await roleSeeder.createAdminRole()
     readonlyRole = await roleSeeder.createReadonlyRole()
@@ -54,14 +61,19 @@ describe('Users', async () => {
       expect(response.status).toBe(401)
     })
 
-    it('should return users', async () => {
-      await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
+    it('should return users with typesense search', async () => {
+      const { user } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
+      const user2 = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
 
       const response = await request(app.getHttpServer())
-        .get('/users')
+        .get(`/users?q=${user.email}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.status).toBe(200)
+      expect(response.body.items.map(item => item.uuid))
+        .toContain(user.uuid)
+      expect(response.body.items.map(item => item.uuid))
+        .not.toContain(user2.user.uuid)
     })
   })
 
