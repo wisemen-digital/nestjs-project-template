@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgis/postgis
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./.postgres:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: test_db
+
+  redis:
+    image: redis
+    ports:
+      - '6379:6379'

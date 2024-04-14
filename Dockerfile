@@ -1,28 +1,36 @@
-# build stage
-FROM node:20.5 as build-stage
+# Command line arguments, such as Node version
+ARG NODE_VERSION=lts
 
-RUN npm i -g pnpm@8.4.0
+#
+# --- Stage 1: Build ---
+#
 
+FROM node:${NODE_VERSION} as build
+
+RUN corepack enable
+
+# Install dependencies
 WORKDIR /app
-
 COPY package.json pnpm-lock.yaml tsconfig.json ./
-
 RUN pnpm install --frozen-lockfile
 
-COPY src/ ./src
-COPY test/ ./test
+# Copy files 
+COPY . .
 
+# Build & optimize a bit
 RUN pnpm build
-
 RUN pnpm prune --prod
 
-# production stage
-FROM node:20.5-alpine as production-stage
+#
+# --- Stage 2: Run ---
+#
+
+FROM node:${NODE_VERSION}-alpine as final
 
 WORKDIR /usr/src/app
 
-COPY --from=build-stage /app/package.json /usr/src/app
-COPY --from=build-stage /app/node_modules /usr/src/app/node_modules
-COPY --from=build-stage /app/dist /usr/src/app/dist
+COPY --from=build --chown=nobody /app/package.json .
+COPY --from=build --chown=nobody /app/node_modules node_modules
+COPY --from=build --chown=nobody /app/dist dist
 
 EXPOSE 3000
