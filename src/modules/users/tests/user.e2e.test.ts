@@ -8,7 +8,7 @@ import { type TestingModule } from '@nestjs/testing'
 import { UserRepository } from '../repositories/user.repository.js'
 import { type Role } from '../../roles/entities/role.entity.js'
 import { RoleSeeder } from '../../roles/tests/role.seeder.js'
-import { globalTestSetup } from '../../../../test/expect/setup.js'
+import { setupTest } from '../../../../test/setup/setup.js'
 import { UserSeeder } from './user.seeder.js'
 import { type SetupUserType } from './setup-user.type.js'
 
@@ -27,7 +27,7 @@ describe('Users', async () => {
   let readonlyUser: SetupUserType
 
   before(async () => {
-    ({ app, moduleRef } = await globalTestSetup())
+    ({ app, moduleRef } = await setupTest())
 
     userSeeder = moduleRef.get(UserSeeder)
     roleSeeder = moduleRef.get(RoleSeeder)
@@ -61,7 +61,7 @@ describe('Users', async () => {
         .get('/users')
         .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
   })
 
@@ -70,7 +70,7 @@ describe('Users', async () => {
       const response = await request(app.getHttpServer())
         .get(`/users/${adminUser.user.uuid}`)
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 404 when user not found', async () => {
@@ -78,7 +78,7 @@ describe('Users', async () => {
         .get(`/users/${randUuid()}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(404)
+      expect(response).toHaveStatus(404)
     })
 
     it('should return 400 when invalid uuid', async () => {
@@ -86,7 +86,7 @@ describe('Users', async () => {
         .get(`/users/${adminUser.user.uuid}s`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
 
     it('should return user', async () => {
@@ -94,7 +94,7 @@ describe('Users', async () => {
         .get(`/users/${adminUser.user.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
 
     it('should return 403 when user is not admin', async () => {
@@ -102,7 +102,7 @@ describe('Users', async () => {
         .get(`/users/${adminUser.user.uuid}`)
         .set('Authorization', `Bearer ${readonlyUser.token}`)
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return user when user is admin', async () => {
@@ -110,7 +110,7 @@ describe('Users', async () => {
         .get(`/users/${readonlyUser.user.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
   })
 
@@ -120,7 +120,7 @@ describe('Users', async () => {
         .post('/users')
         .send({})
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
 
     it('should return 400 when password is missing', async () => {
@@ -130,7 +130,7 @@ describe('Users', async () => {
           email: randEmail()
         })
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
 
     it('should return 201', async () => {
@@ -140,7 +140,7 @@ describe('Users', async () => {
         .post('/users')
         .send(dto)
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
     })
   })
 
@@ -150,7 +150,7 @@ describe('Users', async () => {
         .post(`/users/${randUuid()}`)
         .send({})
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 201 when user is self', async () => {
@@ -162,7 +162,7 @@ describe('Users', async () => {
           lastName: 'Doe'
         })
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
     })
 
     it('should return 404 when user not found', async () => {
@@ -171,7 +171,7 @@ describe('Users', async () => {
         .set('Authorization', `Bearer ${adminUser.token}`)
         .send({})
 
-      expect(response.status).toBe(404)
+      expect(response).toHaveStatus(404)
     })
 
     it('should return 403 when user is not admin', async () => {
@@ -183,7 +183,7 @@ describe('Users', async () => {
           lastName: 'Doe'
         })
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return 201 when user is admin', async () => {
@@ -195,7 +195,7 @@ describe('Users', async () => {
           lastName: 'Doe'
         })
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
       expect(response.body.firstName).toBe('John')
     })
   })
@@ -205,7 +205,7 @@ describe('Users', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/users/${randUuid()}`)
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 404 when user not found', async () => {
@@ -213,7 +213,7 @@ describe('Users', async () => {
         .delete(`/users/${randUuid()}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(404)
+      expect(response).toHaveStatus(404)
     })
 
     it('should return 403 when user is not admin', async () => {
@@ -221,7 +221,7 @@ describe('Users', async () => {
         .delete(`/users/${adminUser.user.uuid}`)
         .set('Authorization', `Bearer ${readonlyUser.token}`)
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return 200 when user is admin', async () => {
@@ -229,7 +229,7 @@ describe('Users', async () => {
         .delete(`/users/${readonlyUser.user.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
 
     it('should return 200 when user is self', async () => {
@@ -239,7 +239,7 @@ describe('Users', async () => {
         .delete(`/users/${user.uuid}`)
         .set('Authorization', `Bearer ${token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
   })
 
@@ -249,7 +249,7 @@ describe('Users', async () => {
         .post(`/users/${randUuid()}/password`)
         .send({})
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 404 when user not found', async () => {
@@ -261,7 +261,7 @@ describe('Users', async () => {
           oldPassword: 'password'
         })
 
-      expect(response.status).toBe(404)
+      expect(response).toHaveStatus(404)
     })
 
     it('should return 403 when user is not admin', async () => {
@@ -272,7 +272,7 @@ describe('Users', async () => {
           password: 'newPassword',
           oldPassword: 'password'
         })
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return 201 when user is self', async () => {
@@ -290,7 +290,7 @@ describe('Users', async () => {
           oldPassword: 'password'
         })
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
     })
 
     it('should return 201 when admin can change other users password', async () => {
@@ -308,7 +308,7 @@ describe('Users', async () => {
           oldPassword: 'password'
         })
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
     })
 
     it('should return 403 when non-admin user wants to change other users password', async () => {
@@ -326,7 +326,7 @@ describe('Users', async () => {
           oldPassword: 'password'
         })
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return 400 when password is missing', async () => {
@@ -337,7 +337,7 @@ describe('Users', async () => {
         .set('Authorization', `Bearer ${token}`)
         .send({})
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
   })
 

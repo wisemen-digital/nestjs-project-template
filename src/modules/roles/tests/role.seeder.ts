@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { ILike, type DeepPartial } from 'typeorm'
-import { type SeederOptions } from '../../../../test/utils/setup.js'
+import { type SeederOptions } from '../../../../test/utils/seeder-options.js'
 import { type Role } from '../entities/role.entity.js'
 import { RoleRepository } from '../repositories/role.repository.js'
 import { Permission } from '../../permissions/permission.enum.js'
