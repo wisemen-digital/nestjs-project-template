@@ -13,11 +13,13 @@ import { MailModule } from './modules/mail/modules/mail.module.js'
 import { RoleModule } from './modules/roles/role.module.js'
 import { PermissionModule } from './modules/permissions/permissions.module.js'
 import { RedisCacheModule } from './utils/cache/cache.module.js'
+import configuration from './config/env/configuration.js'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: process.env.ENV_FILE
+      envFilePath: process.env.ENV_FILE,
+      load: [configuration]
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
