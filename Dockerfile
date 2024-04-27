@@ -6,8 +6,11 @@ ARG NODE_VERSION=lts
 #
 
 FROM node:${NODE_VERSION} as build
-
 RUN corepack enable
+
+ARG BUILD_COMMIT
+ARG BUILD_NUMBER
+ARG BUILD_TIMESTAMP
 
 # Install dependencies
 WORKDIR /app
