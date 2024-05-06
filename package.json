@@ -42,7 +42,7 @@
     "cache-manager-redis-store": "^3.0.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
-    "ejs": "^3.1.9",
+    "ejs": "^3.1.10",
     "jsonwebtoken": "^9.0.2",
     "mjml": "^4.15.3",
     "pg": "^8.11.3",
