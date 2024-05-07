@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { Client } from '../entities/client.entity.js'
-import { ClientRepository } from '../repositories/client.repository.js'
+import { EntityManager } from 'typeorm'
+import { Client } from '../../entities/client.entity.js';
+import { ClientRepository } from '../../repositories/client.repository.js';
 
 @Injectable()
 export class ClientSeeder {
   constructor (
-    private readonly clientRepository: ClientRepository
+    manager: EntityManager,
+    private readonly clientRepository: ClientRepository = new ClientRepository(manager)
   ) {}
 
   async getTestClient (): Promise<Client> {
