@@ -68,7 +68,7 @@ describe('Roles', async () => {
       const response = await request(app.getHttpServer())
         .get('/roles')
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 403 when not authorized', async () => {
@@ -76,7 +76,7 @@ describe('Roles', async () => {
         .get('/roles')
         .set('Authorization', `Bearer ${readonlyToken}`)
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return roles when admin', async () => {
@@ -84,7 +84,7 @@ describe('Roles', async () => {
         .get('/roles')
         .set('Authorization', `Bearer ${adminToken}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
 
     it('should return roles when having ROLE_READ permission', async () => {
@@ -106,7 +106,7 @@ describe('Roles', async () => {
         .get('/roles')
         .set('Authorization', `Bearer ${token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
   })
 
@@ -120,7 +120,7 @@ describe('Roles', async () => {
             .build()
         )
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 403 when not authorized', async () => {
@@ -132,7 +132,7 @@ describe('Roles', async () => {
             .build()
         )
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should create role', async () => {
@@ -145,7 +145,7 @@ describe('Roles', async () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .send(dto)
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
       expect(response.body.name).toBe(dto.name)
       expect(response.body.permissions).toEqual([])
     })
@@ -163,7 +163,7 @@ describe('Roles', async () => {
         .set('Authorization', `Bearer ${adminToken}`)
         .send(dto)
 
-      expect(response.status).toBe(409)
+      expect(response).toHaveStatus(409)
       expect(response.body.errors.find(error => error.code === 'already_exists')).not.toBeUndefined()
     })
 
@@ -177,7 +177,7 @@ describe('Roles', async () => {
             .build()
         )
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
   })
 
@@ -190,7 +190,7 @@ describe('Roles', async () => {
             .build()
         )
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 403 when not authorized', async () => {
@@ -202,7 +202,7 @@ describe('Roles', async () => {
             .build()
         )
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should update role', async () => {
@@ -221,7 +221,7 @@ describe('Roles', async () => {
             .build()
         )
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
       expect(response.body.name).not.toBe(role.name)
     })
 
@@ -235,7 +235,7 @@ describe('Roles', async () => {
             .build()
         )
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
   })
 
@@ -244,7 +244,7 @@ describe('Roles', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/roles/${readonlyRole.uuid}`)
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 403 when not authorized', async () => {
@@ -252,7 +252,7 @@ describe('Roles', async () => {
         .delete(`/roles/${readonlyRole.uuid}`)
         .set('Authorization', `Bearer ${readonlyToken}`)
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return 400 when deleting admin role', async () => {
@@ -263,7 +263,7 @@ describe('Roles', async () => {
       expect(response.body.errors[0].code).toBe('not_editable')
       expect(response.body.errors[0].detail).toBe('Cannot delete this role')
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
 
     it('should delete role and replace all staff roles to readonly', async () => {
@@ -299,7 +299,7 @@ describe('Roles', async () => {
         .delete(`/roles/${role.uuid}`)
         .set('Authorization', `Bearer ${adminToken}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
 
       // check if staffs have readonly role
       const usersAfter = await new UserRepository(dataSource.manager).find({
