@@ -4,12 +4,9 @@ import request from 'supertest'
 import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
 import { type DataSource } from 'typeorm'
-import { type Role } from '../../roles/entities/role.entity.js'
-import { RoleSeeder } from '../../roles/tests/seeders/role.seeder.js'
 import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
-import { type Client } from '../../auth/entities/client.entity.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
-import { ClientSeeder } from '../../auth/tests/seeders/client.seeder.js'
+import { TestContext } from '../../../../test/utils/test-context.js'
 import { UserEntityBuilder } from './builders/entities/user-entity.builder.js'
 import { CreateUserDtoBuilder } from './builders/dtos/create-user-dto.builder.js'
 import { UserSeeder } from './seeders/user.seeder.js'
@@ -19,10 +16,7 @@ describe('Users', async () => {
   let app: INestApplication
   let dataSource: DataSource
 
-  let client: Client
-
-  let adminRole: Role
-  let readonlyRole: Role
+  let context: TestContext
 
   let adminUser: SetupUser
   let readonlyUser: SetupUser
@@ -30,29 +24,10 @@ describe('Users', async () => {
   before(async () => {
     ({ app, dataSource } = await globalTestSetup())
 
-    const roleSeeder = new RoleSeeder(dataSource.manager)
-    const clientSeeder = new ClientSeeder(dataSource.manager)
-    const userSeeder = new UserSeeder(dataSource.manager)
+    context = new TestContext(dataSource.manager)
 
-    adminRole = await roleSeeder.seedAdminRole()
-    readonlyRole = await roleSeeder.seedReadonlyRole()
-
-    client = await clientSeeder.getTestClient()
-
-    adminUser = await userSeeder.setup(
-      client,
-      new UserEntityBuilder()
-        .withEmail(randEmail())
-        .withRole(adminRole)
-        .build()
-    )
-    readonlyUser = await userSeeder.setup(
-      client,
-      new UserEntityBuilder()
-        .withEmail(randEmail())
-        .withRole(readonlyRole)
-        .build()
-    )
+    adminUser = await context.getAdminUser()
+    readonlyUser = await context.getReadonlyUser()
   })
 
   describe('Get users', () => {
@@ -141,13 +116,13 @@ describe('Users', async () => {
     })
 
     it('should return 201', async () => {
+      const dto = new CreateUserDtoBuilder()
+        .withEmail('should-return-201@mail.com')
+        .build()
+
       const response = await request(app.getHttpServer())
         .post('/users')
-        .send(
-          new CreateUserDtoBuilder()
-            .withEmail('should-return-201@mail.com')
-            .build()
-        )
+        .send(dto)
 
       expect(response).toHaveStatus(201)
     })
@@ -242,16 +217,11 @@ describe('Users', async () => {
     })
 
     it('should return 200 when user is self', async () => {
-      const user = await new UserSeeder(dataSource.manager).seedOne(
-        new UserEntityBuilder()
-          .withEmail(randEmail())
-          .build()
-      )
-      const token = await new TokenSeeder(dataSource.manager).seedOne(user, client)
+      const randomUser = await context.getRandomUser()
 
       const response = await request(app.getHttpServer())
-        .delete(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .delete(`/users/${randomUser.user.uuid}`)
+        .set('Authorization', `Bearer ${randomUser.token}`)
 
       expect(response).toHaveStatus(200)
     })
@@ -291,6 +261,9 @@ describe('Users', async () => {
 
     it('should return 201 when user is self', async () => {
       const oldPassword = 'Password123'
+
+      const client = await context.getClient()
+
       const user = await new UserSeeder(dataSource.manager).seedOne(
         new UserEntityBuilder()
           .withEmail(randEmail())
@@ -351,16 +324,11 @@ describe('Users', async () => {
     })
 
     it('should return 400 when password is missing', async () => {
-      const user = await new UserSeeder(dataSource.manager).seedOne(
-        new UserEntityBuilder()
-          .withEmail(randEmail())
-          .build()
-      )
-      const token = await new TokenSeeder(dataSource.manager).seedOne(user, client)
+      const randomUser = await context.getRandomUser()
 
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${randomUser.user.uuid}/password`)
+        .set('Authorization', `Bearer ${randomUser.token}`)
         .send({})
 
       expect(response).toHaveStatus(400)
