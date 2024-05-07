@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { EntityManager } from 'typeorm'
-import { Client } from '../../entities/client.entity.js';
-import { ClientRepository } from '../../repositories/client.repository.js';
+import { Client } from '../../entities/client.entity.js'
+import { ClientRepository } from '../../repositories/client.repository.js'
 
 @Injectable()
 export class ClientSeeder {
