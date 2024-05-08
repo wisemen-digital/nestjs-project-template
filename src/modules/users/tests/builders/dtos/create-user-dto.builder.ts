@@ -1,36 +1,48 @@
 import { CreateUserDto } from '../../../dtos/create-user.dto.js'
 
 export class CreateUserDtoBuilder {
-  private readonly dto: CreateUserDto = new CreateUserDto()
+  private dto: CreateUserDto
 
   constructor () {
+    this.reset()
+  }
+
+  reset (): this {
+    this.dto = new CreateUserDto()
+
     this.dto.email = 'test@mail.com'
     this.dto.password = 'Password123'
     this.dto.firstName = 'John'
     this.dto.lastName = 'Doe'
+
+    return this
   }
 
-  withEmail (email: string): CreateUserDtoBuilder {
+  withEmail (email: string): this {
     this.dto.email = email
     return this
   }
 
-  withPassword (password: string): CreateUserDtoBuilder {
+  withPassword (password: string): this {
     this.dto.password = password
     return this
   }
 
-  withFirstName (firstName: string): CreateUserDtoBuilder {
+  withFirstName (firstName: string): this {
     this.dto.firstName = firstName
     return this
   }
 
-  withLastName (lastName: string): CreateUserDtoBuilder {
+  withLastName (lastName: string): this {
     this.dto.lastName = lastName
     return this
   }
 
   build (): CreateUserDto {
-    return this.dto
+    const result = this.dto
+
+    this.reset()
+
+    return result
   }
 }

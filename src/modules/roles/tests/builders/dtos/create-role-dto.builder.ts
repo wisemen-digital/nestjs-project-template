@@ -1,18 +1,30 @@
 import { CreateRoleDto } from '../../../dtos/create-role.dto.js'
 
 export class CreateRoleDtoBuilder {
-  private readonly createRoleDto: CreateRoleDto = new CreateRoleDto()
+  private createRoleDto: CreateRoleDto
 
   constructor () {
-    this.createRoleDto.name = 'test-role'
+    this.reset()
   }
 
-  withName (name: string): CreateRoleDtoBuilder {
+  reset (): this {
+    this.createRoleDto = new CreateRoleDto()
+
+    this.createRoleDto.name = 'test-role'
+
+    return this
+  }
+
+  withName (name: string): this {
     this.createRoleDto.name = name
     return this
   }
 
   build (): CreateRoleDto {
-    return this.createRoleDto
+    const result = this.createRoleDto
+
+    this.reset()
+
+    return result
   }
 }

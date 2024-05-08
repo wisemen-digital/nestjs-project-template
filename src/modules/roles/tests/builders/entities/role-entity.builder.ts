@@ -3,31 +3,42 @@ import { Role } from '../../../entities/role.entity.js'
 import { type Permission } from '../../../../permissions/permission.enum.js'
 
 export class RoleEntityBuilder {
-  private readonly roleEntity: Role = new Role()
+  private roleEntity: Role
 
   constructor () {
-    this.roleEntity.uuid = randUuid()
-    this.roleEntity.createdAt = new Date()
-    this.roleEntity.updatedAt = new Date()
-    this.roleEntity.name = 'test-role'
+    this.reset()
   }
 
-  withUuid (uuid: string): RoleEntityBuilder {
+  reset (): this {
+    this.roleEntity = new Role()
+
+    this.roleEntity.uuid = randUuid()
+    this.roleEntity.name = 'test-role'
+    this.roleEntity.permissions = []
+
+    return this
+  }
+
+  withUuid (uuid: string): this {
     this.roleEntity.uuid = uuid
     return this
   }
 
-  withName (name: string): RoleEntityBuilder {
+  withName (name: string): this {
     this.roleEntity.name = name
     return this
   }
 
-  withPermissions (permissions: Permission[]): RoleEntityBuilder {
+  withPermissions (permissions: Permission[]): this {
     this.roleEntity.permissions = permissions
     return this
   }
 
   build (): Role {
-    return this.roleEntity
+    const result = this.roleEntity
+
+    this.reset()
+
+    return result
   }
 }
