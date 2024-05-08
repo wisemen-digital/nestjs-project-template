@@ -95,38 +95,38 @@ describe('Roles', async () => {
 
   describe('Create role', () => {
     it('should return 401 when not authenticated', async () => {
+      const roleDto = new CreateRoleDtoBuilder()
+        .withName('should-return-401-when-not-authenticated')
+        .build()
+
       const response = await request(app.getHttpServer())
         .post('/roles')
-        .send(
-          new CreateRoleDtoBuilder()
-            .withName('should-return-401-when-not-authenticated')
-            .build()
-        )
+        .send(roleDto)
 
       expect(response).toHaveStatus(401)
     })
 
     it('should return 403 when not authorized', async () => {
+      const roleDto = new CreateRoleDtoBuilder()
+        .build()
+
       const response = await request(app.getHttpServer())
         .post('/roles')
         .set('Authorization', `Bearer ${readonlyUser.token}`)
-        .send(
-          new CreateRoleDtoBuilder()
-            .build()
-        )
+        .send(roleDto)
 
       expect(response).toHaveStatus(403)
     })
 
     it('should create role', async () => {
-      const dto = new CreateRoleDtoBuilder()
+      const roleDto = new CreateRoleDtoBuilder()
         .withName('should-create-role-test')
         .build()
 
       const response = await request(app.getHttpServer())
         .post('/roles')
         .set('Authorization', `Bearer ${adminUser.token}`)
-        .send(dto)
+        .send(roleDto)
 
       expect(response).toHaveStatus(201)
       expect(response.body.name).toBe(dto.name)
@@ -134,17 +134,17 @@ describe('Roles', async () => {
     })
 
     it('should create role not a second time', async () => {
-      const dto = new CreateRoleDtoBuilder().build()
+      const roleDto = new CreateRoleDtoBuilder().build()
 
       await request(app.getHttpServer())
         .post('/roles')
         .set('Authorization', `Bearer ${adminUser.token}`)
-        .send(dto)
+        .send(roleDto)
 
       const response = await request(app.getHttpServer())
         .post('/roles')
         .set('Authorization', `Bearer ${adminUser.token}`)
-        .send(dto)
+        .send(roleDto)
 
       expect(response).toHaveStatus(409)
       expect(response.body.errors.find(error => error.code === 'already_exists')).not.toBeUndefined()
