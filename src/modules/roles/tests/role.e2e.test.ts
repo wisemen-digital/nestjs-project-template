@@ -9,54 +9,37 @@ import { UserRepository } from '../../users/repositories/user.repository.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { UserSeeder } from '../../users/tests/seeders/user.seeder.js'
 import { UserEntityBuilder } from '../../users/tests/builders/entities/user-entity.builder.js'
-import { type User } from '../../users/entities/user.entity.js'
 import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
 import { ClientSeeder } from '../../auth/tests/seeders/client.seeder.js'
+import { TestContext } from '../../../../test/utils/test-context.js'
+import { type SetupUser } from '../../users/tests/setup-user.type.js'
 import { RoleSeeder } from './seeders/role.seeder.js'
 import { RoleEntityBuilder } from './builders/entities/role-entity.builder.js'
 import { CreateRoleDtoBuilder } from './builders/dtos/create-role-dto.builder.js'
 
 describe('Roles', async () => {
   let app: INestApplication
-
   let dataSource: DataSource
+
+  let context: TestContext
 
   let adminRole: Role
   let readonlyRole: Role
 
-  let adminUser: User
-  let readonlyUser: User
-
-  let adminToken: string
-  let readonlyToken: string
+  let adminUser: SetupUser
+  let readonlyUser: SetupUser
 
   before(async () => {
     ({ app, dataSource } = await globalTestSetup())
 
-    const roleSeeder = new RoleSeeder(dataSource.manager)
-    adminRole = await roleSeeder.seedAdminRole()
-    readonlyRole = await roleSeeder.seedReadonlyRole()
+    context = new TestContext(dataSource.manager)
 
-    const userSeeder = new UserSeeder(dataSource.manager)
-    adminUser = await userSeeder.seedOne(
-      new UserEntityBuilder()
-        .withEmail(randEmail())
-        .withRole(adminRole)
-        .build()
-    )
-    readonlyUser = await userSeeder.seedOne(
-      new UserEntityBuilder()
-        .withEmail(randEmail())
-        .withRole(readonlyRole)
-        .build()
-    )
+    adminRole = await context.getAdminRole()
+    readonlyRole = await context.getReadonlyRole()
 
-    const tokenSeeder = new TokenSeeder(dataSource.manager)
-    const client = await new ClientSeeder(dataSource.manager).getTestClient()
-
-    adminToken = await tokenSeeder.seedOne(adminUser, client)
-    readonlyToken = await tokenSeeder.seedOne(readonlyUser, client)
+    adminUser = await context.getAdminUser()
+    readonlyUser = await context.getReadonlyUser()
   })
 
   after(async () => {
@@ -74,7 +57,7 @@ describe('Roles', async () => {
     it('should return 403 when not authorized', async () => {
       const response = await request(app.getHttpServer())
         .get('/roles')
-        .set('Authorization', `Bearer ${readonlyToken}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
 
       expect(response).toHaveStatus(403)
     })
@@ -82,7 +65,7 @@ describe('Roles', async () => {
     it('should return roles when admin', async () => {
       const response = await request(app.getHttpServer())
         .get('/roles')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response).toHaveStatus(200)
     })
@@ -126,7 +109,7 @@ describe('Roles', async () => {
     it('should return 403 when not authorized', async () => {
       const response = await request(app.getHttpServer())
         .post('/roles')
-        .set('Authorization', `Bearer ${readonlyToken}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send(
           new CreateRoleDtoBuilder()
             .build()
@@ -142,7 +125,7 @@ describe('Roles', async () => {
 
       const response = await request(app.getHttpServer())
         .post('/roles')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send(dto)
 
       expect(response).toHaveStatus(201)
@@ -155,12 +138,12 @@ describe('Roles', async () => {
 
       await request(app.getHttpServer())
         .post('/roles')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send(dto)
 
       const response = await request(app.getHttpServer())
         .post('/roles')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send(dto)
 
       expect(response).toHaveStatus(409)
@@ -170,7 +153,7 @@ describe('Roles', async () => {
     it('should not create role with invalid name', async () => {
       const response = await request(app.getHttpServer())
         .post('/roles')
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send(
           new CreateRoleDtoBuilder()
             .withName('')
@@ -196,7 +179,7 @@ describe('Roles', async () => {
     it('should return 403 when not authorized', async () => {
       const response = await request(app.getHttpServer())
         .post(`/roles/${readonlyRole.uuid}`)
-        .set('Authorization', `Bearer ${readonlyToken}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send(
           new CreateRoleDtoBuilder()
             .build()
@@ -214,7 +197,7 @@ describe('Roles', async () => {
 
       const response = await request(app.getHttpServer())
         .post(`/roles/${role.uuid}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send(
           new CreateRoleDtoBuilder()
             .withName('should-update-role-test')
@@ -228,7 +211,7 @@ describe('Roles', async () => {
     it('should not update role with invalid name', async () => {
       const response = await request(app.getHttpServer())
         .post(`/roles/${readonlyRole.uuid}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send(
           new CreateRoleDtoBuilder()
             .withName('')
@@ -250,7 +233,7 @@ describe('Roles', async () => {
     it('should return 403 when not authorized', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/roles/${readonlyRole.uuid}`)
-        .set('Authorization', `Bearer ${readonlyToken}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
 
       expect(response).toHaveStatus(403)
     })
@@ -258,7 +241,7 @@ describe('Roles', async () => {
     it('should return 400 when deleting admin role', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/roles/${adminRole.uuid}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.body.errors[0].code).toBe('not_editable')
       expect(response.body.errors[0].detail).toBe('Cannot delete this role')
@@ -297,7 +280,7 @@ describe('Roles', async () => {
 
       const response = await request(app.getHttpServer())
         .delete(`/roles/${role.uuid}`)
-        .set('Authorization', `Bearer ${adminToken}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response).toHaveStatus(200)
 
