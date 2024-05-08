@@ -1,3 +1,4 @@
+import { mock } from 'node:test'
 import { DataSource } from 'typeorm'
 import { type INestApplication, ValidationPipe } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
@@ -9,6 +10,7 @@ import { uuid } from '../expect/expectUuid.js'
 import { toHaveErrorCode } from '../expect/expectErrorCode.js'
 import { toHaveStatus } from '../expect/expectStatus.js'
 import { isEnumValue } from '../expect/expectEnum.js'
+import { S3Service } from '../../src/modules/files/services/s3.service.js'
 
 export class SetupTestResponse {
   app: INestApplication
@@ -26,6 +28,13 @@ export async function setupTest (dataSource: DataSource): Promise<void> {
 }
 
 export async function globalTestSetup (): Promise<SetupTestResponse> {
+  mock.method(S3Service.prototype, 'getTemporarilyDownloadUrl', () => 'http://localhost:3000')
+  mock.method(S3Service.prototype, 'getTemporarilyUploadUrl', () => 'http://localhost:3000')
+  mock.method(S3Service.prototype, 'upload', async () => { await Promise.resolve() })
+  mock.method(S3Service.prototype, 'uploadStream', async () => { await Promise.resolve() })
+  mock.method(S3Service.prototype, 'delete', async () => { await Promise.resolve() })
+  mock.method(S3Service.prototype, 'list', async () => { await Promise.resolve([]) })
+
   const moduleRef = await Test.createTestingModule({
     imports: [
       AppModule

@@ -15,6 +15,7 @@ import { PermissionModule } from './modules/permissions/permissions.module.js'
 import { RedisCacheModule } from './utils/cache/cache.module.js'
 import configuration from './config/env/configuration.js'
 import { StatusModule } from './modules/status/modules/status.module.js'
+import { FileModule } from './modules/files/modules/file.module.js'
 
 @Module({
   imports: [
@@ -39,7 +40,8 @@ import { StatusModule } from './modules/status/modules/status.module.js'
     RoleModule,
     PermissionModule,
     RedisCacheModule,
-    StatusModule
+    StatusModule,
+    FileModule
   ],
   controllers: [],
   providers: [
