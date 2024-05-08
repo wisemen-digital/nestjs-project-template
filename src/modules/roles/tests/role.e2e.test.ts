@@ -129,7 +129,7 @@ describe('Roles', async () => {
         .send(roleDto)
 
       expect(response).toHaveStatus(201)
-      expect(response.body.name).toBe(dto.name)
+      expect(response.body.name).toBe(roleDto.name)
       expect(response.body.permissions).toEqual([])
     })
 

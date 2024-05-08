@@ -4,11 +4,17 @@ import { HttpAdapterHost } from '@nestjs/core'
 import { Test, type TestingModule } from '@nestjs/testing'
 import { AppModule } from '../../src/app.module.js'
 import { HttpExceptionFilter } from '../../src/utils/Exceptions/http-exception.filter.js'
+import { toHaveStatus } from '../expect/expectStatus.js'
+import { toHaveErrorCode } from '../expect/expectErrorCode.js'
+import { uuid } from '../expect/expectUuid.js'
+import { isEnumValue } from '../expect/expectEnum.js'
 
 export async function setupTest (dataSource: DataSource): Promise<void> {
   if (process.env.NODE_ENV !== 'test') throw new Error('NODE_ENV must be set to test')
 
   await setupTransaction(dataSource)
+
+  setupExpect()
 }
 
 export async function setupTransaction (dataSource: DataSource): Promise<void> {
@@ -57,4 +63,13 @@ export async function globalTestSetup (): Promise<SetupTestResponse> {
   await setupTest(dataSource)
 
   return { app, moduleRef, dataSource }
+}
+
+function setupExpect (): void {
+  expect.extend({
+    uuid,
+    toHaveErrorCode,
+    toHaveStatus,
+    isEnumValue
+  })
 }
