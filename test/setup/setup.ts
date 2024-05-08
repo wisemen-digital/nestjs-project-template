@@ -10,6 +10,12 @@ import { toHaveErrorCode } from '../expect/expectErrorCode.js'
 import { toHaveStatus } from '../expect/expectStatus.js'
 import { isEnumValue } from '../expect/expectEnum.js'
 
+export class SetupTestResponse {
+  app: INestApplication
+  moduleRef: TestingModule
+  dataSource: DataSource
+}
+
 export async function setupTest (dataSource: DataSource): Promise<void> {
   if (process.env.NODE_ENV !== 'test') {
     throw new Error('NODE_ENV must be set to test')
@@ -17,12 +23,6 @@ export async function setupTest (dataSource: DataSource): Promise<void> {
 
   await setupTransaction(dataSource)
   setupExpect()
-}
-
-export class SetupTestResponse {
-  app: INestApplication
-  moduleRef: TestingModule
-  dataSource: DataSource
 }
 
 export async function globalTestSetup (): Promise<SetupTestResponse> {
