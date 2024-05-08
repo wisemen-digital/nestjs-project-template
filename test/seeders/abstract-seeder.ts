@@ -9,7 +9,7 @@ export abstract class AbstractSeeder<T extends ObjectLiteral> {
 
   protected checkRequiredRelations (entity: T): void {
     for (const relation of this.requiredRelations) {
-      if ((entity)[relation] === null || (entity)[relation] === undefined) {
+      if ((entity)[relation] === undefined) {
         throw new Error(`Missing required relation: ${relation}`)
       }
     }

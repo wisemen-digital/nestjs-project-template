@@ -7,7 +7,7 @@ import { ClientRepository } from '../../repositories/client.repository.js'
 export class ClientSeeder {
   constructor (
     manager: EntityManager,
-    private readonly clientRepository: ClientRepository = new ClientRepository(manager)
+    private readonly clientRepository = new ClientRepository(manager)
   ) {}
 
   async getTestClient (): Promise<Client> {

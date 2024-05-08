@@ -1,4 +1,4 @@
-import { type EntityManager, ILike } from 'typeorm'
+import { type EntityManager } from 'typeorm'
 import { type Role } from '../../entities/role.entity.js'
 import { RoleRepository } from '../../repositories/role.repository.js'
 import { Permission } from '../../../permissions/permission.enum.js'
@@ -21,7 +21,7 @@ export class RoleSeeder extends AbstractSeeder<Role> {
 
   private async findRoleByName (name: string): Promise<Role | null> {
     return await this.repository.findOne({
-      where: { name: ILike(name) }
+      where: { name }
     })
   }
 
