@@ -147,7 +147,7 @@ describe('Roles', async () => {
         .send(roleDto)
 
       expect(response).toHaveStatus(409)
-      expect(response.body.errors.find(error => error.code === 'already_exists')).not.toBeUndefined()
+      expect(response).toHaveErrorCode('already_exists')
     })
 
     it('should not create role with invalid name', async () => {
