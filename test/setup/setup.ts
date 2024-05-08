@@ -11,22 +11,12 @@ import { toHaveStatus } from '../expect/expectStatus.js'
 import { isEnumValue } from '../expect/expectEnum.js'
 
 export async function setupTest (dataSource: DataSource): Promise<void> {
-  if (process.env.NODE_ENV !== 'test') throw new Error('NODE_ENV must be set to test')
+  if (process.env.NODE_ENV !== 'test') {
+    throw new Error('NODE_ENV must be set to test')
+  }
 
   await setupTransaction(dataSource)
-
   setupExpect()
-}
-
-export async function setupTransaction (dataSource: DataSource): Promise<void> {
-  const qr = dataSource.createQueryRunner()
-  await qr.connect()
-  await qr.startTransaction()
-
-  Object.defineProperty(dataSource.manager, 'queryRunner', {
-    configurable: true,
-    value: qr
-  })
 }
 
 export class SetupTestResponse {
@@ -64,6 +54,17 @@ export async function globalTestSetup (): Promise<SetupTestResponse> {
   await setupTest(dataSource)
 
   return { app, moduleRef, dataSource }
+}
+
+async function setupTransaction (dataSource: DataSource): Promise<void> {
+  const qr = dataSource.createQueryRunner()
+  await qr.connect()
+  await qr.startTransaction()
+
+  Object.defineProperty(dataSource.manager, 'queryRunner', {
+    configurable: true,
+    value: qr
+  })
 }
 
 function setupExpect (): void {
