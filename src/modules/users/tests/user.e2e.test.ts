@@ -1,49 +1,33 @@
 import { before, describe, it, after } from 'node:test'
 import { type INestApplication } from '@nestjs/common'
 import request from 'supertest'
-import bcrypt from 'bcryptjs'
 import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
-import { type TestingModule } from '@nestjs/testing'
-import { UserRepository } from '../repositories/user.repository.js'
-import { type Role } from '../../roles/entities/role.entity.js'
-import { RoleSeeder } from '../../roles/tests/role.seeder.js'
-import { setupTest } from '../../../../test/setup/setup.js'
-import { UserSeeder } from './user.seeder.js'
-import { type SetupUserType } from './setup-user.type.js'
+import { type DataSource } from 'typeorm'
+import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
+import { globalTestSetup } from '../../../../test/setup/setup.js'
+import { TestContext } from '../../../../test/utils/test-context.js'
+import { UserEntityBuilder } from './builders/entities/user-entity.builder.js'
+import { CreateUserDtoBuilder } from './builders/dtos/create-user-dto.builder.js'
+import { UserSeeder } from './seeders/user.seeder.js'
+import { type SetupUser } from './setup-user.type.js'
 
 describe('Users', async () => {
   let app: INestApplication
-  let moduleRef: TestingModule
+  let dataSource: DataSource
 
-  let userSeeder: UserSeeder
-  let roleSeeder: RoleSeeder
-  let userRepository: UserRepository
+  let context: TestContext
 
-  let adminRole: Role
-  let readonlyRole: Role
-
-  let adminUser: SetupUserType
-  let readonlyUser: SetupUserType
+  let adminUser: SetupUser
+  let readonlyUser: SetupUser
 
   before(async () => {
-    ({ app, moduleRef } = await setupTest())
+    ({ app, dataSource } = await globalTestSetup())
 
-    userSeeder = moduleRef.get(UserSeeder)
-    roleSeeder = moduleRef.get(RoleSeeder)
-    userRepository = moduleRef.get(UserRepository)
+    context = new TestContext(dataSource.manager)
 
-    adminRole = await roleSeeder.createAdminRole()
-    readonlyRole = await roleSeeder.createReadonlyRole()
-
-    adminUser = await userSeeder.setupUser({
-      roleUuid: adminRole.uuid,
-      email: roleSeeder.createRandomEmail()
-    })
-    readonlyUser = await userSeeder.setupUser({
-      roleUuid: readonlyRole.uuid,
-      email: roleSeeder.createRandomEmail()
-    })
+    adminUser = await context.getAdminUser()
+    readonlyUser = await context.getReadonlyUser()
   })
 
   describe('Get users', () => {
@@ -51,12 +35,10 @@ describe('Users', async () => {
       const response = await request(app.getHttpServer())
         .get('/users')
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return users', async () => {
-      await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
-
       const response = await request(app.getHttpServer())
         .get('/users')
         .set('Authorization', `Bearer ${adminUser.token}`)
@@ -134,7 +116,9 @@ describe('Users', async () => {
     })
 
     it('should return 201', async () => {
-      const dto = await userSeeder.createRandomUserDto({ email: roleSeeder.createRandomEmail() })
+      const dto = new CreateUserDtoBuilder()
+        .withEmail('should-return-201@mail.com')
+        .build()
 
       const response = await request(app.getHttpServer())
         .post('/users')
@@ -233,11 +217,11 @@ describe('Users', async () => {
     })
 
     it('should return 200 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
+      const randomUser = await context.getRandomUser()
 
       const response = await request(app.getHttpServer())
-        .delete(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .delete(`/users/${randomUser.user.uuid}`)
+        .set('Authorization', `Bearer ${randomUser.token}`)
 
       expect(response).toHaveStatus(200)
     })
@@ -276,65 +260,75 @@ describe('Users', async () => {
     })
 
     it('should return 201 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
+      const oldPassword = 'Password123'
 
-      user.password = await bcrypt.hash('password', 10)
+      const client = await context.getClient()
 
-      await userRepository.save(user)
+      const user = await new UserSeeder(dataSource.manager).seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withPassword(oldPassword)
+          .build()
+      )
+      const token = await new TokenSeeder(dataSource.manager).seedOne(user, client)
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           password: 'newPassword',
-          oldPassword: 'password'
+          oldPassword
         })
 
       expect(response).toHaveStatus(201)
     })
 
     it('should return 201 when admin can change other users password', async () => {
-      const user = await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
-
-      user.password = await bcrypt.hash('password', 10)
-
-      await userRepository.save(user, { reload: true })
+      const oldPassword = 'Password123'
+      const user = await new UserSeeder(dataSource.manager).seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withPassword(oldPassword)
+          .build()
+      )
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)
         .set('Authorization', `Bearer ${adminUser.token}`)
         .send({
           password: 'newPassword',
-          oldPassword: 'password'
+          oldPassword
         })
 
       expect(response).toHaveStatus(201)
     })
 
     it('should return 403 when non-admin user wants to change other users password', async () => {
-      const user = await userSeeder.createRandomUser({ email: roleSeeder.createRandomEmail() })
-
-      user.password = await bcrypt.hash('password', 10)
-
-      await userRepository.save(user, { reload: true })
+      const oldPassword = 'Password123'
+      const user = await new UserSeeder(dataSource.manager).seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withPassword(oldPassword)
+          .build()
+      )
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)
         .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send({
           password: 'newPassword',
-          oldPassword: 'password'
+          oldPassword
         })
 
       expect(response).toHaveStatus(403)
     })
 
     it('should return 400 when password is missing', async () => {
-      const { user, token } = await userSeeder.setupUser({ email: roleSeeder.createRandomEmail() })
+      const randomUser = await context.getRandomUser()
 
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${randomUser.user.uuid}/password`)
+        .set('Authorization', `Bearer ${randomUser.token}`)
         .send({})
 
       expect(response).toHaveStatus(400)

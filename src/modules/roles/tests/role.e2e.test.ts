@@ -2,49 +2,44 @@ import { before, describe, it, after } from 'node:test'
 import { type INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { randWord } from '@ngneat/falso'
-import { In } from 'typeorm'
-import { type TestingModule } from '@nestjs/testing'
-import { type SetupUserType } from '../../users/tests/setup-user.type.js'
-import { UserSeeder } from '../../users/tests/user.seeder.js'
+import { randEmail } from '@ngneat/falso'
+import { type DataSource, In } from 'typeorm'
 import { type Role } from '../entities/role.entity.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { Permission } from '../../permissions/permission.enum.js'
-import { setupTest } from '../../../../test/setup/setup.js'
-import { RoleSeeder } from './role.seeder.js'
+import { UserSeeder } from '../../users/tests/seeders/user.seeder.js'
+import { UserEntityBuilder } from '../../users/tests/builders/entities/user-entity.builder.js'
+import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
+import { globalTestSetup } from '../../../../test/setup/setup.js'
+import { ClientSeeder } from '../../auth/tests/seeders/client.seeder.js'
+import { TestContext } from '../../../../test/utils/test-context.js'
+import { type SetupUser } from '../../users/tests/setup-user.type.js'
+import { RoleSeeder } from './seeders/role.seeder.js'
+import { RoleEntityBuilder } from './builders/entities/role-entity.builder.js'
+import { CreateRoleDtoBuilder } from './builders/dtos/create-role-dto.builder.js'
 
 describe('Roles', async () => {
   let app: INestApplication
+  let dataSource: DataSource
 
-  let userRepository: UserRepository
-  let moduleRef: TestingModule
-
-  let userSeeder: UserSeeder
-  let roleSeeder: RoleSeeder
+  let context: TestContext
 
   let adminRole: Role
   let readonlyRole: Role
-  let adminUser: SetupUserType
-  let readonlyUser: SetupUserType
+
+  let adminUser: SetupUser
+  let readonlyUser: SetupUser
 
   before(async () => {
-    ({ app, moduleRef } = await setupTest())
+    ({ app, dataSource } = await globalTestSetup())
 
-    userRepository = moduleRef.get(UserRepository)
+    context = new TestContext(dataSource.manager)
 
-    userSeeder = moduleRef.get(UserSeeder)
-    roleSeeder = moduleRef.get(RoleSeeder)
+    adminRole = await context.getAdminRole()
+    readonlyRole = await context.getReadonlyRole()
 
-    adminRole = await roleSeeder.createAdminRole()
-    readonlyRole = await roleSeeder.createReadonlyRole()
-    adminUser = await userSeeder.setupUser({
-      roleUuid: adminRole.uuid,
-      email: roleSeeder.createRandomEmail()
-    })
-    readonlyUser = await userSeeder.setupUser({
-      roleUuid: readonlyRole.uuid,
-      email: roleSeeder.createRandomEmail()
-    })
+    adminUser = await context.getAdminUser()
+    readonlyUser = await context.getReadonlyUser()
   })
 
   after(async () => {
@@ -76,19 +71,23 @@ describe('Roles', async () => {
     })
 
     it('should return roles when having ROLE_READ permission', async () => {
-      const roleReadRole = await roleSeeder.createRandomRole({
-        name: roleSeeder.createRandomName(),
-        permissions: [Permission.ROLE_READ]
-      })
-
-      const user = await userSeeder.setupUser({
-        roleUuid: roleReadRole.uuid,
-        email: roleSeeder.createRandomEmail()
-      })
+      const role = await new RoleSeeder(dataSource.manager).seedOne(
+        new RoleEntityBuilder()
+          .withName('should-return-roles-when-having-role-read-permission')
+          .withPermissions([Permission.ROLE_READ])
+          .build()
+      )
+      const user = await new UserSeeder(dataSource.manager).seedOne(
+        new UserEntityBuilder()
+          .withRole(role)
+          .build()
+      )
+      const client = await new ClientSeeder(dataSource.manager).getTestClient()
+      const token = await new TokenSeeder(dataSource.manager).seedOne(user, client)
 
       const response = await request(app.getHttpServer())
         .get('/roles')
-        .set('Authorization', `Bearer ${user.token}`)
+        .set('Authorization', `Bearer ${token}`)
 
       expect(response).toHaveStatus(200)
     })
@@ -96,7 +95,9 @@ describe('Roles', async () => {
 
   describe('Create role', () => {
     it('should return 401 when not authenticated', async () => {
-      const roleDto = await roleSeeder.createRandomRoleDto({ name: roleSeeder.createRandomName() })
+      const roleDto = new CreateRoleDtoBuilder()
+        .withName('should-return-401-when-not-authenticated')
+        .build()
 
       const response = await request(app.getHttpServer())
         .post('/roles')
@@ -106,7 +107,8 @@ describe('Roles', async () => {
     })
 
     it('should return 403 when not authorized', async () => {
-      const roleDto = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
+      const roleDto = new CreateRoleDtoBuilder()
+        .build()
 
       const response = await request(app.getHttpServer())
         .post('/roles')
@@ -117,7 +119,9 @@ describe('Roles', async () => {
     })
 
     it('should create role', async () => {
-      const roleDto = await roleSeeder.createRandomRoleDto({ name: roleSeeder.createRandomName() })
+      const roleDto = new CreateRoleDtoBuilder()
+        .withName('should-create-role-test')
+        .build()
 
       const response = await request(app.getHttpServer())
         .post('/roles')
@@ -130,7 +134,7 @@ describe('Roles', async () => {
     })
 
     it('should create role not a second time', async () => {
-      const roleDto = await roleSeeder.createRandomRoleDto({ name: roleSeeder.createRandomName() })
+      const roleDto = new CreateRoleDtoBuilder().build()
 
       await request(app.getHttpServer())
         .post('/roles')
@@ -147,9 +151,9 @@ describe('Roles', async () => {
     })
 
     it('should not create role with invalid name', async () => {
-      const roleDto = await roleSeeder.createRandomRoleDto({ name: roleSeeder.createRandomName() })
-
-      roleDto.name = ''
+      const roleDto = new CreateRoleDtoBuilder()
+        .withName('')
+        .build()
 
       const response = await request(app.getHttpServer())
         .post('/roles')
@@ -162,45 +166,57 @@ describe('Roles', async () => {
 
   describe('Update role', () => {
     it('should return 401 when not authenticated', async () => {
-      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
+      const roleDto = new CreateRoleDtoBuilder()
+        .build()
 
       const response = await request(app.getHttpServer())
-        .post(`/roles/${role.uuid}`)
-        .send({ name: randWord() })
+        .post(`/roles/${readonlyRole.uuid}`)
+        .send(roleDto)
 
       expect(response).toHaveStatus(401)
     })
 
     it('should return 403 when not authorized', async () => {
-      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
+      const roleDto = new CreateRoleDtoBuilder()
+        .build()
 
       const response = await request(app.getHttpServer())
-        .post(`/roles/${role.uuid}`)
+        .post(`/roles/${readonlyRole.uuid}`)
         .set('Authorization', `Bearer ${readonlyUser.token}`)
-        .send({ name: randWord() })
+        .send(roleDto)
 
       expect(response).toHaveStatus(403)
     })
 
     it('should update role', async () => {
-      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
+      const role = await new RoleSeeder(dataSource.manager).seedOne(
+        new RoleEntityBuilder()
+          .withName('should-update-role')
+          .build()
+      )
+
+      const roleDto = new CreateRoleDtoBuilder()
+        .withName('should-update-role-test')
+        .build()
 
       const response = await request(app.getHttpServer())
         .post(`/roles/${role.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
-        .send({ name: roleSeeder.createRandomName() })
+        .send(roleDto)
 
       expect(response).toHaveStatus(201)
       expect(response.body.name).not.toBe(role.name)
     })
 
     it('should not update role with invalid name', async () => {
-      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
+      const roleDto = new CreateRoleDtoBuilder()
+        .withName('')
+        .build()
 
       const response = await request(app.getHttpServer())
-        .post(`/roles/${role.uuid}`)
+        .post(`/roles/${readonlyRole.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
-        .send({ name: '' })
+        .send(roleDto)
 
       expect(response).toHaveStatus(400)
     })
@@ -208,29 +224,23 @@ describe('Roles', async () => {
 
   describe('Delete role', () => {
     it('should return 401 when not authenticated', async () => {
-      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
-
       const response = await request(app.getHttpServer())
-        .delete(`/roles/${role.uuid}`)
+        .delete(`/roles/${readonlyRole.uuid}`)
 
       expect(response).toHaveStatus(401)
     })
 
     it('should return 403 when not authorized', async () => {
-      const role = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
-
       const response = await request(app.getHttpServer())
-        .delete(`/roles/${role.uuid}`)
+        .delete(`/roles/${readonlyRole.uuid}`)
         .set('Authorization', `Bearer ${readonlyUser.token}`)
 
       expect(response).toHaveStatus(403)
     })
 
     it('should return 400 when deleting admin role', async () => {
-      const role = await roleSeeder.createAdminRole()
-
       const response = await request(app.getHttpServer())
-        .delete(`/roles/${role.uuid}`)
+        .delete(`/roles/${adminRole.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response.body.errors[0].code).toBe('not_editable')
@@ -240,33 +250,43 @@ describe('Roles', async () => {
     })
 
     it('should delete role and replace all staff roles to readonly', async () => {
-      const randomRole = await roleSeeder.createRandomRole({ name: roleSeeder.createRandomName() })
-      await roleSeeder.createReadonlyRole()
+      const role = await new RoleSeeder(dataSource.manager).seedOne(
+        new RoleEntityBuilder()
+          .withName('should-delete-role-with-staff')
+          .build()
+      )
 
-      const user1 = await userSeeder.setupUser({
-        roleUuid: randomRole.uuid,
-        email: roleSeeder.createRandomEmail()
-      })
-      const user2 = await userSeeder.setupUser({
-        roleUuid: randomRole.uuid,
-        email: roleSeeder.createRandomEmail()
-      })
-      const user3 = await userSeeder.setupUser({
-        roleUuid: randomRole.uuid,
-        email: roleSeeder.createRandomEmail()
-      })
+      const userSeeder = new UserSeeder(dataSource.manager)
+      const user1 = await userSeeder.seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withRole(role)
+          .build()
+      )
+      const user2 = await userSeeder.seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withRole(role)
+          .build()
+      )
+      const user3 = await userSeeder.seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withRole(role)
+          .build()
+      )
 
       const users = [user1, user2, user3]
 
       const response = await request(app.getHttpServer())
-        .delete(`/roles/${randomRole.uuid}`)
+        .delete(`/roles/${role.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response).toHaveStatus(200)
 
       // check if staffs have readonly role
-      const usersAfter = await userRepository.find({
-        where: { uuid: In(users.map(user => user.user.uuid)) },
+      const usersAfter = await new UserRepository(dataSource.manager).find({
+        where: { uuid: In(users.map(user => user.uuid)) },
         relations: { role: true }
       })
 
