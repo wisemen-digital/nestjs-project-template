@@ -151,14 +151,14 @@ describe('Roles', async () => {
     })
 
     it('should not create role with invalid name', async () => {
+      const roleDto = new CreateRoleDtoBuilder()
+        .withName('')
+        .build()
+
       const response = await request(app.getHttpServer())
         .post('/roles')
         .set('Authorization', `Bearer ${adminUser.token}`)
-        .send(
-          new CreateRoleDtoBuilder()
-            .withName('')
-            .build()
-        )
+        .send(roleDto)
 
       expect(response).toHaveStatus(400)
     })
@@ -166,24 +166,24 @@ describe('Roles', async () => {
 
   describe('Update role', () => {
     it('should return 401 when not authenticated', async () => {
+      const roleDto = new CreateRoleDtoBuilder()
+        .build()
+
       const response = await request(app.getHttpServer())
         .post(`/roles/${readonlyRole.uuid}`)
-        .send(
-          new CreateRoleDtoBuilder()
-            .build()
-        )
+        .send(roleDto)
 
       expect(response).toHaveStatus(401)
     })
 
     it('should return 403 when not authorized', async () => {
+      const roleDto = new CreateRoleDtoBuilder()
+        .build()
+
       const response = await request(app.getHttpServer())
         .post(`/roles/${readonlyRole.uuid}`)
         .set('Authorization', `Bearer ${readonlyUser.token}`)
-        .send(
-          new CreateRoleDtoBuilder()
-            .build()
-        )
+        .send(roleDto)
 
       expect(response).toHaveStatus(403)
     })
@@ -195,28 +195,28 @@ describe('Roles', async () => {
           .build()
       )
 
+      const roleDto = new CreateRoleDtoBuilder()
+        .withName('should-update-role-test')
+        .build()
+
       const response = await request(app.getHttpServer())
         .post(`/roles/${role.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
-        .send(
-          new CreateRoleDtoBuilder()
-            .withName('should-update-role-test')
-            .build()
-        )
+        .send(roleDto)
 
       expect(response).toHaveStatus(201)
       expect(response.body.name).not.toBe(role.name)
     })
 
     it('should not update role with invalid name', async () => {
+      const roleDto = new CreateRoleDtoBuilder()
+        .withName('')
+        .build()
+
       const response = await request(app.getHttpServer())
         .post(`/roles/${readonlyRole.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
-        .send(
-          new CreateRoleDtoBuilder()
-            .withName('')
-            .build()
-        )
+        .send(roleDto)
 
       expect(response).toHaveStatus(400)
     })
