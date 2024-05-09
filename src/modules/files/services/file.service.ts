@@ -22,14 +22,14 @@ export class FileService {
     dto: CreateFileDto,
     userUuid?: string
   ): Promise<{ file: File, uploadUrl: string }> {
-    let file = this.fileRepository.create({
+    const file = this.fileRepository.create({
       ...dto,
       userUuid
     })
 
-    file = await this.fileRepository.save(file)
+    await this.fileRepository.insert(file)
 
-    const uploadUrl = await this.s3Service.getTemporarilyUploadUrl(
+    const uploadUrl = await this.s3Service.createTemporaryUploadUrl(
       file.uuid,
       dto.mimeType
     )
@@ -41,8 +41,8 @@ export class FileService {
   }
 
   async getTemporarilyUrl (file: File): Promise<string> {
-    const url = await this.s3Service.getTemporarilyDownloadUrl(
-      file.fileName,
+    const url = await this.s3Service.createTemporaryDownloadUrl(
+      file.name,
       file.uuid,
       file.mimeType ?? undefined
     )
@@ -53,11 +53,18 @@ export class FileService {
   async confirmUploadOrFail (uuid: string): Promise<void> {
     const file = await this.findOneOrFail({ uuid })
 
-    file.isUploadConfirmed = true
-    await this.fileRepository.save(file)
+    await this.fileRepository.update({
+      uuid: file.uuid
+    }, {
+      isUploadConfirmed: true
+    })
   }
 
-  async remove (file: File): Promise<void> {
+  async remove (fileUuid: string): Promise<void> {
+    const file = await this.findOneOrFail({ uuid: fileUuid })
+
     await this.fileRepository.remove(file)
+
+    await this.s3Service.delete(file.uuid)
   }
 }

@@ -1,5 +1,5 @@
 import { type ObjectLiteral, type SelectQueryBuilder } from 'typeorm'
-import { FileEntity } from '../entities/file-entity.entity.js'
+import { FileLink } from '../entities/file-link.entity.js'
 
 export class FileJoiner<T extends ObjectLiteral> {
   constructor (
@@ -20,7 +20,7 @@ export class FileJoiner<T extends ObjectLiteral> {
     if (mapMany) {
       this.queryBuilder.leftJoinAndMapMany(
         `${entityTypeName}.${fileEntityAlias}`,
-        FileEntity,
+        FileLink,
         fileEntityAlias,
         `${fileEntityAlias}.entityUuid = ${entityTypeName}.uuid
       AND ${fileEntityAlias}.entityType = '${entityTypeName}'
@@ -30,7 +30,7 @@ export class FileJoiner<T extends ObjectLiteral> {
     } else {
       this.queryBuilder.leftJoinAndMapOne(
         `${entityTypeName}.${fileEntityAlias}`,
-        FileEntity,
+        FileLink,
         fileEntityAlias,
         `${fileEntityAlias}.entityUuid = ${entityTypeName}.uuid
       AND ${fileEntityAlias}.entityType = '${entityTypeName}'

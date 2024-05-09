@@ -3,26 +3,25 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { Request } from '../../auth/guards/auth.guard.js'
 import { CreateFileDto } from '../dtos/create-file.dto.js'
-import { FileCreatedTransformerType, FileCreatedTransformer } from '../transformers/file-created.transformer.js'
+import { type CreateFileResponse, CreateFileResponseDoc, CreateFileResponseTransformer } from '../transformers/file-created.transformer.js'
 import { FileService } from '../services/file.service.js'
 
 @ApiTags('File')
 @Controller('file')
 export class FileController {
-  constructor (private readonly fileService: FileService) {}
+  constructor (
+    private readonly fileService: FileService
+  ) {}
+
   @Post()
-  @ApiResponse({
-    status: 201,
-    description: 'Successfully created file',
-    type: FileCreatedTransformerType
-  })
+  @CreateFileResponseDoc()
   async createFile (
     @Req() req: Request,
     @Body() createFileDto: CreateFileDto
-  ): Promise<FileCreatedTransformerType> {
+  ): Promise<CreateFileResponse> {
     const { file, uploadUrl } = await this.fileService.create(createFileDto, req.auth.user.uuid)
 
-    return new FileCreatedTransformer().transform(file, uploadUrl)
+    return new CreateFileResponseTransformer().item(file, uploadUrl)
   }
 
   @Post(':file/confirm-upload')
@@ -43,14 +42,14 @@ export class FileController {
     description: 'Successfully downloaded file'
   })
   @HttpCode(302)
-  async confirmFileDownload (
+  async downloadFile (
     @Param('file', ParseUUIDPipe) fileUuid: string,
     @Res() res: Response
   ): Promise<void> {
     const file = await this.fileService.findOneOrFail({ uuid: fileUuid })
 
     res.setHeader('Location', await this.fileService.getTemporarilyUrl(file))
-    res.setHeader('Content-Disposition', `attachment; filename=${file.fileName}`)
+    res.setHeader('Content-Disposition', `attachment; filename=${file.name}`)
     res.setHeader('Content-Type', file.mimeType ?? 'application/octet-stream')
     res.redirect(await this.fileService.getTemporarilyUrl(file))
   }
@@ -63,7 +62,6 @@ export class FileController {
   async removeFile (
     @Param('file', ParseUUIDPipe) fileUuid: string
   ): Promise<void> {
-    const file = await this.fileService.findOneOrFail({ uuid: fileUuid })
-    await this.fileService.remove(file)
+    await this.fileService.remove(fileUuid)
   }
 }

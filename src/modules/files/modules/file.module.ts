@@ -3,18 +3,17 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { UserModule } from '../../users/modules/user.module.js'
 import { S3Service } from '../services/s3.service.js'
-import { FileEntityRepository } from '../repositories/file-entity.repository.js'
 import { FileRepository } from '../repositories/file.repository.js'
-import { FileEntity } from '../entities/file-entity.entity.js'
 import { FileController } from '../controllers/file.controller.js'
-import { FileEntityService } from '../services/file-entity.service.js'
 import { FileService } from '../services/file.service.js'
-import { FileSubscriber } from '../subscribers/file.subscriber.js'
 import { File } from '../entities/file.entity.js'
+import { FileLink } from '../entities/file-link.entity.js'
+import { FileLinkRepository } from '../repositories/file-link.repository.js'
+import { FileLinkService } from '../services/file-link.service.js'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([File, FileEntity]),
+    TypeOrmModule.forFeature([File, FileLink]),
     UserModule,
     ConfigModule
     // PGBossModule.forJobs([
@@ -24,10 +23,9 @@ import { File } from '../entities/file.entity.js'
   controllers: [FileController],
   providers: [
     FileRepository,
-    FileEntityRepository,
+    FileLinkRepository,
     FileService,
-    FileEntityService,
-    FileSubscriber,
+    FileLinkService,
     S3Service
 
     // RemoveUnusedMediaJobHandler,
@@ -35,7 +33,7 @@ import { File } from '../entities/file.entity.js'
   ],
   exports: [
     FileService,
-    FileEntityService
+    FileLinkService
   ]
 })
 export class FileModule {}

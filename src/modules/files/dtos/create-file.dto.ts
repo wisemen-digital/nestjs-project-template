@@ -8,7 +8,7 @@ export class CreateFileDto {
   @IsString()
   @IsNotEmpty()
   @Transform(({ value }) => value.toLowerCase())
-  fileName: string
+  name: string
 
   @ApiProperty()
   @IsNotEmpty()

@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Column, OneToMany, type Relation } from 'typeorm'
-import { FileEntity } from './file-entity.entity.js'
+import { type MimeType } from '../enums/mime-type.enum.js'
+import { FileLink } from './file-link.entity.js'
 
 @Entity()
 export class File {
@@ -12,14 +13,14 @@ export class File {
   @UpdateDateColumn({ precision: 3 })
   updatedAt: Date
 
-  @DeleteDateColumn({ precision: 3, nullable: true })
+  @DeleteDateColumn({ precision: 3 })
   deletedAt: Date | null
 
   @Column({ type: 'varchar' })
-  fileName: string
+  name: string
 
   @Column({ type: 'varchar', nullable: true })
-  mimeType: string | null
+  mimeType: MimeType | null
 
   @Column({ type: 'uuid', nullable: true })
   userUuid: string | null
@@ -27,8 +28,8 @@ export class File {
   @Column({ type: 'boolean', default: false })
   isUploadConfirmed: boolean
 
-  @OneToMany(() => FileEntity, fileEntity => fileEntity.file)
-  fileEntities?: Array<Relation<FileEntity>>
+  @OneToMany(() => FileLink, fileLink => fileLink.file)
+  fileEntities?: Array<Relation<FileLink>>
 
   url: string
 }

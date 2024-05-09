@@ -28,8 +28,8 @@ export async function setupTest (dataSource: DataSource): Promise<void> {
 }
 
 export async function globalTestSetup (): Promise<SetupTestResponse> {
-  mock.method(S3Service.prototype, 'getTemporarilyDownloadUrl', () => 'http://localhost:3000')
-  mock.method(S3Service.prototype, 'getTemporarilyUploadUrl', () => 'http://localhost:3000')
+  mock.method(S3Service.prototype, 'createTemporaryDownloadUrl', () => 'http://localhost:3000')
+  mock.method(S3Service.prototype, 'createTemporaryUploadUrl', () => 'http://localhost:3000')
   mock.method(S3Service.prototype, 'upload', async () => { await Promise.resolve() })
   mock.method(S3Service.prototype, 'uploadStream', async () => { await Promise.resolve() })
   mock.method(S3Service.prototype, 'delete', async () => { await Promise.resolve() })

@@ -11,14 +11,14 @@ export class CreateFileDtoBuilder {
   reset (): this {
     this.dto = new CreateFileDto()
 
-    this.dto.fileName = 'test.png'
+    this.dto.name = 'test.png'
     this.dto.mimeType = MimeType.PNG
 
     return this
   }
 
-  withFileName (fileName: string): this {
-    this.dto.fileName = fileName
+  withFileName (name: string): this {
+    this.dto.name = name
     return this
   }
 

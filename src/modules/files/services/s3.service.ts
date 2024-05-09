@@ -4,6 +4,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Upload } from '@aws-sdk/lib-storage'
+import { type MimeType } from '../enums/mime-type.enum.js'
 
 @Injectable()
 export class S3Service {
@@ -17,31 +18,31 @@ export class S3Service {
     this.s3 = new S3Client({
       forcePathStyle: false,
       region,
-      endpoint: 'https://' + this.configService.getOrThrow('S3_ENDPOINT', ''),
+      endpoint: 'https://' + this.configService.getOrThrow('S3_ENDPOINT'),
       credentials: {
         accessKeyId: this.configService.getOrThrow('S3_ACCESS_KEY'),
-        secretAccessKey: this.configService.getOrThrow('S3_SECRET_KEY', '')
+        secretAccessKey: this.configService.getOrThrow('S3_SECRET_KEY')
       }
     })
   }
 
-  public async getTemporarilyDownloadUrl (
-    fileName: string,
+  public async createTemporaryDownloadUrl (
+    name: string,
     fileUuid: string,
-    mimeType?: string,
-    expiresIn?: number
+    mimeType?: MimeType,
+    expiresInSeconds?: number
   ): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: this.bucketName,
       Key: this.createKey(fileUuid),
       ResponseContentType: mimeType ?? 'application/octet-stream',
-      ResponseContentDisposition: `attachment; filename=${fileName}`
+      ResponseContentDisposition: `attachment; filename=${name}`
     })
 
-    return await getSignedUrl(this.s3, command, { expiresIn: expiresIn ?? 1800 })
+    return await getSignedUrl(this.s3, command, { expiresIn: expiresInSeconds ?? 1800 })
   }
 
-  public async getTemporarilyUploadUrl (
+  public async createTemporaryUploadUrl (
     fileUuid: string,
     mimeType: string,
     expiresIn?: number
@@ -56,23 +57,23 @@ export class S3Service {
     return await getSignedUrl(this.s3, command, { expiresIn: expiresIn ?? 180 })
   }
 
-  public async upload (fileUuid: string, body: Buffer): Promise<void> {
+  public async upload (fileUuid: string, content: Buffer): Promise<void> {
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: this.createKey(fileUuid),
-      Body: body,
+      Body: content,
       ACL: 'private'
     })
 
     await this.s3.send(command)
   }
 
-  public async uploadStream (key: string, stream: Readable): Promise<void> {
+  public async uploadStream (fileUuid: string, stream: Readable): Promise<void> {
     const parallelUploads = new Upload({
       client: this.s3,
       params: {
         Bucket: this.bucketName,
-        Key: this.createKey(key),
+        Key: this.createKey(fileUuid),
         Body: stream,
         ACL: 'private'
       },

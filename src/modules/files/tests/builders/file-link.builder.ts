@@ -1,4 +1,5 @@
 import { File } from '../../entities/file.entity.js'
+import { MimeType } from '../../enums/mime-type.enum.js'
 
 export class FileBuilder {
   private file: File
@@ -10,18 +11,18 @@ export class FileBuilder {
   reset (): this {
     this.file = new File()
 
-    this.file.fileName = 'test.png'
-    this.file.mimeType = 'image/png'
+    this.file.name = 'test.png'
+    this.file.mimeType = MimeType.PNG
 
     return this
   }
 
-  withFileName (fileName: string): this {
-    this.file.fileName = fileName
+  withFileName (name: string): this {
+    this.file.name = name
     return this
   }
 
-  withMimeType (mimeType: string): this {
+  withMimeType (mimeType: MimeType): this {
     this.file.mimeType = mimeType
     return this
   }

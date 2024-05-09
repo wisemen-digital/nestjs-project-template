@@ -9,7 +9,7 @@ import { type SetupUser } from '../../users/tests/setup-user.type.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
 import { CreateFileDtoBuilder } from './builders/create-file-dto.builder.js'
 import { FileSeeder } from './seeders/file.seeder.js'
-import { FileBuilder } from './builders/file-entity.builder.js'
+import { FileBuilder } from './builders/file-link.builder.js'
 
 describe('File', async () => {
   let app: INestApplication
@@ -28,14 +28,14 @@ describe('File', async () => {
   })
 
   describe('Create file', () => {
-    it('should return 401 when no token is provided', async () => {
+    it('should return 401 when creating a file without a token', async () => {
       const response = await request(app.getHttpServer())
         .post('/file')
 
       expect(response).toHaveStatus(401)
     })
 
-    it('should return 400 when invalid body', async () => {
+    it('should return 400 when creating a file with an invalid body', async () => {
       const response = await request(app.getHttpServer())
         .post('/file')
         .set('Authorization', `Bearer ${adminUser.token}`)
@@ -65,7 +65,7 @@ describe('File', async () => {
         .seedOne(new FileBuilder().build())
     })
 
-    it('should return 401 when no token is provided', async () => {
+    it('should return 401 when downloading a file without a token', async () => {
       const response = await request(app.getHttpServer())
         .post(`/file/${file.uuid}/download`)
 
@@ -81,7 +81,7 @@ describe('File', async () => {
     })
   })
 
-  describe('Delete file', () => {
+  describe('Delete a file', () => {
     let file: File
 
     before(async () => {
@@ -89,14 +89,14 @@ describe('File', async () => {
         .seedOne(new FileBuilder().build())
     })
 
-    it('should return 401 when no token is provided', async () => {
+    it('should return 401 when deleting a file when no token is provided', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/file/${file.uuid}`)
 
       expect(response).toHaveStatus(401)
     })
 
-    it('should return 200', async () => {
+    it('should delete the file', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/file/${file.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)

@@ -3,7 +3,7 @@ import { File } from './file.entity.js'
 
 @Entity()
 @Index(['entityType', 'entityUuid'])
-export class FileEntity {
+export class FileLink {
   @PrimaryGeneratedColumn('uuid')
   uuid: string
 
@@ -13,6 +13,7 @@ export class FileEntity {
   @UpdateDateColumn({ precision: 3 })
   updatedAt: Date
 
+  @Index()
   @Column({ type: 'uuid' })
   fileUuid: string
 
@@ -23,6 +24,7 @@ export class FileEntity {
   @Column({ type: 'varchar' })
   entityType: string
 
+  @Index()
   @Column({ type: 'uuid' })
   entityUuid: string
 
