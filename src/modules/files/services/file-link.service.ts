@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { type ObjectLiteral } from 'typeorm'
+import { DataSource, In } from 'typeorm'
 import { type CreateFileLinkDto } from '../dtos/create-file-entity.dto.js'
 import { type FileLink } from '../entities/file-link.entity.js'
 import { FileLinkRepository } from '../repositories/file-link.repository.js'
@@ -7,20 +7,21 @@ import { FileLinkRepository } from '../repositories/file-link.repository.js'
 @Injectable()
 export class FileLinkService {
   constructor (
+    private readonly dataSource: DataSource,
     private readonly fileLinkRepository: FileLinkRepository
   ) {}
 
   async create (
     dto: CreateFileLinkDto,
-    collectionName: string,
     entityUuid: string,
-    entityType: string
+    entityType: string,
+    entityPart: string
   ): Promise<FileLink> {
     const file = this.fileLinkRepository.create({
       ...dto,
-      collectionName,
       entityUuid,
-      entityType
+      entityType,
+      entityPart
     })
 
     await this.fileLinkRepository.insert(file)
@@ -37,42 +38,46 @@ export class FileLinkService {
     }, dto)
   }
 
-  async sync<T extends ObjectLiteral> (
+  async sync (
     dtos: CreateFileLinkDto[],
-    collectionName: keyof T,
     entityUuid: string,
-    entityType: string
+    entityType: string,
+    entityPart: string
   ): Promise<void> {
-    const collectionNameString = collectionName.toString()
-    const existingFileLinks = await this.fileLinkRepository.find({
+    const previousFileLinks = await this.fileLinkRepository.find({
       where: {
-        collectionName: collectionNameString,
+        entityPart,
         entityUuid,
         entityType
       }
     })
 
-    // Remove FileLinks that are no longer included
-    const removeFileLinks = existingFileLinks.filter(
-      (existing) => !dtos.some(
-        (dto) => dto.fileUuid === existing.fileUuid
-      )
-    )
-    for (const fileLink of removeFileLinks ?? []) {
-      await this.fileLinkRepository.remove(fileLink)
-    }
+    await this.dataSource.transaction(async manager => {
+      const fileLinkRepository = new FileLinkRepository(manager)
 
-    // Create or update included FileLinks
-    for (const dto of dtos) {
-      const existingFileLink = existingFileLinks.find(
-        (FileLink) => FileLink.fileUuid === dto.fileUuid
-      )
+      const removedFileLinks = previousFileLinks.filter(existing => {
+        return !dtos.some(dto => dto.fileUuid === existing.fileUuid)
+      })
 
-      if (existingFileLink == null) {
-        await this.create(dto, collectionNameString, entityUuid, entityType)
-      } else {
-        await this.update(existingFileLink, dto)
-      }
-    }
+      const upsertFileLinks = dtos.map(dto => {
+        const existing = previousFileLinks.find(link => {
+          return link.fileUuid === dto.fileUuid
+        })
+
+        return {
+          ...dto,
+          uuid: existing?.uuid
+        }
+      })
+
+      await fileLinkRepository.delete({
+        uuid: In(removedFileLinks.map((link) => link.uuid))
+      })
+
+      await fileLinkRepository.upsert(
+        upsertFileLinks,
+        ['uuid']
+      )
+    })
   }
 }

@@ -30,7 +30,7 @@ export class FileLink {
 
   @Index()
   @Column({ type: 'varchar' })
-  collectionName: string
+  entityPart: string
 
   @Column({ type: 'smallint', nullable: true })
   order: number | null
