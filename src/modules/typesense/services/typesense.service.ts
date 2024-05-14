@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { type SearchParams } from 'typesense/lib/Typesense/Documents.js'
 import { TypesenseClient } from '../clients/typesense.client.js'
 import { typesenseCollections, type TypesenseAliasName } from '../collections/typesense.collections.js'
-import { PaginatedResult } from '../../../utils/pagination/pages/paginated-result.interface.js'
+import { type PaginatedResult } from '../../../utils/pagination/pages/paginated-result.interface.js'
 
 @Injectable()
 export class TypesenseService {
