@@ -8,6 +8,7 @@ import { PermissionsGuard } from './modules/permissions/permissions.guard.js'
 import { UserModule } from './modules/users/modules/user.module.js'
 import { ErrorsInterceptor } from './errors.interceptor.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
+import { TypesenseModule } from './modules/typesense/modules/typesense.module.js'
 import { MailModule } from './modules/mail/modules/mail.module.js'
 import { RoleModule } from './modules/roles/role.module.js'
 import { PermissionModule } from './modules/permissions/permissions.module.js'
@@ -35,6 +36,7 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
       autoLoadEntities: true
     }),
     AuthModule,
+    TypesenseModule,
     UserModule,
     MailModule,
     RoleModule,
