@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
+import { PGBossModule } from '@apricote/nest-pg-boss'
 import { AuthGuard } from './modules/auth/guards/auth.guard.js'
 import { AuthModule } from './modules/auth/modules/auth.module.js'
 import { PermissionsGuard } from './modules/permissions/permissions.guard.js'
@@ -33,6 +34,10 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
       migrations: mainMigrations,
       migrationsRun: true,
       autoLoadEntities: true
+    }),
+    PGBossModule.forRoot({
+      connectionString: process.env.TYPEORM_URI,
+      max: 10
     }),
     AuthModule,
     TypesenseModule,
