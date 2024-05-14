@@ -17,6 +17,8 @@ import { RedisCacheModule } from './utils/cache/cache.module.js'
 import configuration from './config/env/configuration.js'
 import { StatusModule } from './modules/status/modules/status.module.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
+import { Job } from './modules/jobs/entities/job.entity.js'
+import { ArchivedJob } from './modules/jobs/entities/archived-job.entity.js'
 
 @Module({
   imports: [
@@ -39,13 +41,20 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
       connectionString: process.env.TYPEORM_URI,
       max: 10
     }),
+    // Auth
     AuthModule,
-    TypesenseModule,
     UserModule,
-    MailModule,
     RoleModule,
     PermissionModule,
+
+    // Jobs
+    Job,
+    ArchivedJob,
+
+    // Utils
+    MailModule,
     RedisCacheModule,
+    TypesenseModule,
     StatusModule
   ],
   controllers: [],
