@@ -11,7 +11,7 @@ import { Permission } from '../../permissions/permission.enum.js'
 export class TypesenseController {
   constructor (private readonly typesenseImportService: TypesenseImportService) {}
   @Get('migrate')
-  @Permissions(Permission.TYPESENSE)
+  @Permissions(Permission.ADMIN)
   async migrate (
     @Query() query: MigrateTypesenseQueryDto
   ): Promise<void> {
@@ -19,7 +19,7 @@ export class TypesenseController {
   }
 
   @Get('import')
-  @Permissions(Permission.TYPESENSE)
+  @Permissions(Permission.ADMIN)
   async import (
     @Query() query: ImportTypesenseQueryDto
   ): Promise<void> {
@@ -27,13 +27,13 @@ export class TypesenseController {
   }
 
   @Get('collections')
-  @Permissions(Permission.TYPESENSE)
+  @Permissions(Permission.ADMIN)
   async getCollections (): Promise<CollectionSchema[]> {
     return await this.typesenseImportService.retrieveCollections()
   }
 
   @Get('aliases')
-  @Permissions(Permission.TYPESENSE)
+  @Permissions(Permission.ADMIN)
   async getAliases (): Promise<CollectionAliasSchema[]> {
     return await this.typesenseImportService.retrieveAliases()
   }

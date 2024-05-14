@@ -32,7 +32,7 @@ export class UserController {
   @Get()
   @ApiResponse({
     status: 200,
-    description: 'The users has been successfully received.',
+    description: 'The users have been successfully received.',
     type: [UserTransformerType]
   })
   @Permissions(Permission.USER_READ)

@@ -1,49 +1,33 @@
 import { before, describe, it, after } from 'node:test'
-import { type INestApplication, ValidationPipe } from '@nestjs/common'
-import { Test } from '@nestjs/testing'
+import { type INestApplication } from '@nestjs/common'
 import request from 'supertest'
-import bcrypt from 'bcryptjs'
 import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
-import { HttpAdapterHost } from '@nestjs/core'
-import { AppModule } from '../../../app.module.js'
-import { Role } from '../entities/user.entity.js'
-import { UserRepository } from '../repositories/user.repository.js'
-import { HttpExceptionFilter } from '../../../utils/Exceptions/http-exception.filter.js'
-import { UserSeeder } from './user.seeder.js'
-import { UserSeederModule } from './user-seeder.module.js'
+import { type DataSource } from 'typeorm'
+import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
+import { globalTestSetup } from '../../../../test/setup/setup.js'
+import { TestContext } from '../../../../test/utils/test-context.js'
+import { UserEntityBuilder } from './builders/entities/user-entity.builder.js'
+import { CreateUserDtoBuilder } from './builders/dtos/create-user-dto.builder.js'
+import { UserSeeder } from './seeders/user.seeder.js'
+import { type SetupUser } from './setup-user.type.js'
 
 describe('Users', async () => {
   let app: INestApplication
-  let userSeeder: UserSeeder
-  let userRepository: UserRepository
+  let dataSource: DataSource
+
+  let context: TestContext
+
+  let adminUser: SetupUser
+  let readonlyUser: SetupUser
 
   before(async () => {
-    const moduleRef = await Test.createTestingModule({
-      imports: [
-        AppModule,
-        UserSeederModule
-      ]
-    }).compile()
+    ({ app, dataSource } = await globalTestSetup())
 
-    app = moduleRef.createNestApplication()
-    app.useGlobalPipes(
-      new ValidationPipe({
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        transform: true,
-        transformOptions: {
-          enableImplicitConversion: true
-        }
-      })
-    )
+    context = new TestContext(dataSource.manager)
 
-    const httpAdapterHost = app.get(HttpAdapterHost)
-    app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
-
-    userSeeder = moduleRef.get(UserSeeder)
-    userRepository = moduleRef.get(UserRepository)
-    await app.init()
+    adminUser = await context.getAdminUser()
+    readonlyUser = await context.getReadonlyUser()
   })
 
   describe('Get users', () => {
@@ -51,84 +35,64 @@ describe('Users', async () => {
       const response = await request(app.getHttpServer())
         .get('/users')
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return users', async () => {
-      await userSeeder.createRandomUser()
-
-      const { token } = await userSeeder.setupUser()
-
       const response = await request(app.getHttpServer())
         .get('/users')
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
   })
 
   describe('Get user', () => {
     it('should return 401 when not authenticated', async () => {
-      const { user } = await userSeeder.setupUser()
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}`)
+        .get(`/users/${adminUser.user.uuid}`)
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 404 when user not found', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
         .get(`/users/${randUuid()}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(404)
+      expect(response).toHaveStatus(404)
     })
 
     it('should return 400 when invalid uuid', async () => {
-      const { user, token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}s`)
-        .set('Authorization', `Bearer ${token}`)
+        .get(`/users/${adminUser.user.uuid}s`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
 
     it('should return user', async () => {
-      const { user, token } = await userSeeder.setupUser()
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .get(`/users/${adminUser.user.uuid}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
 
     it('should return 403 when user is not admin', async () => {
-      const { token } = await userSeeder.setupUser()
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .get(`/users/${adminUser.user.uuid}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return user when user is admin', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .get(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .get(`/users/${readonlyUser.user.uuid}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
   })
 
@@ -138,7 +102,7 @@ describe('Users', async () => {
         .post('/users')
         .send({})
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
 
     it('should return 400 when password is missing', async () => {
@@ -148,17 +112,19 @@ describe('Users', async () => {
           email: randEmail()
         })
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
 
     it('should return 201', async () => {
-      const dto = await userSeeder.createRandomUserDto()
+      const dto = new CreateUserDtoBuilder()
+        .withEmail('should-return-201@mail.com')
+        .build()
 
       const response = await request(app.getHttpServer())
         .post('/users')
         .send(dto)
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
     })
   })
 
@@ -168,64 +134,52 @@ describe('Users', async () => {
         .post(`/users/${randUuid()}`)
         .send({})
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 201 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser()
-
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${readonlyUser.user.uuid}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send({
           firstName: 'John',
           lastName: 'Doe'
         })
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
     })
 
     it('should return 404 when user not found', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
         .post(`/users/${randUuid()}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send({})
 
-      expect(response.status).toBe(404)
+      expect(response).toHaveStatus(404)
     })
 
     it('should return 403 when user is not admin', async () => {
-      const { token } = await userSeeder.setupUser()
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${adminUser.user.uuid}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send({
           firstName: 'John',
           lastName: 'Doe'
         })
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return 201 when user is admin', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${readonlyUser.user.uuid}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send({
           firstName: 'John',
           lastName: 'Doe'
         })
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
       expect(response.body.firstName).toBe('John')
     })
   })
@@ -235,51 +189,41 @@ describe('Users', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/users/${randUuid()}`)
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 404 when user not found', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
         .delete(`/users/${randUuid()}`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(404)
+      expect(response).toHaveStatus(404)
     })
 
     it('should return 403 when user is not admin', async () => {
-      const { token } = await userSeeder.setupUser()
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .delete(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .delete(`/users/${adminUser.user.uuid}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return 200 when user is admin', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .delete(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .delete(`/users/${readonlyUser.user.uuid}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
 
     it('should return 200 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser()
+      const randomUser = await context.getRandomUser()
 
       const response = await request(app.getHttpServer())
-        .delete(`/users/${user.uuid}`)
-        .set('Authorization', `Bearer ${token}`)
+        .delete(`/users/${randomUser.user.uuid}`)
+        .set('Authorization', `Bearer ${randomUser.token}`)
 
-      expect(response.status).toBe(200)
+      expect(response).toHaveStatus(200)
     })
   })
 
@@ -289,105 +233,105 @@ describe('Users', async () => {
         .post(`/users/${randUuid()}/password`)
         .send({})
 
-      expect(response.status).toBe(401)
+      expect(response).toHaveStatus(401)
     })
 
     it('should return 404 when user not found', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
       const response = await request(app.getHttpServer())
         .post(`/users/${randUuid()}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send({
           password: 'newPassword',
           oldPassword: 'password'
         })
 
-      expect(response.status).toBe(404)
+      expect(response).toHaveStatus(404)
     })
 
     it('should return 403 when user is not admin', async () => {
-      const { token } = await userSeeder.setupUser()
-
-      const user = await userSeeder.createRandomUser()
-
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${adminUser.user.uuid}/password`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send({
           password: 'newPassword',
           oldPassword: 'password'
         })
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return 201 when user is self', async () => {
-      const { user, token } = await userSeeder.setupUser()
+      const oldPassword = 'Password123'
 
-      user.password = await bcrypt.hash('password', 10)
+      const client = await context.getClient()
 
-      await userRepository.save(user)
+      const user = await new UserSeeder(dataSource.manager).seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withPassword(oldPassword)
+          .build()
+      )
+      const token = await new TokenSeeder(dataSource.manager).seedOne(user, client)
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)
         .set('Authorization', `Bearer ${token}`)
         .send({
           password: 'newPassword',
-          oldPassword: 'password'
+          oldPassword
         })
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
     })
 
     it('should return 201 when admin can change other users password', async () => {
-      const { token } = await userSeeder.setupUser(Role.ADMIN)
-
-      const user = await userSeeder.createRandomUser()
-
-      user.password = await bcrypt.hash('password', 10)
-
-      await userRepository.save(user, { reload: true })
+      const oldPassword = 'Password123'
+      const user = await new UserSeeder(dataSource.manager).seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withPassword(oldPassword)
+          .build()
+      )
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${adminUser.token}`)
         .send({
           password: 'newPassword',
-          oldPassword: 'password'
+          oldPassword
         })
 
-      expect(response.status).toBe(201)
+      expect(response).toHaveStatus(201)
     })
 
     it('should return 403 when non-admin user wants to change other users password', async () => {
-      const { token } = await userSeeder.setupUser(Role.USER)
-
-      const user = await userSeeder.createRandomUser()
-
-      user.password = await bcrypt.hash('password', 10)
-
-      await userRepository.save(user, { reload: true })
+      const oldPassword = 'Password123'
+      const user = await new UserSeeder(dataSource.manager).seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withPassword(oldPassword)
+          .build()
+      )
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .set('Authorization', `Bearer ${readonlyUser.token}`)
         .send({
           password: 'newPassword',
-          oldPassword: 'password'
+          oldPassword
         })
 
-      expect(response.status).toBe(403)
+      expect(response).toHaveStatus(403)
     })
 
     it('should return 400 when password is missing', async () => {
-      const { user, token } = await userSeeder.setupUser()
+      const randomUser = await context.getRandomUser()
 
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${randomUser.user.uuid}/password`)
+        .set('Authorization', `Bearer ${randomUser.token}`)
         .send({})
 
-      expect(response.status).toBe(400)
+      expect(response).toHaveStatus(400)
     })
   })
 

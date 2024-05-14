@@ -12,10 +12,7 @@ async function bootstrap (): Promise<void> {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true
-      }
+      transform: true
     })
   )
   app.setGlobalPrefix('api', {
@@ -34,7 +31,7 @@ async function bootstrap (): Promise<void> {
     .build()
   const document = SwaggerModule.createDocument(app, config)
 
-  SwaggerModule.setup('api', app, document)
+  SwaggerModule.setup('api/docs', app, document)
 
   const httpAdapterHost = app.get(HttpAdapterHost)
 

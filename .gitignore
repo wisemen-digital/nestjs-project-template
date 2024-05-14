@@ -1,48 +1,50 @@
-# compiled output
-/dist
-/node_modules
+# Compiled output
+dist
+node_modules
+/typesense-data
+.typesense/
+.postgres
+_build
 
 # Logs
 logs
 *.log
+lerna-debug.log*
 npm-debug.log*
 pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-lerna-debug.log*
-
-# OS
-.DS_Store
 
 # Tests
 /coverage
 /.nyc_output
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
+# Editor directories and files
 .vscode/*
-!.vscode/settings.json
+!.vscode/extensions.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
-
-~/
-
-.env
-.env.local
-.env.development
-.env.qa
-.env.staging
-.env.sandbox
-.env.production
+.c9/
+.classpath
+.fleet
+.idea
+.project
+.settings/
 .DS_Store
-.vscode
+*.launch
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sublime-workspace
+*.sw?
+
+# Local env files
+.env
+.env.*
+!.env.test
+!.env.example
+
+# Certificates
 *.pem

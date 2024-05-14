@@ -38,8 +38,7 @@ export class TokenService {
         cid: decoded.cid,
         scope: decoded.scope,
         user: {
-          uuid: decoded.uid,
-          role: decoded.role
+          uuid: decoded.uid
         },
         client: {
           uuid: decoded.cid,
@@ -61,7 +60,6 @@ export class TokenService {
     const payload: Omit<AccessTokenPayload, 'exp'> = {
       uid: user.uuid,
       cid: client.uuid,
-      role: user.role,
       scope
     }
 
