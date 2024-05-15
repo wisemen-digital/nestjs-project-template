@@ -1,6 +1,6 @@
 import { type ObjectLiteral, type SelectQueryBuilder } from 'typeorm'
 
-export class FileJoiner2<T extends ObjectLiteral> {
+export class FileJoiner<T extends ObjectLiteral> {
   private count = 1
   constructor (
     private readonly queryBuilder: SelectQueryBuilder<T>,
@@ -12,7 +12,7 @@ export class FileJoiner2<T extends ObjectLiteral> {
     property: string,
     entityPart: string,
     alias?: string
-  ): FileJoiner2<T> {
+  ): this {
     const queryAlias = alias ?? entityPart
     const fileAlias = `${queryAlias}Files`
 
@@ -34,11 +34,11 @@ export class FileJoiner2<T extends ObjectLiteral> {
     return this
   }
 
-  public joinFile (property: string, entityPart: string, alias?: string): FileJoiner2<T> {
+  public joinFile (property: string, entityPart: string, alias?: string): this {
     return this.join('leftJoinAndMapOne', property, entityPart, alias)
   }
 
-  public joinFiles (property: string, entityPart: string, alias?: string): FileJoiner2<T> {
+  public joinFiles (property: string, entityPart: string, alias?: string): this {
     return this.join('leftJoinAndMapMany', property, entityPart, alias)
   }
 }

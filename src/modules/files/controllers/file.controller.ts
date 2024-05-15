@@ -48,10 +48,12 @@ export class FileController {
   ): Promise<void> {
     const file = await this.fileService.findOneOrFail({ uuid: fileUuid })
 
-    res.setHeader('Location', await this.fileService.getTemporarilyUrl(file))
+    const temporaryUrl = await this.fileService.getTemporaryUrl(file)
+
+    res.setHeader('Location', temporaryUrl)
     res.setHeader('Content-Disposition', `attachment; filename=${file.name}`)
     res.setHeader('Content-Type', file.mimeType ?? 'application/octet-stream')
-    res.redirect(await this.fileService.getTemporarilyUrl(file))
+    res.redirect(temporaryUrl)
   }
 
   @Delete(':file')

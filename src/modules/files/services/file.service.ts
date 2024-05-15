@@ -40,7 +40,7 @@ export class FileService {
     }
   }
 
-  async getTemporarilyUrl (file: File): Promise<string> {
+  async getTemporaryUrl (file: File): Promise<string> {
     const url = await this.s3Service.createTemporaryDownloadUrl(
       file.name,
       file.uuid,
