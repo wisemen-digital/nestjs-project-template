@@ -1,10 +1,4 @@
 export interface JobData {
-  classData: {
-    retries: number
-    priority: number
-    createdAt: number
-    queueName: string
-    customerUuid: string
-  }
+  classData: unknown
   className: string
 }
