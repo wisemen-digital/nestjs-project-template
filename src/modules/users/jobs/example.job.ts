@@ -13,8 +13,8 @@ export const ExampleJob = createJob<ExampleJobData>('example-job')
 @Injectable()
 export class ExampleJobHandler {
   @ExampleJob.Handle()
-  async handleJob (job: Job<ExampleJobData>): Promise<void> {
-    console.log(`Received job with message: ${job.data.message}`)
+  async handleJob (_job: Job<ExampleJobData>): Promise<void> {
+
   }
 }
 
