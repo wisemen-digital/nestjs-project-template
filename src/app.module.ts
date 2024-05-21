@@ -15,6 +15,7 @@ import { PermissionModule } from './modules/permissions/permissions.module.js'
 import { RedisCacheModule } from './utils/cache/cache.module.js'
 import configuration from './config/env/configuration.js'
 import { StatusModule } from './modules/status/modules/status.module.js'
+import { FileModule } from './modules/files/modules/file.module.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
 
 @Module({
@@ -41,7 +42,8 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
     RoleModule,
     PermissionModule,
     RedisCacheModule,
-    StatusModule
+    StatusModule,
+    FileModule
   ],
   controllers: [],
   providers: [
