@@ -45,8 +45,8 @@ export class TypesenseQueryService {
           items: result.hits?.map(hit => hit.document) as UserSearchSchema[] ?? [],
           meta: {
             total: result.found,
-            offset: 0,
-            limit: 50
+            offset: result.page - 1,
+            limit: result.request_params.per_page ?? 0
           }
         }
       }

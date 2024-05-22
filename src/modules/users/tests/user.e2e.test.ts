@@ -4,9 +4,13 @@ import request from 'supertest'
 import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
 import { type DataSource } from 'typeorm'
+import { type TestingModule } from '@nestjs/testing'
 import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
+import { TypesenseCollection } from '../../typesense/enums/typesense-collection-index.enum.js'
+import { TypesenseInitializationService } from '../../typesense/services/typesense-initialization.service.js'
+import { Permission } from '../../permissions/permission.enum.js'
 import { UserEntityBuilder } from './builders/entities/user-entity.builder.js'
 import { CreateUserDtoBuilder } from './builders/dtos/create-user-dto.builder.js'
 import { UserSeeder } from './seeders/user.seeder.js'
@@ -14,6 +18,7 @@ import { type SetupUser } from './setup-user.type.js'
 
 describe('Users', async () => {
   let app: INestApplication
+  let moduleRef: TestingModule
   let dataSource: DataSource
 
   let context: TestContext
@@ -22,9 +27,15 @@ describe('Users', async () => {
   let readonlyUser: SetupUser
 
   before(async () => {
-    ({ app, dataSource } = await globalTestSetup())
+    ({ app, moduleRef, dataSource } = await globalTestSetup())
 
     context = new TestContext(dataSource.manager)
+
+    const typesenseImportService = moduleRef.get(TypesenseInitializationService)
+    typesenseImportService.migrate(
+      true,
+      [TypesenseCollection.USER]
+    )
 
     adminUser = await context.getAdminUser()
     readonlyUser = await context.getReadonlyUser()
@@ -51,11 +62,20 @@ describe('Users', async () => {
         .get('/users')
         .set('Authorization', `Bearer ${adminUser.token}`)
         .query({
-          page: 1,
-          limit: 10
+          pagination: {
+            limit: 10,
+            offset: 0
+          },
+          'filter[permissions][0]': Permission.READ_ONLY
         })
 
       expect(response).toHaveStatus(200)
+      expect(response.body.items.length).toBe(1)
+      expect(response.body.meta.total).toBe(1)
+      expect(response.body.meta.limit).toBe(10)
+      expect(response.body.meta.offset).toBe(0)
+      expect(response.body.items[0].role.permissions).toContain(Permission.READ_ONLY)
+      expect(response.body.items[0].uuid).toBe(readonlyUser.user.uuid)
     })
   })
 
