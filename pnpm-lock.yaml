@@ -11,6 +11,9 @@ dependencies:
   '@appwise/oauth2-server':
     specifier: ^0.0.10
     version: 0.0.10
+  '@appwise/time':
+    specifier: ^0.0.12
+    version: 0.0.12
   '@appwise/transformer':
     specifier: ^0.0.2
     version: 0.0.2
@@ -327,6 +330,15 @@ packages:
       jsonwebtoken: 9.0.2
     transitivePeerDependencies:
       - debug
+    dev: false
+
+  /@appwise/time@0.0.12:
+    resolution: {integrity: sha512-C2YvxHK0txykU56A4sIs3DxjjtM1kD69CTWS0u0eCRjy2uw3sQl6vEFgB5/SrHeZPfU0ROGo25khUBb/y8S9nQ==}
+    dependencies:
+      '@appwise/express-dto-router': 1.1.5
+      class-validator: 0.14.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@appwise/transformer@0.0.2:
