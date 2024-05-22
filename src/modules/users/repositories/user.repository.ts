@@ -18,7 +18,6 @@ export class UserRepository extends Repository<User> {
     const usersQuery = this.createQueryBuilder('user')
       .leftJoinAndSelect('user.role', 'role')
       .andWhere('user.uuid IN (:...userUuids)', { userUuids })
-      .orderBy('user.createdAt', 'DESC')
 
     return await usersQuery.getMany()
   }
