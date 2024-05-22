@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { TypesenseCollection } from '../../enums/typesense-collection-index.enum.js'
+import { TypesenseCollectionName } from '../../enums/typesense-collection-index.enum.js'
 import { exhaustiveCheck } from '../../../../utils/helpers/exhaustive-check.helper.js'
 import { UserTypesenseCollector } from './user-typesense.collector.js'
 
@@ -9,9 +9,9 @@ export class TypesenseCollectorFactory {
     private readonly userTypeSenseCollector: UserTypesenseCollector
   ) {}
 
-  public create (collection: TypesenseCollection): TypesenseCollector {
+  public create (collection: TypesenseCollectionName): TypesenseCollector {
     switch (collection) {
-    case TypesenseCollection.USER:
+    case TypesenseCollectionName.USER:
       return this.userTypeSenseCollector
     default: exhaustiveCheck(collection)
     }

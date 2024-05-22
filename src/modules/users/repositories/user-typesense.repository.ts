@@ -3,7 +3,7 @@ import { type SearchParams } from 'typesense/lib/Typesense/Documents.js'
 import { TypesenseQueryService } from '../../typesense/services/typesense-query.service.js'
 import { TypesenseSearchParamsBuilder } from '../../typesense/builder/search-params.builder.js'
 import { UserTypesenseCollection } from '../../typesense/collections/user.collections.js'
-import { TypesenseCollection } from '../../typesense/enums/typesense-collection-index.enum.js'
+import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import { type UserQuery } from '../queries/user.query.js'
 import { type TypesensePaginatedResult, emptyTypesensePaginatedResult } from '../../typesense/pagination/paginated-result.interface.js'
 
@@ -19,11 +19,11 @@ export class UserTypesenseRepository {
     const typesenseSearchParams = this.createTypesenseSearchParams(query)
 
     const typesenseSearchedValues = await this.typesenseService.search(
-      TypesenseCollection.USER,
+      TypesenseCollectionName.USER,
       typesenseSearchParams
     )
 
-    const userUuids = typesenseSearchedValues[TypesenseCollection.USER]?.items.map(
+    const userUuids = typesenseSearchedValues[TypesenseCollectionName.USER]?.items.map(
       item => item.uuid
     )
 
@@ -34,9 +34,9 @@ export class UserTypesenseRepository {
     return {
       items: userUuids,
       meta: {
-        total: typesenseSearchedValues[TypesenseCollection.USER]?.meta.total ?? 0,
-        offset: typesenseSearchedValues[TypesenseCollection.USER]?.meta.offset ?? 0,
-        limit: typesenseSearchedValues[TypesenseCollection.USER]?.meta.limit ?? 0
+        total: typesenseSearchedValues[TypesenseCollectionName.USER]?.meta.total ?? 0,
+        offset: typesenseSearchedValues[TypesenseCollectionName.USER]?.meta.offset ?? 0,
+        limit: typesenseSearchedValues[TypesenseCollectionName.USER]?.meta.limit ?? 0
       }
     }
   }

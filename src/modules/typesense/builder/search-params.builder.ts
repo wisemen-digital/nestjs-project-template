@@ -1,9 +1,9 @@
 import { type SearchParams } from 'typesense/lib/Typesense/Documents.js'
-import { type FilterField, type SearchField, type AbstractTypesenseCollection, type SortField } from '../collections/abstract-typesense.collection.js'
+import { type FilterField, type SearchField, type TypesenseCollection, type SortField } from '../collections/abstract-typesense.collection.js'
 import { type SortDirection } from '../../../utils/query/sort-direction.enum.js'
 import { FilterOptions } from '../enums/typesense-filter-options.enum.js'
 
-export class TypesenseSearchParamsBuilder<Collection extends AbstractTypesenseCollection> {
+export class TypesenseSearchParamsBuilder<Collection extends TypesenseCollection> {
   private readonly filters: string[] = []
   private queries: string[] = []
   private readonly sorting: string[] = []

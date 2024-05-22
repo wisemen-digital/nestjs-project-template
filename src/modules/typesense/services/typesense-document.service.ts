@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { captureException } from '@sentry/node'
-import { type TypesenseCollection } from '../enums/typesense-collection-index.enum.js'
+import { type TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { TypesenseClient } from '../clients/typesense.client.js'
 
 @Injectable()
@@ -10,7 +10,7 @@ export class TypesenseDocumentService {
   ) {}
 
   async addDocuments <T extends object> (
-    index: TypesenseCollection,
+    index: TypesenseCollectionName,
     documents: T[],
     collectionName?: string
   ): Promise<void> {
@@ -29,7 +29,7 @@ export class TypesenseDocumentService {
     }
   }
 
-  public async deleteDocument (index: TypesenseCollection, uuid: string): Promise<void> {
+  public async deleteDocument (index: TypesenseCollectionName, uuid: string): Promise<void> {
     try {
       await this.typesenseClient.client.collections(index).documents(uuid).delete()
     } catch {}

@@ -1,9 +1,9 @@
 import { type FieldType, type CollectionFieldSchema } from 'typesense/lib/Typesense/Collection.js'
 import { type CollectionCreateSchema } from 'typesense/lib/Typesense/Collections.js'
 
-export type SearchField<T extends AbstractTypesenseCollection > = T['searchableFields'][number]['name']
-export type FilterField<T extends AbstractTypesenseCollection> = T['filterableFields'][number]['name'] | SearchField<T>
-export type SortField<T extends AbstractTypesenseCollection> = Extract<T['searchableFields'][number] | T['filterableFields'][number], { sort: true }>['name']
+export type SearchField<T extends TypesenseCollection > = T['searchableFields'][number]['name']
+export type FilterField<T extends TypesenseCollection> = T['filterableFields'][number]['name'] | SearchField<T>
+export type SortField<T extends TypesenseCollection> = Extract<T['searchableFields'][number] | T['filterableFields'][number], { sort: true }>['name']
 
 export interface TypesenseField {
   readonly name: string
@@ -12,7 +12,7 @@ export interface TypesenseField {
   readonly sort?: boolean
 }
 
-export abstract class AbstractTypesenseCollection {
+export abstract class TypesenseCollection {
   abstract readonly name: string
   abstract readonly searchableFields: Readonly<TypesenseField[]>
   abstract readonly filterableFields: Readonly<TypesenseField[]>

@@ -4,7 +4,7 @@ import { type CollectionCreateSchema } from 'typesense/lib/Typesense/Collections
 import { type CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
 import { type CollectionAliasSchema } from 'typesense/lib/Typesense/Aliases.js'
 import { TypesenseClient } from '../clients/typesense.client.js'
-import { TypesenseCollection } from '../enums/typesense-collection-index.enum.js'
+import { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { UserTypesenseCollection } from '../collections/user.collections.js'
 import { TypesenseCollectionService } from './typesense-collection.service.js'
 
@@ -58,10 +58,10 @@ export class TypesenseInitializationService {
     })
   }
 
-  public async migrate (fresh: boolean, indexes: TypesenseCollection[]): Promise<void> {
-    if (indexes.includes(TypesenseCollection.USER)) {
+  public async migrate (fresh: boolean, indexes: TypesenseCollectionName[]): Promise<void> {
+    if (indexes.includes(TypesenseCollectionName.USER)) {
       await this.migrateCollection(
-        TypesenseCollection.USER,
+        TypesenseCollectionName.USER,
         new UserTypesenseCollection().getSchema(),
         fresh
       )
@@ -69,7 +69,7 @@ export class TypesenseInitializationService {
   }
 
   public async migrateCollection (
-    aliasName: TypesenseCollection,
+    aliasName: TypesenseCollectionName,
     createCollection: CollectionCreateSchema,
     fresh: boolean
   ): Promise<void> {
@@ -86,10 +86,10 @@ export class TypesenseInitializationService {
     }
   }
 
-  public async import (indexes: TypesenseCollection[]): Promise<void> {
-    if (indexes.includes(TypesenseCollection.USER)) {
+  public async import (indexes: TypesenseCollectionName[]): Promise<void> {
+    if (indexes.includes(TypesenseCollectionName.USER)) {
       await this.typesenseCollectionService
-        .importToTypesense(TypesenseCollection.USER)
+        .importToTypesense(TypesenseCollectionName.USER)
     }
   }
 }

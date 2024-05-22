@@ -5,7 +5,7 @@ import { MigrateTypesenseQueryDto } from '../dtos/migrate-typesense-query.dto.js
 import { ImportTypesenseQueryDto } from '../dtos/import-typesense-query.dto.js'
 import { Permissions } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
-import { TypesenseCollection } from '../enums/typesense-collection-index.enum.js'
+import { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
 
 @Controller('typesense')
@@ -13,7 +13,7 @@ export class TypesenseController {
   constructor (private readonly typesenseImportService: TypesenseInitializationService) {}
   @Get('migrate')
   @ApiQuery({ required: false, name: 'fresh', type: 'boolean' })
-  @ApiQuery({ required: false, name: 'collections', enum: TypesenseCollection, isArray: true })
+  @ApiQuery({ required: false, name: 'collections', enum: TypesenseCollectionName, isArray: true })
   @ApiResponse({
     status: 200,
     description: 'Successfully migrated collections'
@@ -26,7 +26,7 @@ export class TypesenseController {
   }
 
   @Get('import')
-  @ApiQuery({ required: false, name: 'collections', enum: TypesenseCollection, isArray: true })
+  @ApiQuery({ required: false, name: 'collections', enum: TypesenseCollectionName, isArray: true })
   @ApiResponse({
     status: 200,
     description: 'Successfully imported collections'

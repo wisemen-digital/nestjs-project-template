@@ -5,7 +5,7 @@ import {
   IsOptional
 } from 'class-validator'
 import { Transform } from 'class-transformer'
-import { TypesenseCollection } from '../enums/typesense-collection-index.enum.js'
+import { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 
 export class MigrateTypesenseQueryDto {
   @IsOptional()
@@ -15,6 +15,6 @@ export class MigrateTypesenseQueryDto {
   fresh: boolean
 
   @IsOptional()
-  @IsEnum(TypesenseCollection, { each: true })
-  collections: TypesenseCollection[] = Object.values(TypesenseCollection)
+  @IsEnum(TypesenseCollectionName, { each: true })
+  collections: TypesenseCollectionName[] = Object.values(TypesenseCollectionName)
 }

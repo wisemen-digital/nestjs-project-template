@@ -1,6 +1,6 @@
-import { TypesenseCollection } from '../enums/typesense-collection-index.enum.js'
+import { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { type Permission } from '../../permissions/permission.enum.js'
-import { AbstractTypesenseCollection } from './abstract-typesense.collection.js'
+import { TypesenseCollection } from './abstract-typesense.collection.js'
 
 export interface UserSearchSchema {
   id: string
@@ -10,8 +10,8 @@ export interface UserSearchSchema {
   permissions: Permission[]
 }
 
-export class UserTypesenseCollection extends AbstractTypesenseCollection {
-  readonly name = TypesenseCollection.USER
+export class UserTypesenseCollection extends TypesenseCollection {
+  readonly name = TypesenseCollectionName.USER
 
   readonly searchableFields = [
     { name: 'firstName', type: 'string', sort: true },
@@ -19,6 +19,6 @@ export class UserTypesenseCollection extends AbstractTypesenseCollection {
   ] as const
 
   readonly filterableFields = [
-    { name: 'permissions', type: 'string[]', optional: true, facet: true }
+    { name: 'permissions', type: 'string[]', optional: true }
   ] as const
 }

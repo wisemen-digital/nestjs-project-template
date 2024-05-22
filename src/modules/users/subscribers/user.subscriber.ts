@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectDataSource } from '@nestjs/typeorm'
 import { type EntitySubscriberInterface, DataSource, type InsertEvent, type UpdateEvent, type RemoveEvent } from 'typeorm'
-import { TypesenseCollection } from '../../typesense/enums/typesense-collection-index.enum.js'
+import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import { TypesenseCollectionService } from '../../typesense/services/typesense-collection.service.js'
 import { User } from '../entities/user.entity.js'
 
@@ -23,7 +23,7 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     const { entity } = event
 
     await this.typesense.importManuallyToTypesense(
-      TypesenseCollection.USER,
+      TypesenseCollectionName.USER,
       [entity]
     )
   }
@@ -32,12 +32,12 @@ export class UserSubscriber implements EntitySubscriberInterface<User> {
     const { entity } = event
 
     await this.typesense.importManuallyToTypesense(
-      TypesenseCollection.USER,
+      TypesenseCollectionName.USER,
       [entity]
     )
   }
 
   async afterRemove (event: RemoveEvent<User>): Promise<void> {
-    await this.typesense.deleteFromTypesense(TypesenseCollection.USER, event.entityId)
+    await this.typesense.deleteFromTypesense(TypesenseCollectionName.USER, event.entityId)
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { type TypesenseCollection } from '../enums/typesense-collection-index.enum.js'
+import { type TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { TypesenseCollectorFactory } from './collectors/typesense-collector.factory.js'
 import { TypesenseDocumentService } from './typesense-document.service.js'
 
@@ -11,7 +11,7 @@ export class TypesenseCollectionService {
   ) {}
 
   async importManuallyToTypesense<T> (
-    collection: TypesenseCollection,
+    collection: TypesenseCollectionName,
     objects: T[]
   ): Promise<void> {
     const collector = this.collectorFactory.create(collection)
@@ -23,7 +23,7 @@ export class TypesenseCollectionService {
   }
 
   async importToTypesense (
-    collection: TypesenseCollection,
+    collection: TypesenseCollectionName,
     uuids?: string[]
   ): Promise<void> {
     const collector = this.collectorFactory.create(collection)
@@ -35,7 +35,7 @@ export class TypesenseCollectionService {
     )
   }
 
-  async deleteFromTypesense (collection: TypesenseCollection, uuid: string): Promise<void> {
+  async deleteFromTypesense (collection: TypesenseCollectionName, uuid: string): Promise<void> {
     await this.typesenseDocumentService.deleteDocument(collection, uuid)
   }
 }

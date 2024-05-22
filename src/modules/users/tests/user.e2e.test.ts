@@ -8,7 +8,7 @@ import { type TestingModule } from '@nestjs/testing'
 import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
-import { TypesenseCollection } from '../../typesense/enums/typesense-collection-index.enum.js'
+import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import { TypesenseInitializationService } from '../../typesense/services/typesense-initialization.service.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { UserEntityBuilder } from './builders/entities/user-entity.builder.js'
@@ -34,7 +34,7 @@ describe('Users', async () => {
     const typesenseImportService = moduleRef.get(TypesenseInitializationService)
     typesenseImportService.migrate(
       true,
-      [TypesenseCollection.USER]
+      [TypesenseCollectionName.USER]
     )
 
     adminUser = await context.getAdminUser()

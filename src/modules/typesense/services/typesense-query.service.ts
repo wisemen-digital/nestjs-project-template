@@ -1,7 +1,7 @@
 import { captureException } from '@sentry/node'
 import { Injectable } from '@nestjs/common'
 import { type SearchParams } from 'typesense/lib/Typesense/Documents.js'
-import { type MultiSearchResult, type TypesenseCollection } from '../enums/typesense-collection-index.enum.js'
+import { type MultiSearchResult, type TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { TypesenseClient } from '../clients/typesense.client.js'
 import { UserTypesenseCollection, type UserSearchSchema } from '../collections/user.collections.js'
 
@@ -18,7 +18,7 @@ export class TypesenseQueryService {
   public async searchAll (query: string): Promise<MultiSearchResult> {
     const results = await Promise.all(
       TypesenseQueryService.COLLECTIONS.map(async collection => {
-        return await this.search(collection.name as TypesenseCollection, {
+        return await this.search(collection.name as TypesenseCollectionName, {
           q: query,
           query_by: collection.fields?.map(f => f.name).join(',') ?? ''
         })
@@ -31,7 +31,7 @@ export class TypesenseQueryService {
   }
 
   public async search (
-    index: TypesenseCollection,
+    index: TypesenseCollectionName,
     searchParams: SearchParams
   ): Promise<MultiSearchResult> {
     try {
