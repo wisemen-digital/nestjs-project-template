@@ -6,15 +6,35 @@ import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { KnownError } from '../../../utils/Exceptions/errors.js'
+import { type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
+import { type UserQuery } from '../queries/user.query.js'
+import { UserTypesenseRepository } from '../repositories/user-typesense.repository.js'
 
 @Injectable()
 export class UserService {
   constructor (
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly userTypesenseRepository: UserTypesenseRepository
   ) {}
 
-  async findAll (): Promise<User[]> {
-    return await this.userRepository.find()
+  async findPaginated (
+    query: UserQuery
+  ): Promise<OffsetPaginatedResult<User>> {
+    const result = await this.userTypesenseRepository.findPaginatedUuids(query)
+    const users = await this.userRepository.findWithUuids(result.items)
+
+    const sortedUsers = result.items.map(userUuid => {
+      const user = users.find(user => user.uuid === userUuid)
+      if (user === undefined) {
+        throw new KnownError('not_found')
+      }
+      return user
+    })
+
+    return {
+      items: sortedUsers,
+      meta: result.meta
+    }
   }
 
   async findOne (uuid: string): Promise<User> {

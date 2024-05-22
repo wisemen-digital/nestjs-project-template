@@ -1,18 +1,33 @@
 import { Module } from '@nestjs/common'
-import { UserRepository } from '../../users/repositories/user.repository.js'
-import { TypesenseService } from '../services/typesense.service.js'
-import { TypesenseImportService } from '../services/typesense-import.service.js'
-import { TypesenseClient } from '../clients/typesense.client.js'
 import { TypesenseController } from '../controllers/typesense.controller.js'
+import { TypesenseQueryService } from '../services/typesense-query.service.js'
+import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
+import { TypesenseDocumentService } from '../services/typesense-document.service.js'
+import { TypesenseCollectionService } from '../services/typesense-collection.service.js'
+import { TypesenseCollectorFactory } from '../services/collectors/typesense-collector.factory.js'
+import { UserTypesenseCollector } from '../services/collectors/user-typesense.collector.js'
+import { UserRepository } from '../../users/repositories/user.repository.js'
+import { TypesenseClient } from '../clients/typesense.client.js'
 
 @Module({
   controllers: [TypesenseController],
   providers: [
     TypesenseClient,
-    TypesenseService,
-    TypesenseImportService,
+    TypesenseQueryService,
+    TypesenseDocumentService,
+    TypesenseInitializationService,
+    TypesenseCollectionService,
+    TypesenseCollectorFactory,
+    UserTypesenseCollector,
     UserRepository
   ],
-  exports: [TypesenseService, TypesenseImportService]
+  exports: [
+    TypesenseQueryService,
+    TypesenseDocumentService,
+    TypesenseInitializationService,
+    TypesenseCollectionService,
+    TypesenseCollectorFactory,
+    UserTypesenseCollector
+  ]
 })
 export class TypesenseModule {}

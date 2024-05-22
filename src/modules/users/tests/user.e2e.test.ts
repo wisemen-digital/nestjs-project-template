@@ -45,6 +45,18 @@ describe('Users', async () => {
 
       expect(response).toHaveStatus(200)
     })
+
+    it('should return users paginated', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', `Bearer ${adminUser.token}`)
+        .query({
+          page: 1,
+          limit: 10
+        })
+
+      expect(response).toHaveStatus(200)
+    })
   })
 
   describe('Get user', () => {

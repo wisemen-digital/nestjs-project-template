@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Permissions, Public } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
@@ -8,6 +8,8 @@ import { UpdateUserDto } from '../dtos/update-user.dto.js'
 import { UserService } from '../services/user.service.js'
 import { UserTransformerType, UserTransformer } from '../transformers/user.transformer.js'
 import { UpdateUserGuard } from '../guards/user-update.guard.js'
+import { UserQuery } from '../queries/user.query.js'
+import { type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
 
 @ApiTags('User')
 @Controller('users')
@@ -36,10 +38,15 @@ export class UserController {
     type: [UserTransformerType]
   })
   @Permissions(Permission.USER_READ)
-  async getUsers (): Promise<UserTransformerType[]> {
-    const users = await this.userService.findAll()
+  async getUsers (
+    @Query() query: UserQuery
+  ): Promise<OffsetPaginatedResult<UserTransformerType>> {
+    const usersPaginated = await this.userService.findPaginated(query)
 
-    return new UserTransformer().array(users)
+    return {
+      items: new UserTransformer().array(usersPaginated.items),
+      meta: usersPaginated.meta
+    }
   }
 
   @Get(':user')

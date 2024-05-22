@@ -2,7 +2,7 @@ import { applyDecorators, type Type } from '@nestjs/common'
 import { ApiExtraModels, ApiOkResponse, ApiProperty, getSchemaPath } from '@nestjs/swagger'
 import { IsArray } from 'class-validator'
 
-class InfiniteScrollEntityMeta {
+class KeysetPaginationEntityMeta {
   @ApiProperty()
   readonly lastTimestamp: number
 }
@@ -11,8 +11,8 @@ class InfiniteScrollEntity<T> {
   @ApiProperty({ isArray: true })
   readonly items: T[]
 
-  @ApiProperty({ type: InfiniteScrollEntityMeta })
-  readonly meta: InfiniteScrollEntityMeta
+  @ApiProperty({ type: KeysetPaginationEntityMeta })
+  readonly meta: KeysetPaginationEntityMeta
 }
 
 export const InfiniteScrollResponse = <T extends Type<unknown>>(entityType: T): MethodDecorator => {

@@ -1,15 +1,15 @@
 import { Transformer } from '@appwise/transformer'
-import { type InfiniteScrollResult } from './infinite-scroll-result.interface.js'
+import { type KeysetPaginatedResult } from './paginated-result.interface.js'
 
-export abstract class InfiniteScrollTransformer<From, To> extends Transformer<From, To> {
+export abstract class KeysetPaginatedTransformer<From, To> extends Transformer<From, To> {
   paginated (
-    infiniteScrollItems: InfiniteScrollResult<From>,
+    infiniteScrollItems: KeysetPaginatedResult<From>,
     timestampKey: keyof From
-  ): InfiniteScrollResult<To> {
+  ): KeysetPaginatedResult<To> {
     return {
       items: this.array(infiniteScrollItems.items),
       meta: {
-        lastTimestamp: this.getLastTimestamp(infiniteScrollItems.items, timestampKey)?.toISOString()
+        next: this.getLastTimestamp(infiniteScrollItems.items, timestampKey)?.toISOString()
       }
     }
   }

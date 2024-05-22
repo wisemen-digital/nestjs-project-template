@@ -1,20 +1,19 @@
-import { SortDirection } from './sort-direction.enum.js'
+import { Dto } from '@appwise/express-dto-router'
+import { type SortDirection } from './sort-direction.enum.js'
+
+export abstract class Query extends Dto {}
 
 export abstract class SortQuery {
-  [key: string]: undefined | SortDirection
-}
-
-export abstract class LikeQuery {
   abstract key: unknown
-  abstract value: unknown
+  abstract order: SortDirection
 }
 
-export abstract class MatchQuery {
-  [key: string]: unknown
+export abstract class FilterQuery {
+  [key: string]: FilterQuery | string | string[] | undefined
 }
 
 export abstract class SearchQuery {
-  abstract sort?: SortQuery
-  abstract match?: MatchQuery
-  abstract like?: LikeQuery
+  abstract sort?: SortQuery[]
+  abstract filter?: FilterQuery
+  abstract search?: string
 }

@@ -1,4 +1,4 @@
-import type { EntityManager } from 'typeorm'
+import { type EntityManager } from 'typeorm'
 import bcrypt from 'bcryptjs'
 import { type User } from '../../entities/user.entity.js'
 import { UserRepository } from '../../repositories/user.repository.js'
