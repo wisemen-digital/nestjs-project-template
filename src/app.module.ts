@@ -17,6 +17,7 @@ import configuration from './config/env/configuration.js'
 import { StatusModule } from './modules/status/modules/status.module.js'
 import { FileModule } from './modules/files/modules/file.module.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
+import { PgBossModule } from './modules/pgboss/pgboss.module.js'
 
 @Module({
   imports: [
@@ -43,7 +44,8 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
     PermissionModule,
     RedisCacheModule,
     StatusModule,
-    FileModule
+    FileModule,
+    PgBossModule
   ],
   controllers: [],
   providers: [

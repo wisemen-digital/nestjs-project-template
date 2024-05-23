@@ -14,7 +14,7 @@ export class TypesenseClient {
       process.env.TYPESENSE_HOST == null ||
       process.env.TYPESENSE_KEY == null
     ) {
-      throw new Error('Typesense environment variables are not set')
+      return
     }
 
     this._client = new Typesense.Client({
