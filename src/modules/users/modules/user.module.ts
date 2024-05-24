@@ -12,7 +12,7 @@ import { UserTypesenseJob } from '../jobs/user-typesense.job.js'
   imports: [
     TypeOrmModule.forFeature([User]),
     RedisCacheModule,
-    PgBossModule.registerJob([UserTypesenseJob])
+    PgBossModule.forFeature([UserTypesenseJob])
   ],
   controllers: [UserController],
   providers: [

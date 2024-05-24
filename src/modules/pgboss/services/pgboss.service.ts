@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common'
 import type PgBoss from 'pg-boss'
 import { type EntityManager } from 'typeorm'
 import { type PgBossJob } from '../jobs/pgboss.job.js'
-import { PgBossClient } from './pgboss.client.js'
+import { PgBossClientService } from './pgboss-client.service.js'
 
 @Injectable()
 export class PgBossService {
   constructor (
-    private readonly boss: PgBossClient
+    private readonly boss: PgBossClientService
   ) {}
 
   public async scheduleJob (

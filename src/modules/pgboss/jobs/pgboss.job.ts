@@ -4,8 +4,8 @@ import { plainToInstance } from 'class-transformer'
 import { captureException } from '@sentry/node'
 import colors from 'colors'
 import dayjs from 'dayjs'
-import { type JobQueue } from '../types/job-queue.enum.js'
 import { type JobSerialization } from '../types/job-serialization.type.js'
+import { type QueueName } from '../types/queue-name.enum.js'
 
 export type JobConstructor<T> = new (...args: unknown[]) => PgBossJob<T>
 
@@ -31,7 +31,7 @@ export abstract class PgBossJob <T = void> {
   protected readonly createdAt = Date.now()
   protected startedAt?: number
 
-  protected abstract readonly queueName: JobQueue
+  protected abstract readonly queueName: QueueName
   protected readonly onCompleteJob: boolean = false
   protected readonly priority: number = 0
   protected readonly retryLimit: number = 3

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { type DynamicModule, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
@@ -6,7 +6,6 @@ import { AuthGuard } from './modules/auth/guards/auth.guard.js'
 import { AuthModule } from './modules/auth/modules/auth.module.js'
 import { PermissionsGuard } from './modules/permissions/permissions.guard.js'
 import { UserModule } from './modules/users/modules/user.module.js'
-import { ErrorsInterceptor } from './errors.interceptor.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
 import { TypesenseModule } from './modules/typesense/modules/typesense.module.js'
 import { MailModule } from './modules/mail/modules/mail.module.js'
@@ -18,49 +17,58 @@ import { StatusModule } from './modules/status/modules/status.module.js'
 import { FileModule } from './modules/files/modules/file.module.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
 import { PgBossModule } from './modules/pgboss/pgboss.module.js'
+import { ErrorsInterceptor } from './utils/Exceptions/errors.interceptor.js'
 
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath: process.env.ENV_FILE,
-      load: [configuration]
-    }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.TYPEORM_URI,
-      ssl: sslHelper(process.env.TYPEORM_SSL),
-      extra: { max: 50 },
-      logging: false,
-      synchronize: false,
-      migrations: mainMigrations,
-      migrationsRun: true,
-      autoLoadEntities: true
-    }),
-    AuthModule,
-    TypesenseModule,
-    UserModule,
-    MailModule,
-    RoleModule,
-    PermissionModule,
-    RedisCacheModule,
-    StatusModule,
-    FileModule,
-    PgBossModule
-  ],
-  controllers: [],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PermissionsGuard
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ErrorsInterceptor
+@Module({})
+export class AppModule {
+  static forRoot (
+    modules: DynamicModule[] = []
+  ): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.ENV_FILE,
+          load: [configuration]
+        }),
+        TypeOrmModule.forRoot({
+          type: 'postgres',
+          url: process.env.TYPEORM_URI,
+          ssl: sslHelper(process.env.TYPEORM_SSL),
+          extra: { max: 50 },
+          logging: false,
+          synchronize: false,
+          migrations: mainMigrations,
+          migrationsRun: true,
+          autoLoadEntities: true
+        }),
+        AuthModule,
+        TypesenseModule,
+        UserModule,
+        MailModule,
+        RoleModule,
+        PermissionModule,
+        RedisCacheModule,
+        StatusModule,
+        FileModule,
+        PgBossModule.forRoot(),
+        ...modules
+      ],
+      controllers: [],
+      providers: [
+        {
+          provide: APP_GUARD,
+          useClass: AuthGuard
+        },
+        {
+          provide: APP_GUARD,
+          useClass: PermissionsGuard
+        },
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: ErrorsInterceptor
+        }
+      ]
     }
-  ]
-})
-export class AppModule {}
+  }
+}

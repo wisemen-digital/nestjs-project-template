@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config'
 import PgBoss from 'pg-boss'
 
 @Injectable()
-export class PgBossClient extends PgBoss implements OnModuleInit, OnModuleDestroy {
+export class PgBossClientService extends PgBoss implements OnModuleInit, OnModuleDestroy {
   constructor (
     configService: ConfigService
   ) {

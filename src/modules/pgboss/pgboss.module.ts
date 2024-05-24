@@ -1,27 +1,32 @@
-import { Module } from '@nestjs/common'
+import { type DynamicModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { PgBossService } from './services/pgboss.service.js'
-import { PgBossClient } from './services/pgboss.client.js'
-import { WorkerService } from './services/worker.service.js'
 import { Job } from './entities/job.entity.js'
 import { ArchivedJob } from './entities/archive.entity.js'
-import { type PgBossJob } from './jobs/pgboss.job.js'
+import { PgBossClientService } from './services/pgboss-client.service.js'
+import { JobFactory } from './factories/job-factory.js'
+import { type JobConstructor } from './jobs/pgboss.job.js'
 
-@Module({
-  imports: [
-    ConfigModule,
-    TypeOrmModule.forFeature([Job, ArchivedJob])
-  ],
-  providers: [
-    PgBossClient,
-    PgBossService,
-    WorkerService
-  ],
-  exports: [PgBossService]
-})
 export class PgBossModule {
-  static registerJob (_jobs: PgBossJob[]): PgBossModule {
-    return this
+  static forRoot (): DynamicModule {
+    return {
+      module: PgBossModule,
+      imports: [
+        ConfigModule,
+        TypeOrmModule.forFeature([Job, ArchivedJob])
+      ],
+      providers: [
+        PgBossClientService,
+        PgBossService
+      ],
+      exports: [PgBossService]
+    }
+  }
+
+  static forFeature (jobs: Array<JobConstructor<unknown>>): DynamicModule {
+    jobs.forEach(job => { JobFactory.register(job) })
+
+    return this.forRoot()
   }
 }

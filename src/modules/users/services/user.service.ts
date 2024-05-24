@@ -18,6 +18,13 @@ export class UserService {
     private readonly pgBossService: PgBossService
   ) {}
 
+  async onApplicationBootstrap (): Promise<void> {
+    // TODO: DELETE THIS FUNCTION IS FOR TEST PURPOSES
+    await this.pgBossService.scheduleJobs(this.dataSource.manager, [
+      UserTypesenseJob.create()
+    ])
+  }
+
   async findAll (): Promise<User[]> {
     return await this.userRepository.find()
   }
