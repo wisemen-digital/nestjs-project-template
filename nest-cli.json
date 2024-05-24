@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
-  "entryFile": "entrypoints/api",
+  "monorepo": true,
+  "root": "src",
   "compilerOptions": {
     "assets": [
       {
@@ -11,5 +11,19 @@
       }
     ],
     "deleteOutDir": true
+  },
+  "projects": {
+    "api": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/api",
+      "sourceRoot": "src"
+    },
+    "worker": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/worker",
+      "sourceRoot": "src"
+    }
   }
 }
