@@ -13,7 +13,10 @@ import { RedisCacheService } from './cache.js'
     imports: [ConfigModule],
     useFactory: async (configService: ConfigService) => ({
       store: await redisStore({
-        url: configService.get('REDIS_URL')
+        socket: {
+          host: configService.get('REDIS_HOST'),
+          port: configService.get('REDIS_PORT')
+        }
       })
     }),
     inject: [ConfigService]
