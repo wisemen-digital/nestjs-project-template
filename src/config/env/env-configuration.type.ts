@@ -1,4 +1,3 @@
 export interface EnvConfiguration {
-  redisHost: string
-  redisPort: number
+  redisUrl: string
 }
