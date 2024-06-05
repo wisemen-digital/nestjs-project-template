@@ -3,7 +3,7 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { Request } from '../../auth/guards/auth.guard.js'
 import { CreateFileDto } from '../dtos/create-file.dto.js'
-import { type CreateFileResponse, CreateFileResponseTransformer } from '../transformers/file-created.transformer.js'
+import { type CreateFileResponseTransformerType, CreateFileResponseTransformer } from '../transformers/file-created.transformer.js'
 import { FileFlowService } from '../services/file.flows.service.js'
 import { confirmFileUploadResponse, createFileResponse, downloadFileResponse, removeFileResponse } from '../docs/file-response.docs.js'
 
@@ -19,7 +19,7 @@ export class FileController {
   async createFile (
     @Req() req: Request,
     @Body() createFileDto: CreateFileDto
-  ): Promise<CreateFileResponse> {
+  ): Promise<CreateFileResponseTransformerType> {
     const userUuid = req.auth.user.uuid
     const { file, uploadUrl } = await this.fileFlowService.create(createFileDto, userUuid)
     return new CreateFileResponseTransformer().item(file, uploadUrl)
