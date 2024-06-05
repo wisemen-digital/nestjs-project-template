@@ -3,52 +3,45 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { Request } from '../../auth/guards/auth.guard.js'
 import { CreateFileDto } from '../dtos/create-file.dto.js'
-import { type CreateFileResponse, CreateFileResponseDoc, CreateFileResponseTransformer } from '../transformers/file-created.transformer.js'
-import { FileService } from '../services/file.service.js'
+import { type CreateFileResponse, CreateFileResponseTransformer } from '../transformers/file-created.transformer.js'
+import { FileFlowService } from '../services/file.flows.service.js'
+import { confirmFileUploadResponse, createFileResponse, downloadFileResponse, removeFileResponse } from '../docs/file-response.docs.js'
 
 @ApiTags('File')
 @Controller('file')
 export class FileController {
   constructor (
-    private readonly fileService: FileService
+    private readonly fileFlowService: FileFlowService
   ) {}
 
   @Post()
-  @CreateFileResponseDoc()
+  @ApiResponse(createFileResponse)
   async createFile (
     @Req() req: Request,
     @Body() createFileDto: CreateFileDto
   ): Promise<CreateFileResponse> {
-    const { file, uploadUrl } = await this.fileService.create(createFileDto, req.auth.user.uuid)
-
+    const userUuid = req.auth.user.uuid
+    const { file, uploadUrl } = await this.fileFlowService.create(createFileDto, userUuid)
     return new CreateFileResponseTransformer().item(file, uploadUrl)
   }
 
-  @Post(':file/confirm-upload')
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully confirmed file upload'
-  })
+  @Post('/:file/confirm-upload')
+  @ApiResponse(confirmFileUploadResponse)
   @HttpCode(200)
   async confirmFileUpload (
     @Param('file', ParseUUIDPipe) fileUuid: string
   ): Promise<void> {
-    await this.fileService.confirmUploadOrFail(fileUuid)
+    await this.fileFlowService.confirmUploadOrFail(fileUuid)
   }
 
-  @Post(':file/download')
-  @ApiResponse({
-    status: 302,
-    description: 'Successfully downloaded file'
-  })
+  @Post('/:file/download')
+  @ApiResponse(downloadFileResponse)
   @HttpCode(302)
   async downloadFile (
     @Param('file', ParseUUIDPipe) fileUuid: string,
     @Res() res: Response
   ): Promise<void> {
-    const file = await this.fileService.findOneOrFail({ uuid: fileUuid })
-
-    const temporaryUrl = await this.fileService.getTemporaryUrl(file)
+    const { file, temporaryUrl } = await this.fileFlowService.getTemporaryUrl(fileUuid)
 
     res.setHeader('Location', temporaryUrl)
     res.setHeader('Content-Disposition', `attachment; filename=${file.name}`)
@@ -56,14 +49,11 @@ export class FileController {
     res.redirect(temporaryUrl)
   }
 
-  @Delete(':file')
-  @ApiResponse({
-    status: 200,
-    description: 'Successfully removed file'
-  })
+  @Delete('/:file')
+  @ApiResponse(removeFileResponse)
   async removeFile (
     @Param('file', ParseUUIDPipe) fileUuid: string
   ): Promise<void> {
-    await this.fileService.remove(fileUuid)
+    await this.fileFlowService.remove(fileUuid)
   }
 }

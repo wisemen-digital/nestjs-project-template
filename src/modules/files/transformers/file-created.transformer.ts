@@ -1,5 +1,5 @@
 import { Transformer } from '@appwise/transformer'
-import { ApiProperty, ApiResponse } from '@nestjs/swagger'
+import { ApiProperty } from '@nestjs/swagger'
 import { plainToInstance } from 'class-transformer'
 import { type File } from '../entities/file.entity.js'
 import { MimeType } from '../enums/mime-type.enum.js'
@@ -27,12 +27,4 @@ export class CreateFileResponseTransformer extends Transformer<File, CreateFileR
       uploadUrl
     })
   }
-}
-
-export function CreateFileResponseDoc (): ReturnType<typeof ApiResponse> {
-  return ApiResponse({
-    status: 201,
-    description: 'Successfully created file',
-    type: CreateFileResponse
-  })
 }
