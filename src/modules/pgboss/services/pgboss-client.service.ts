@@ -8,7 +8,7 @@ export class PgBossClientService extends PgBoss implements OnModuleInit, OnModul
     configService: ConfigService
   ) {
     super({
-      connectionString: configService.getOrThrow<string>('TYPEORM_URI')
+      connectionString: configService.getOrThrow<string>('DATABASE_URI')
     })
   }
 

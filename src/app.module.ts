@@ -38,8 +38,8 @@ export class AppModule {
         }),
         TypeOrmModule.forRoot({
           type: 'postgres',
-          url: process.env.TYPEORM_URI,
-          ssl: sslHelper(process.env.TYPEORM_SSL),
+          url: process.env.DATABASE_URI,
+          ssl: sslHelper(process.env.DATABASE_SSL),
           extra: { max: 50 },
           logging: false,
           synchronize: false,
