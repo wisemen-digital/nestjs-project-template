@@ -1,6 +1,6 @@
 import { plainToInstance } from 'class-transformer'
 import type { JobSerialization } from '../types/job-serialization.type.js'
-import { JobConstructor, PgBossJob } from '../jobs/pgboss.job.js'
+import { type JobConstructor, type PgBossJob } from '../jobs/pgboss.job.js'
 
 export class JobFactory {
   jobConstructors = new Map<string, JobConstructor<unknown>>()

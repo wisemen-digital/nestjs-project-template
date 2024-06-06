@@ -117,13 +117,10 @@ export abstract class PgBossJob <T = void> {
 
   protected logSuccess (): void {
     if (this.startedAt == null) throw Error('Job has not been started yet')
-    const executionTime = Date.now() - this.startedAt
   }
 
   protected logFailure (err: Error): void {
     if (this.startedAt == null) throw Error('Job has not been started yet')
-    const executionTime = Date.now() - this.startedAt
-
     captureException(err)
   }
 }
