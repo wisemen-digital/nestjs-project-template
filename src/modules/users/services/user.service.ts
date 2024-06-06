@@ -23,6 +23,9 @@ export class UserService {
     const result = await this.userTypesenseRepository.findPaginatedUuids(query)
     const users = await this.userRepository.findWithUuids(result.items)
 
+    console.log('users', users)
+    console.log('result', result)
+
     const sortedUsers = result.items.map(userUuid => {
       const user = users.find(user => user.uuid === userUuid)
       if (user === undefined) {

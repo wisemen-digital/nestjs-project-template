@@ -7,6 +7,7 @@ import { type DataSource } from 'typeorm'
 import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
+import { Permission } from '../../permissions/permission.enum.js'
 import { UserEntityBuilder } from './builders/entities/user-entity.builder.js'
 import { CreateUserDtoBuilder } from './builders/dtos/create-user-dto.builder.js'
 import { UserSeeder } from './seeders/user.seeder.js'
@@ -38,34 +39,34 @@ describe('Users', async () => {
       expect(response).toHaveStatus(401)
     })
 
-    // it('should return users', async () => {
-    //   const response = await request(app.getHttpServer())
-    //     .get('/users')
-    //     .set('Authorization', `Bearer ${adminUser.token}`)
+    it('should return users', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', `Bearer ${adminUser.token}`)
 
-    //   expect(response).toHaveStatus(200)
-    // })
+      expect(response).toHaveStatus(200)
+    })
 
-    // it('should return users paginated', async () => {
-    //   const response = await request(app.getHttpServer())
-    //     .get('/users')
-    //     .set('Authorization', `Bearer ${adminUser.token}`)
-    //     .query({
-    //       pagination: {
-    //         limit: 10,
-    //         offset: 0
-    //       },
-    //       'filter[permissions][0]': Permission.READ_ONLY
-    //     })
+    it('should return users paginated', async () => {
+      const response = await request(app.getHttpServer())
+        .get('/users')
+        .set('Authorization', `Bearer ${adminUser.token}`)
+        .query({
+          pagination: {
+            limit: 10,
+            offset: 0
+          },
+          'filter[permissions][0]': Permission.READ_ONLY
+        })
 
-    //   expect(response).toHaveStatus(200)
-    //   expect(response.body.items.length).toBe(1)
-    //   expect(response.body.meta.total).toBe(1)
-    //   expect(response.body.meta.limit).toBe(10)
-    //   expect(response.body.meta.offset).toBe(0)
-    //   expect(response.body.items[0].role.permissions).toContain(Permission.READ_ONLY)
-    //   expect(response.body.items[0].uuid).toBe(readonlyUser.user.uuid)
-    // })
+      expect(response).toHaveStatus(200)
+      expect(response.body.items.length).toBe(1)
+      expect(response.body.meta.total).toBe(1)
+      expect(response.body.meta.limit).toBe(10)
+      expect(response.body.meta.offset).toBe(0)
+      expect(response.body.items[0].role.permissions).toContain(Permission.READ_ONLY)
+      expect(response.body.items[0].uuid).toBe(readonlyUser.user.uuid)
+    })
   })
 
   describe('Get user', () => {
