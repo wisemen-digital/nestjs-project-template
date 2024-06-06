@@ -1,4 +1,4 @@
-import { Inject, Injectable, type OnModuleInit } from '@nestjs/common'
+import { Inject, Injectable, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common'
 import type PgBoss from 'pg-boss'
 import { ModuleRef } from '@nestjs/core'
 import { PgBossService } from '../../pgboss/services/pgboss.service.js'
@@ -7,7 +7,7 @@ import { JobFactory } from '../../pgboss/factories/job-factory.js'
 import { type JobSerialization } from '../../pgboss/types/job-serialization.type.js'
 
 @Injectable()
-export class WorkerService implements OnModuleInit {
+export class WorkerService implements OnModuleInit, OnModuleDestroy {
   constructor (
     @Inject('QUEUE_NAME') private readonly queue: QueueName,
     private readonly pgBossService: PgBossService,
@@ -20,6 +20,10 @@ export class WorkerService implements OnModuleInit {
         await this.handleJob(job)
       }
     )
+  }
+
+  public async onModuleDestroy (): Promise<void> {
+    await this.pgBossService.stopQueue()
   }
 
   private async handleJob (job: PgBoss.Job<JobSerialization<unknown>>): Promise<void> {
