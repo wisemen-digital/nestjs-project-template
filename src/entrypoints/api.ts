@@ -1,7 +1,6 @@
 import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { ValidationPipe, VersioningType } from '@nestjs/common'
-import { type ValidationError } from 'class-validator'
 import { AppModule } from '../app.module.js'
 import { HttpExceptionFilter } from '../utils/Exceptions/http-exception.filter.js'
 import { initSentry } from '../helpers/sentry.js'
@@ -10,7 +9,7 @@ async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(
     AppModule.forRoot()
   )
-  
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,

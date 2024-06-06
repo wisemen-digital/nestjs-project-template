@@ -14,9 +14,8 @@ async function bootstrap (): Promise<void> {
 
   const scheduler = app.get(PgBossService)
   const dataSource = app.get(DataSource)
-    
-  const job  = ImportTypesenseJob.create()
-  
+
+  const job = ImportTypesenseJob.create()
 
   await scheduler.scheduleJobs(dataSource.manager, [job])
 

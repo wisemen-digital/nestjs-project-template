@@ -1,8 +1,6 @@
 import { after, before, describe, it, mock } from 'node:test'
-import dayjs from 'dayjs'
 import { type TestingModule } from '@nestjs/testing'
 import { type INestApplication } from '@nestjs/common'
-import { type DataSource } from 'typeorm'
 import { expect } from 'expect'
 import { ImportTypesenseJob } from '../jobs/import-typesense.job.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
@@ -25,7 +23,6 @@ describe('Test import typesense job', () => {
     it('should migrate and import typesense', async () => {
       const spyImport = mock.method(TypesenseImportService.prototype, 'migrate', async () => { })
       const spyMigrate = mock.method(TypesenseImportService.prototype, 'import', async () => { })
-
 
       job = ImportTypesenseJob.create()
 
