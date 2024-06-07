@@ -38,4 +38,8 @@ export class PgBossService {
       await handler(job)
     })
   }
+
+  public async stopQueue (): Promise<void> {
+    await this.boss.stop()
+  }
 }
