@@ -19,8 +19,6 @@ import { FileModule } from './modules/files/modules/file.module.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
 import { PgBossModule } from './modules/pgboss/modules/pgboss.module.js'
 import { PgBossWorkerModule } from './modules/pgboss-worker/pgboss-worker.module.js'
-import { PgBossClientService } from './modules/pgboss/services/pgboss-client.service.js'
-import { PgBossService } from './modules/pgboss/services/pgboss.service.js'
 import { envValidationSchema } from './config/env/env.validation.js'
 
 @Module({})
