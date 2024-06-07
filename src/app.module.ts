@@ -79,9 +79,7 @@ export class AppModule {
         {
           provide: APP_INTERCEPTOR,
           useClass: ErrorsInterceptor
-        },
-        PgBossClientService,
-        PgBossService
+        }
       ]
     }
   }

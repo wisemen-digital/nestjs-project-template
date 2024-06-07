@@ -41,6 +41,8 @@ async function bootstrap (): Promise<void> {
 
   initSentry()
 
+  app.enableShutdownHooks()
+
   await app.listen(3000)
 }
 
