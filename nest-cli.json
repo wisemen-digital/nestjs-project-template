@@ -5,5 +5,28 @@
   "compilerOptions": {
     "assets": [{ "include": "**/*.mjml", "outDir": "dist/src"}],
     "deleteOutDir": true
+  },
+  "monorepo": true,
+  "root": "src",
+  "entryFile": "entrypoints/api",
+  "projects": {
+    "api": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/api",
+      "sourceRoot": "src"
+    },
+    "pgbossWorker": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/pgboss-worker",
+      "sourceRoot": "src"
+    },
+    "importTypesenseCronjob": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/cronjobs/import-typesense.cronjob",
+      "sourceRoot": "src"
+    }
   }
 }

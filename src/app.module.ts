@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common'
+import { type DynamicModule, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
@@ -17,48 +17,68 @@ import configuration from './config/env/configuration.js'
 import { StatusModule } from './modules/status/modules/status.module.js'
 import { FileModule } from './modules/files/modules/file.module.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
+import { PgBossModule } from './modules/pgboss/modules/pgboss.module.js'
+import { PgBossWorkerModule } from './modules/pgboss-worker/pgboss-worker.module.js'
+import { envValidationSchema } from './config/env/env.validation.js'
 
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      envFilePath: process.env.ENV_FILE,
-      load: [configuration]
-    }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      url: process.env.TYPEORM_URI,
-      ssl: sslHelper(process.env.TYPEORM_SSL),
-      extra: { max: 50 },
-      logging: false,
-      synchronize: false,
-      migrations: mainMigrations,
-      migrationsRun: true,
-      autoLoadEntities: true
-    }),
-    AuthModule,
-    TypesenseModule,
-    UserModule,
-    MailModule,
-    RoleModule,
-    PermissionModule,
-    RedisCacheModule,
-    StatusModule,
-    FileModule
-  ],
-  controllers: [],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard
-    },
-    {
-      provide: APP_GUARD,
-      useClass: PermissionsGuard
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: ErrorsInterceptor
+@Module({})
+export class AppModule {
+  static forRoot (
+    modules: DynamicModule[] = []
+  ): DynamicModule {
+    return {
+      module: AppModule,
+      imports: [
+        ConfigModule.forRoot({
+          envFilePath: process.env.ENV_FILE,
+          load: [configuration],
+          validationSchema: envValidationSchema
+        }),
+        TypeOrmModule.forRoot({
+          type: 'postgres',
+          url: process.env.DATABASE_URI,
+          ssl: sslHelper(process.env.DATABASE_SSL),
+          extra: { max: 50 },
+          logging: false,
+          synchronize: false,
+          migrations: mainMigrations,
+          migrationsRun: true,
+          autoLoadEntities: true
+        }),
+        // Auth
+        AuthModule,
+        UserModule,
+        RoleModule,
+        PermissionModule,
+
+        // PG Boss
+        PgBossModule,
+        PgBossWorkerModule,
+
+        // Utils
+        MailModule,
+        RedisCacheModule,
+        TypesenseModule,
+        FileModule,
+        StatusModule,
+
+        ...modules
+      ],
+      controllers: [],
+      providers: [
+        {
+          provide: APP_GUARD,
+          useClass: AuthGuard
+        },
+        {
+          provide: APP_GUARD,
+          useClass: PermissionsGuard
+        },
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: ErrorsInterceptor
+        }
+      ]
     }
-  ]
-})
-export class AppModule {}
+  }
+}
