@@ -40,8 +40,6 @@ export class PgBossService {
   }
 
   public async stopQueue (): Promise<void> {
-    await this.boss.stop({
-      destroy: true
-    })
+    await this.boss.stop()
   }
 }

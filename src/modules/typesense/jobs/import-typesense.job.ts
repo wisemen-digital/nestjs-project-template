@@ -1,6 +1,5 @@
 import { type ModuleRef } from '@nestjs/core'
 import { type TestingModule } from '@nestjs/testing'
-import { randUuid } from '@ngneat/falso'
 import { DataSource } from 'typeorm'
 import { QueueName } from '../../pgboss/types/queue-name.enum.js'
 import { PgBossJob } from '../../pgboss/jobs/pgboss.job.js'
@@ -10,10 +9,9 @@ import { TypesenseAliasName } from '../collections/typesense.collections.js'
 export class ImportTypesenseJob extends PgBossJob {
   protected readonly queueName = QueueName.TYPESENSE
 
-  public readonly workOrderUuid: string
-
+  private readonly _uniqueBy: string = 'typesense-import'
   protected get uniqueBy (): string {
-    return `typesense-${randUuid()}`
+    return this._uniqueBy
   }
 
   async run (moduleRef: ModuleRef | TestingModule): Promise<void> {
