@@ -3,6 +3,7 @@ import { SECONDS_PER_MINUTE } from '@appwise/time'
 import { plainToInstance } from 'class-transformer'
 import { captureException } from '@sentry/node'
 import dayjs from 'dayjs'
+import colors from 'colors'
 import { type ModuleRef } from '@nestjs/core'
 import { type TestingModule } from '@nestjs/testing'
 import { type JobSerialization } from '../types/job-serialization.type.js'
@@ -117,10 +118,24 @@ export abstract class PgBossJob <T = void> {
 
   protected logSuccess (): void {
     if (this.startedAt == null) throw Error('Job has not been started yet')
+    const executionTime = Date.now() - this.startedAt
+
+    // eslint-disable-next-line no-console
+    console.info(colors.blue(this.getName()), 'succeeded', `(${executionTime}ms)`)
   }
 
   protected logFailure (err: Error): void {
     if (this.startedAt == null) throw Error('Job has not been started yet')
+    const executionTime = Date.now() - this.startedAt
+
     captureException(err)
+
+    // eslint-disable-next-line no-console
+    console.error(
+      colors.blue(this.getName()),
+      'failed with error:',
+      colors.red(`${err.name}: ${err.message}`),
+      `(${executionTime}ms)`
+    )
   }
 }
