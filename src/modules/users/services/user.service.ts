@@ -1,29 +1,17 @@
 import bcrypt from 'bcryptjs'
 import { Injectable } from '@nestjs/common'
-import { DataSource } from 'typeorm'
 import { type CreateUserDto } from '../dtos/create-user.dto.js'
 import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { KnownError } from '../../../utils/Exceptions/errors.js'
-import { PgBossService } from '../../pgboss/services/pgboss.service.js'
-import { UserTypesenseJob } from '../jobs/user-typesense.job.js'
 
 @Injectable()
 export class UserService {
   constructor (
-    private readonly dataSource: DataSource,
-    private readonly userRepository: UserRepository,
-    private readonly pgBossService: PgBossService
+    private readonly userRepository: UserRepository
   ) {}
-
-  async onApplicationBootstrap (): Promise<void> {
-    // TODO: DELETE THIS FUNCTION IS FOR TEST PURPOSES
-    await this.pgBossService.scheduleJobs(this.dataSource.manager, [
-      UserTypesenseJob.create()
-    ])
-  }
 
   async findAll (): Promise<User[]> {
     return await this.userRepository.find()
@@ -62,11 +50,6 @@ export class UserService {
     const user = this.userRepository.create(dto)
 
     user.password = await bcrypt.hash(dto.password, 10)
-
-    await this.pgBossService.scheduleJobs(
-      this.dataSource.manager,
-      [UserTypesenseJob.create()]
-    )
 
     return await this.userRepository.save(user)
   }
