@@ -7,7 +7,10 @@ import { UserRepository } from '../repositories/user.repository.js'
 import { RedisCacheModule } from '../../../utils/cache/cache.module.js'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), RedisCacheModule],
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    RedisCacheModule
+  ],
   controllers: [UserController],
   providers: [
     UserService,

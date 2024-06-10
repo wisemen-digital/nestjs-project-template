@@ -6,7 +6,6 @@ import { AuthGuard } from './modules/auth/guards/auth.guard.js'
 import { AuthModule } from './modules/auth/modules/auth.module.js'
 import { PermissionsGuard } from './modules/permissions/permissions.guard.js'
 import { UserModule } from './modules/users/modules/user.module.js'
-import { ErrorsInterceptor } from './errors.interceptor.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
 import { TypesenseModule } from './modules/typesense/modules/typesense.module.js'
 import { MailModule } from './modules/mail/modules/mail.module.js'
@@ -17,8 +16,8 @@ import configuration from './config/env/configuration.js'
 import { StatusModule } from './modules/status/modules/status.module.js'
 import { FileModule } from './modules/files/modules/file.module.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
+import { ErrorsInterceptor } from './utils/Exceptions/errors.interceptor.js'
 import { PgBossModule } from './modules/pgboss/modules/pgboss.module.js'
-import { PgBossWorkerModule } from './modules/pgboss-worker/pgboss-worker.module.js'
 import { envValidationSchema } from './config/env/env.validation.js'
 
 @Module({})
@@ -45,6 +44,7 @@ export class AppModule {
           migrationsRun: true,
           autoLoadEntities: true
         }),
+
         // Auth
         AuthModule,
         UserModule,
@@ -52,8 +52,7 @@ export class AppModule {
         PermissionModule,
 
         // PG Boss
-        PgBossModule,
-        PgBossWorkerModule,
+        PgBossModule.forRoot(),
 
         // Utils
         MailModule,
