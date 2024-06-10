@@ -20,6 +20,12 @@
       "entryFile": "entrypoints/api",
       "sourceRoot": "src"
     },
+    "wss": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/wss",
+      "sourceRoot": "src"
+    },
     "worker": {
       "type": "application",
       "root": "src",
