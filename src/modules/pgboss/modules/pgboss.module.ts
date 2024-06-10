@@ -1,12 +1,12 @@
 import { type DynamicModule } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { PgBossService } from './services/pgboss.service.js'
-import { Job } from './entities/job.entity.js'
-import { ArchivedJob } from './entities/archive.entity.js'
-import { PgBossClientService } from './services/pgboss-client.service.js'
-import { JobFactory } from './factories/job-factory.js'
-import { type JobConstructor } from './jobs/pgboss.job.js'
+import { ArchivedJob } from '../entities/archive.entity.js'
+import { Job } from '../entities/job.entity.js'
+import { JobFactory } from '../factories/job-factory.js'
+import { type JobConstructor } from '../jobs/pgboss.job.js'
+import { PgBossClientService } from '../services/pgboss-client.service.js'
+import { PgBossService } from '../services/pgboss.service.js'
 
 export class PgBossModule {
   static forRoot (): DynamicModule {

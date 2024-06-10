@@ -37,7 +37,7 @@ export async function globalTestSetup (): Promise<SetupTestResponse> {
 
   const moduleRef = await Test.createTestingModule({
     imports: [
-      AppModule
+      AppModule.forRoot()
     ]
   }).compile()
 

@@ -16,8 +16,9 @@ import configuration from './config/env/configuration.js'
 import { StatusModule } from './modules/status/modules/status.module.js'
 import { FileModule } from './modules/files/modules/file.module.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
-import { PgBossModule } from './modules/pgboss/pgboss.module.js'
 import { ErrorsInterceptor } from './utils/Exceptions/errors.interceptor.js'
+import { PgBossModule } from './modules/pgboss/modules/pgboss.module.js'
+import { envValidationSchema } from './config/env/env.validation.js'
 
 @Module({})
 export class AppModule {
@@ -29,12 +30,13 @@ export class AppModule {
       imports: [
         ConfigModule.forRoot({
           envFilePath: process.env.ENV_FILE,
-          load: [configuration]
+          load: [configuration],
+          validationSchema: envValidationSchema
         }),
         TypeOrmModule.forRoot({
           type: 'postgres',
-          url: process.env.TYPEORM_URI,
-          ssl: sslHelper(process.env.TYPEORM_SSL),
+          url: process.env.DATABASE_URI,
+          ssl: sslHelper(process.env.DATABASE_SSL),
           extra: { max: 50 },
           logging: false,
           synchronize: false,
@@ -42,16 +44,23 @@ export class AppModule {
           migrationsRun: true,
           autoLoadEntities: true
         }),
+
+        // Auth
         AuthModule,
-        TypesenseModule,
         UserModule,
-        MailModule,
         RoleModule,
         PermissionModule,
-        RedisCacheModule,
-        StatusModule,
-        FileModule,
+
+        // PG Boss
         PgBossModule.forRoot(),
+
+        // Utils
+        MailModule,
+        RedisCacheModule,
+        TypesenseModule,
+        FileModule,
+        StatusModule,
+
         ...modules
       ],
       controllers: [],

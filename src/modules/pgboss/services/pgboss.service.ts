@@ -10,21 +10,24 @@ export class PgBossService {
     private readonly boss: PgBossClientService
   ) {}
 
-  public async scheduleJob (
-    name: string,
-    data: object,
-    options?: PgBoss.SendOptions
-  ): Promise<string | null> {
-    return await this.boss.send(name, data, options ?? {})
-  }
-
   public async scheduleJobs <T extends PgBossJob> (
-    _manager: EntityManager,
+    manager: EntityManager,
     jobs: T[]
   ): Promise<void> {
-    await this.boss.insert(
-      jobs.map(job => job.serialize())
-    )
+    const options: PgBoss.ConnectionOptions = {
+      db: {
+        async executeSql (text, values) {
+          const result = await manager.query(text, values)
+
+          return {
+            rows: result,
+            rowCount: result.length
+          }
+        }
+      }
+    }
+
+    await this.boss.insert(jobs.map(job => job.serialize()), options)
   }
 
   public async runQueue (

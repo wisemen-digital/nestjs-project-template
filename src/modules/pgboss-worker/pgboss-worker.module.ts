@@ -1,6 +1,6 @@
 import { type DynamicModule, Module } from '@nestjs/common'
 import { type QueueName } from '../pgboss/types/queue-name.enum.js'
-import { PgBossModule } from '../pgboss/pgboss.module.js'
+import { PgBossModule } from '../pgboss/modules/pgboss.module.js'
 import { WorkerService } from './services/worker.service.js'
 
 @Module({})

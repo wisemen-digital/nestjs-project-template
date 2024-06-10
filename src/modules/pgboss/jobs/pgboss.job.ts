@@ -2,8 +2,10 @@ import { type JobInsert, type Job } from 'pg-boss'
 import { SECONDS_PER_MINUTE } from '@appwise/time'
 import { plainToInstance } from 'class-transformer'
 import { captureException } from '@sentry/node'
-import colors from 'colors'
 import dayjs from 'dayjs'
+import colors from 'colors'
+import { type ModuleRef } from '@nestjs/core'
+import { type TestingModule } from '@nestjs/testing'
 import { type JobSerialization } from '../types/job-serialization.type.js'
 import { type QueueName } from '../types/queue-name.enum.js'
 
@@ -51,13 +53,13 @@ export abstract class PgBossJob <T = void> {
     return undefined
   }
 
-  async execute (): Promise<T> {
+  async execute (moduleRef: ModuleRef | TestingModule): Promise<T> {
     this.startedAt = Date.now()
 
     this.logStart()
 
     try {
-      const result = await this.run()
+      const result = await this.run(moduleRef)
 
       this.logSuccess()
 
@@ -68,7 +70,7 @@ export abstract class PgBossJob <T = void> {
     }
   }
 
-  abstract run (): Promise<T>
+  abstract run (moduleRef: ModuleRef | TestingModule): Promise<T>
 
   async onComplete (_completedJob: CompletedJob): Promise<void> {
     throw new Error('Method not implemented.')

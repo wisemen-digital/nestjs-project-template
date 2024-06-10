@@ -1,3 +1,4 @@
 export enum QueueName {
-  SYSTEM = 'system'
+  SYSTEM = 'system',
+  TYPESENSE = 'typesense'
 }

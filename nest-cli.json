@@ -3,6 +3,7 @@
   "collection": "@nestjs/schematics",
   "monorepo": true,
   "root": "src",
+  "entryFile": "entrypoints/api",
   "compilerOptions": {
     "assets": [
       {
@@ -23,6 +24,18 @@
       "type": "application",
       "root": "src",
       "entryFile": "entrypoints/worker",
+      "sourceRoot": "src"
+    },
+    "pgbossWorker": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/pgboss-worker",
+      "sourceRoot": "src"
+    },
+    "importTypesenseCronjob": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/cronjobs/import-typesense.cronjob",
       "sourceRoot": "src"
     }
   }
