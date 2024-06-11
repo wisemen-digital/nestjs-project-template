@@ -1,10 +1,9 @@
 import { Transformer } from '@appwise/transformer'
 import { ApiProperty } from '@nestjs/swagger'
-import { plainToInstance } from 'class-transformer'
 import { type File } from '../entities/file.entity.js'
 import { MimeType } from '../enums/mime-type.enum.js'
 
-export class CreateFileResponseTransformerType {
+export class CreateFileResponse {
   @ApiProperty({ type: 'string', format: 'uuid' })
   uuid: string
 
@@ -19,13 +18,13 @@ export class CreateFileResponseTransformerType {
 }
 
 export class CreateFileResponseTransformer
-  extends Transformer<File, CreateFileResponseTransformerType> {
-  transform (file: File, uploadUrl: string): CreateFileResponseTransformerType {
-    return plainToInstance(CreateFileResponseTransformerType, {
+  extends Transformer<File, CreateFileResponse> {
+  transform (file: File, uploadUrl: string): CreateFileResponse {
+    return {
       uuid: file.uuid,
       name: file.name,
       mimeType: file.mimeType,
       uploadUrl
-    })
+    }
   }
 }
