@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { ExpectationResult, MatcherFunction } from 'expect'
-import { type knownErrors } from '../../src/utils/Exceptions/errors.js'
+import { type knownErrors } from '../../src/utils/exceptions/errors.js'
 
 export const toHaveErrorCode: MatcherFunction<[code: keyof typeof knownErrors]> = function (
   response: { status?: unknown, body?: { errors?: Array<{ code?: unknown }> } },
