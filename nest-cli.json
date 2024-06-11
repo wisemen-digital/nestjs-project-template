@@ -1,9 +1,36 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "src",
+  "monorepo": true,
+  "root": "src",
+  "entryFile": "entrypoints/api",
   "compilerOptions": {
-    "assets": [{ "include": "**/*.mjml", "outDir": "dist/src"}],
+    "assets": [
+      {
+        "include": "**/*.mjml",
+        "outDir": "dist/src"
+      }
+    ],
     "deleteOutDir": true
+  },
+  "projects": {
+    "api": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/api",
+      "sourceRoot": "src"
+    },
+    "worker": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/pgboss-worker",
+      "sourceRoot": "src"
+    },
+    "import-typesense-cronjob": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/cronjobs/import-typesense.cronjob",
+      "sourceRoot": "src"
+    }
   }
 }
