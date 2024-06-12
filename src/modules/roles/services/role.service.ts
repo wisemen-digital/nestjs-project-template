@@ -4,7 +4,7 @@ import { RoleRepository } from '../repositories/role.repository.js'
 import { type Role } from '../entities/role.entity.js'
 import { type CreateRoleDto } from '../dtos/create-role.dto.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
+import { KnownError } from '../../../utils/exception/errors.js'
 import { RedisCacheService } from '../../../utils/cache/cache.js'
 import { type UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
 
