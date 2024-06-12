@@ -5,7 +5,7 @@ import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
-import { KnownError } from '../../../utils/exception/errors.js'
+import { KnownError } from '../../../utils/exceptions/errors.js'
 
 @Injectable()
 export class UserService {
