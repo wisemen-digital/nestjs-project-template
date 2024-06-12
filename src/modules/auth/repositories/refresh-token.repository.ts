@@ -1,10 +1,11 @@
-import { EntityManager, Repository } from 'typeorm'
+import { EntityManager } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { InjectEntityManager } from '@nestjs/typeorm'
 import { RefreshToken } from '../entities/refreshtoken.entity.js'
+import { TypeOrmRepository } from '../../typeorm/utils/transaction.js'
 
 @Injectable()
-export class RefreshTokenRepository extends Repository<RefreshToken> {
+export class RefreshTokenRepository extends TypeOrmRepository<RefreshToken> {
   constructor (@InjectEntityManager() entityManager: EntityManager) {
     super(RefreshToken, entityManager)
   }
