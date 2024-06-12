@@ -27,6 +27,10 @@ describe('File', async () => {
     adminUser = await context.getAdminUser()
   })
 
+  after(async () => {
+    await app.close()
+  })
+
   describe('Create file', () => {
     it('should return 401 when creating a file without a token', async () => {
       const response = await request(app.getHttpServer())
@@ -103,9 +107,5 @@ describe('File', async () => {
 
       expect(response).toHaveStatus(200)
     })
-  })
-
-  after(async () => {
-    await app.close()
   })
 })
