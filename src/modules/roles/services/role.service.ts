@@ -4,9 +4,10 @@ import { RoleRepository } from '../repositories/role.repository.js'
 import { type Role } from '../entities/role.entity.js'
 import { type CreateRoleDto } from '../dtos/create-role.dto.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
-import { KnownError } from '../../../utils/Exceptions/errors.js'
+import { KnownError } from '../../../utils/exceptions/errors.js'
 import { RedisCacheService } from '../../../utils/cache/cache.js'
 import { type UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
+import { transaction } from '../../typeorm/utils/transaction.js'
 
 @Injectable()
 export class RoleService {
@@ -52,9 +53,7 @@ export class RoleService {
   }
 
   async updateBulk (dto: UpdateRolesBulkDto): Promise<Role[]> {
-    await this.dataSource.transaction(async manager => {
-      return await new RoleRepository(manager).upsert(dto.roles, { conflictPaths: { uuid: true } })
-    })
+    await this.roleRepository.upsert(dto.roles, { conflictPaths: { uuid: true } })
 
     await this.cache.clearRolePermissions()
 
@@ -78,15 +77,18 @@ export class RoleService {
       where: { roleUuid: role.uuid }
     })
 
-    await this.dataSource.transaction(async manager => {
-      await Promise.all(users.map(async user => {
+    await transaction(this.dataSource, async () => {
+      await this.userRepository.update({
+        roleUuid: uuid
+      }, {
+        roleUuid: readOnlyRole.uuid
+      })
+
+      users.forEach(user => {
         user.roleUuid = readOnlyRole.uuid
+      })
 
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        new UserRepository(manager).update({ roleUuid: uuid }, { roleUuid: readOnlyRole.uuid })
-      }))
-
-      await manager.remove(role)
+      await this.roleRepository.remove(role)
     })
 
     await this.cache.clearRolePermissions(uuid)

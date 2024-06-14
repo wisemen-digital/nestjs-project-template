@@ -10,6 +10,7 @@ import { File } from '../entities/file.entity.js'
 import { FileLink } from '../entities/file-link.entity.js'
 import { FileLinkRepository } from '../repositories/file-link.repository.js'
 import { FileLinkService } from '../services/file-link.service.js'
+import { FileFlowService } from '../services/file.flows.service.js'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { FileLinkService } from '../services/file-link.service.js'
   providers: [
     FileRepository,
     FileLinkRepository,
+    FileFlowService,
     FileService,
     FileLinkService,
     S3Service
@@ -32,8 +34,7 @@ import { FileLinkService } from '../services/file-link.service.js'
     // RemoveUnusedMediaCron
   ],
   exports: [
-    FileService,
-    FileLinkService
+    FileFlowService
   ]
 })
 export class FileModule {}

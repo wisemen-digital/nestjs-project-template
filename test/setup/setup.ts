@@ -5,7 +5,7 @@ import { HttpAdapterHost } from '@nestjs/core'
 import { Test, type TestingModule } from '@nestjs/testing'
 import { expect } from 'expect'
 import { AppModule } from '../../src/app.module.js'
-import { HttpExceptionFilter } from '../../src/utils/Exceptions/http-exception.filter.js'
+import { HttpExceptionFilter } from '../../src/utils/exceptions/http-exception.filter.js'
 import { uuid } from '../expect/expectUuid.js'
 import { toHaveErrorCode } from '../expect/expectErrorCode.js'
 import { toHaveStatus } from '../expect/expectStatus.js'
@@ -37,7 +37,7 @@ export async function globalTestSetup (): Promise<SetupTestResponse> {
 
   const moduleRef = await Test.createTestingModule({
     imports: [
-      AppModule
+      AppModule.forRoot()
     ]
   }).compile()
 

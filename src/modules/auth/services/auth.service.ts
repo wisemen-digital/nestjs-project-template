@@ -4,7 +4,6 @@ import { type Response } from 'express'
 import { UserService } from '../../users/services/user.service.js'
 import { type AccessTokenInterface } from '../entities/accesstoken.entity.js'
 import { type Request } from '../guards/auth.guard.js'
-import { UserRepository } from '../../users/repositories/user.repository.js'
 import { type User } from '../../users/entities/user.entity.js'
 import { ClientService, scopes } from './client.service.js'
 import { TokenService } from './token.service.js'
@@ -16,8 +15,7 @@ export class AuthService {
   constructor (
     private readonly userService: UserService,
     private readonly clientService: ClientService,
-    private readonly tokenService: TokenService,
-    private readonly userRepository: UserRepository
+    private readonly tokenService: TokenService
   ) {
     this.oauth = createOAuth2({
       scopes,
@@ -41,7 +39,8 @@ export class AuthService {
   }
 
   async getUserInfo (req: Request): Promise<User> {
-    return await this.userRepository.findOneOrFail({ where: { uuid: req.auth.user.uuid } })
+    const userUuid = req.auth.user.uuid
+    return await this.userService.findOne(userUuid)
   }
 
   public async authenticate (req: Request, res: Response): Promise<AccessTokenInterface> {

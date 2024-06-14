@@ -8,9 +8,14 @@ import { TypesenseCollectorFactory } from '../services/collectors/typesense-coll
 import { UserTypesenseCollector } from '../services/collectors/user-typesense.collector.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { TypesenseClient } from '../clients/typesense.client.js'
+import { PgBossModule } from '../../pgboss/modules/pgboss.module.js'
+import { ImportTypesenseJob } from '../jobs/import-typesense.job.js'
 
 @Module({
   controllers: [TypesenseController],
+  imports: [
+    PgBossModule.forFeature([ImportTypesenseJob])
+  ],
   providers: [
     TypesenseClient,
     TypesenseQueryService,

@@ -1,10 +1,18 @@
 import { type Readable } from 'stream'
-import { DeleteObjectCommand, GetObjectCommand, ListObjectsV2Command, type ListObjectsV2Output, PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  ListObjectsV2Command,
+  type ListObjectsV2Output,
+  PutObjectCommand,
+  S3Client
+} from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Upload } from '@aws-sdk/lib-storage'
 import { type MimeType } from '../enums/mime-type.enum.js'
+import { type File } from '../entities/file.entity.js'
 
 @Injectable()
 export class S3Service {
@@ -29,7 +37,7 @@ export class S3Service {
   public async createTemporaryDownloadUrl (
     name: string,
     fileUuid: string,
-    mimeType?: MimeType,
+    mimeType?: MimeType | null,
     expiresInSeconds?: number
   ): Promise<string> {
     const command = new GetObjectCommand({
@@ -39,25 +47,33 @@ export class S3Service {
       ResponseContentDisposition: `attachment; filename=${name}`
     })
 
-    return await getSignedUrl(this.s3, command, { expiresIn: expiresInSeconds ?? 1800 })
+    const expiresIn = expiresInSeconds ?? 1800
+    return await getSignedUrl(this.s3, command, { expiresIn })
   }
 
   public async createTemporaryUploadUrl (
-    fileUuid: string,
-    mimeType: string,
-    expiresIn?: number
+    file: File,
+    expiresInSeconds?: number
   ): Promise<string> {
+    if (file.mimeType == null) {
+      throw new Error('File MIME type is required')
+    }
+
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
-      Key: this.createKey(fileUuid),
-      ContentType: mimeType,
+      Key: this.createKey(file.uuid),
+      ContentType: file.mimeType,
       ACL: 'private'
     })
 
-    return await getSignedUrl(this.s3, command, { expiresIn: expiresIn ?? 180 })
+    const expiresIn = expiresInSeconds ?? 180
+    return await getSignedUrl(this.s3, command, { expiresIn })
   }
 
-  public async upload (fileUuid: string, content: Buffer): Promise<void> {
+  public async upload (
+    fileUuid: string,
+    content: Buffer
+  ): Promise<void> {
     const command = new PutObjectCommand({
       Bucket: this.bucketName,
       Key: this.createKey(fileUuid),
@@ -68,7 +84,10 @@ export class S3Service {
     await this.s3.send(command)
   }
 
-  public async uploadStream (fileUuid: string, stream: Readable): Promise<void> {
+  public async uploadStream (
+    fileUuid: string,
+    stream: Readable
+  ): Promise<void> {
     const parallelUploads = new Upload({
       client: this.s3,
       params: {
@@ -84,18 +103,21 @@ export class S3Service {
     await parallelUploads.done()
   }
 
-  public async list (fileUuid: string): Promise<ListObjectsV2Output['Contents']> {
+  public async list (
+    fileUuid: string
+  ): Promise<ListObjectsV2Output['Contents']> {
     const command = new ListObjectsV2Command({
       Bucket: this.bucketName,
       Prefix: this.createKey(fileUuid)
     })
 
     const result = await this.s3.send(command)
-
     return result.Contents
   }
 
-  public async delete (fileUuid: string): Promise<void> {
+  public async delete (
+    fileUuid: string
+  ): Promise<void> {
     const command = new DeleteObjectCommand({
       Bucket: this.bucketName,
       Key: this.createKey(fileUuid)
@@ -108,9 +130,10 @@ export class S3Service {
     return this.configService.getOrThrow('S3_BUCKET')
   }
 
-  private createKey (fileUuid: string): string {
+  private createKey (
+    fileUuid: string
+  ): string {
     const env = this.configService.get('NODE_ENV', 'local')
-
     return `${env}/${fileUuid}`
   }
 }

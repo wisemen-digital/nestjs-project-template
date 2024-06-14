@@ -8,7 +8,10 @@ import { RoleService } from './services/role.service.js'
 import { RoleRepository } from './repositories/role.repository.js'
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Role]), RedisCacheModule],
+  imports: [
+    TypeOrmModule.forFeature([Role]),
+    RedisCacheModule
+  ],
   controllers: [RoleController],
   providers: [RoleService, RoleRepository, UserRepository],
   exports: [RoleService]
