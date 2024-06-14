@@ -40,7 +40,7 @@
     "@ngneat/falso": "^7.1.0",
     "@sentry/node": "^7.91.0",
     "@sentry/tracing": "^7.91.0",
-    "axios": "^1.6.7",
+    "axios": "^1.6.8",
     "bcryptjs": "^2.4.3",
     "cache-manager": "^5.4.0",
     "cache-manager-redis-store": "^3.0.1",

@@ -63,8 +63,8 @@ dependencies:
     specifier: ^7.91.0
     version: 7.91.0
   axios:
-    specifier: ^1.6.7
-    version: 1.6.7
+    specifier: ^1.6.8
+    version: 1.6.8
   bcryptjs:
     specifier: ^2.4.3
     version: 2.4.3
@@ -334,7 +334,7 @@ packages:
     dependencies:
       '@azure/msal-node': 1.18.3
       '@node-oauth/oauth2-server': 4.3.3
-      axios: 1.6.7
+      axios: 1.6.8
       jose: 4.15.5
       jsonwebtoken: 9.0.2
     transitivePeerDependencies:
@@ -4698,8 +4698,8 @@ packages:
       - debug
     dev: false
 
-  /axios@1.6.7:
-    resolution: {integrity: sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==}
+  /axios@1.6.8:
+    resolution: {integrity: sha512-v/ZHtJDU39mDpyBoFVkETcd/uNdxrWRrg3bKpOKzXFA6Bvqopts6ALSMU3y6ijYxbw2B+wPrIv46egTzJXCLGQ==}
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
