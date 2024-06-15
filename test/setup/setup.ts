@@ -68,7 +68,6 @@ export async function globalTestSetup (): Promise<SetupTestResponse> {
 
   const dataSource = moduleRef.get(DataSource)
   await setupTest(dataSource)
-  await migrateTypesense(moduleRef)
 
   return { app, moduleRef, dataSource }
 }

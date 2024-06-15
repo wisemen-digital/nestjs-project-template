@@ -6,7 +6,7 @@ import { randEmail, randUuid } from '@ngneat/falso'
 import { type DataSource } from 'typeorm'
 import { type TestingModule } from '@nestjs/testing'
 import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
-import { globalTestSetup } from '../../../../test/setup/setup.js'
+import { globalTestSetup, migrateTypesense } from '../../../../test/setup/setup.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
@@ -33,6 +33,8 @@ describe('Users', async () => {
 
     adminUser = await context.getAdminUser()
     readonlyUser = await context.getReadonlyUser()
+
+    await migrateTypesense(moduleRef)
 
     const typesenseCollectionService = moduleRef.get(TypesenseCollectionService)
     await typesenseCollectionService.importManuallyToTypesense(
