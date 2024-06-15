@@ -12,4 +12,5 @@ jobs:
     uses: wisemen-digital/devops-github-actions/.github/workflows/node-build-and-test.yml@main
     if: github.event.pull_request.draft == false
     with:
+      test-typesense-enabled: true
       test-redis-enabled: true
