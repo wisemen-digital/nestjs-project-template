@@ -12,6 +12,7 @@ export class UserRepository extends TypeOrmRepository<User> {
   async findWithUuids (
     userUuids: string[]
   ): Promise<User[]> {
+    if (userUuids.length === 0) return []
     const usersQuery = this.createQueryBuilder('user')
       .leftJoinAndSelect('user.role', 'role')
       .andWhere('user.uuid IN (:...userUuids)', { userUuids })

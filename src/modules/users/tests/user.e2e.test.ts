@@ -4,10 +4,13 @@ import request from 'supertest'
 import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
 import { type DataSource } from 'typeorm'
+import { type TestingModule } from '@nestjs/testing'
 import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
 import { Permission } from '../../permissions/permission.enum.js'
+import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
+import { TypesenseCollectionService } from '../../typesense/services/typesense-collection.service.js'
 import { UserEntityBuilder } from './builders/entities/user-entity.builder.js'
 import { CreateUserDtoBuilder } from './builders/dtos/create-user-dto.builder.js'
 import { UserSeeder } from './seeders/user.seeder.js'
@@ -15,6 +18,7 @@ import { type SetupUser } from './setup-user.type.js'
 
 describe('Users', async () => {
   let app: INestApplication
+  let moduleRef: TestingModule
   let dataSource: DataSource
 
   let context: TestContext
@@ -23,12 +27,18 @@ describe('Users', async () => {
   let readonlyUser: SetupUser
 
   before(async () => {
-    ({ app, dataSource } = await globalTestSetup())
+    ({ app, moduleRef, dataSource } = await globalTestSetup())
 
     context = new TestContext(dataSource.manager)
 
     adminUser = await context.getAdminUser()
     readonlyUser = await context.getReadonlyUser()
+
+    const typesenseCollectionService = moduleRef.get(TypesenseCollectionService)
+    await typesenseCollectionService.importManuallyToTypesense(
+      TypesenseCollectionName.USER,
+      [adminUser.user, readonlyUser.user]
+    )
   })
 
   describe('Get users', () => {
@@ -37,14 +47,6 @@ describe('Users', async () => {
         .get('/users')
 
       expect(response).toHaveStatus(401)
-    })
-
-    it('should return users', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/users')
-        .set('Authorization', `Bearer ${adminUser.token}`)
-
-      expect(response).toHaveStatus(200)
     })
 
     it('should return users paginated', async () => {

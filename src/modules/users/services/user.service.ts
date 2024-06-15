@@ -1,14 +1,14 @@
-import bcrypt from 'bcryptjs'
 import { Injectable } from '@nestjs/common'
 import { type CreateUserDto } from '../dtos/create-user.dto.js'
-import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { KnownError } from '../../../utils/exceptions/errors.js'
-import { type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
 import { type UserQuery } from '../queries/user.query.js'
 import { UserTypesenseRepository } from '../repositories/user-typesense.repository.js'
+import { createHash, validatePassword } from '../../../utils/helpers/hash.helper.js'
+import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
+import { sortEntitiesByUuids } from '../../../utils/helpers/sort-entities-by-uuids.helper.js'
 
 @Injectable()
 export class UserService {
@@ -19,101 +19,66 @@ export class UserService {
 
   async findPaginated (
     query: UserQuery
-  ): Promise<OffsetPaginatedResult<User>> {
-    const result = await this.userTypesenseRepository.findPaginatedUuids(query)
-    const users = await this.userRepository.findWithUuids(result.items)
+  ): Promise<[items: User[], count: number]> {
+    const [uuids, count] = await this.userTypesenseRepository.findPaginatedUuids(query)
+    const users = await this.userRepository.findWithUuids(uuids)
 
-    console.log('users', users)
-    console.log('result', result)
+    const sortedUsers = sortEntitiesByUuids(uuids, users)
 
-    const sortedUsers = result.items.map(userUuid => {
-      const user = users.find(user => user.uuid === userUuid)
-      if (user === undefined) {
-        throw new KnownError('not_found')
-      }
-      return user
-    })
-
-    return {
-      items: sortedUsers,
-      meta: result.meta
-    }
+    return [sortedUsers, count]
   }
 
-  async findOne (uuid: string): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { uuid } })
-
-    if (user == null) {
-      throw new KnownError('not_found')
-    }
-
-    return user
+  async findOneOrFail (uuid: string): Promise<User> {
+    return await this.userRepository.findOneOrFail({ where: { uuid } })
   }
 
   async findOneByEmail (email: string): Promise<User> {
-    if (email == null) throw new KnownError('missing_parameters')
-
-    email = email.toLowerCase()
-    const user = await this.userRepository.findOne({ where: { email } })
-
-    if (user == null) throw new KnownError('not_found')
-
-    return user
+    return await this.userRepository.findOneOrFail({
+      where: { email: email.toLowerCase() }
+    })
   }
 
-  async create (dto: CreateUserDto): Promise<User> {
+  async checkIfExists (email: string): Promise<void> {
     const exists = await this.userRepository.findOne({
-      where: { email: dto.email }
+      where: { email }
     })
 
     if (exists !== null) throw new KnownError('already_exists')
+  }
 
+  async create (dto: CreateUserDto): Promise<User> {
     dto.email = dto.email.toLowerCase()
-
+    await this.checkIfExists(dto.email)
+    dto.password = await createHash(dto.password)
     const user = this.userRepository.create(dto)
-
-    user.password = await bcrypt.hash(dto.password, 10)
 
     return await this.userRepository.save(user)
   }
 
-  async update (user: User, dto: UpdateUserDto): Promise<User> {
+  async update (userUuid: string, dto: UpdateUserDto): Promise<User> {
+    const user = await this.findOneOrFail(userUuid)
     Object.assign(user, dto)
 
     return await this.userRepository.save(user)
   }
 
-  async updatePassword (uuid: string, dto: UpdatePasswordDto): Promise<User> {
-    const user = await this.userRepository.preload({
-      uuid
-    })
+  async updatePassword (userUuid: string, dto: UpdatePasswordDto): Promise<User> {
+    const user = await this.findOneOrFail(userUuid)
+    await validatePassword(dto.oldPassword, user.password)
 
-    if (user === undefined) {
-      throw new KnownError('not_found')
-    }
-
-    const match = await bcrypt.compare(dto.oldPassword, user.password)
-
-    if (!match) {
-      throw new KnownError('invalid_credentials')
-    }
-
-    user.password = await bcrypt.hash(dto.password, 10)
-
-    return await this.userRepository.save(user)
+    await this.userRepository.update(user.uuid, { password: await createHash(dto.password) })
+    return user
   }
 
-  async delete (uuid: string): Promise<User> {
-    const user = await this.findOne(uuid)
+  async delete (userUuid: string): Promise<User> {
+    const user = await this.findOneOrFail(userUuid)
     return await this.userRepository.remove(user)
   }
 
   async verify (email: string, password: string): Promise<User | false> {
     try {
       const user = await this.findOneByEmail(email)
-      const match = await bcrypt.compare(password, user.password ?? '')
-
-      if (!match) return false
+      await validatePassword(password, user.password)
 
       return user
     } catch (e) {

@@ -4,7 +4,7 @@ import { type INestApplication } from '@nestjs/common'
 import { expect } from 'expect'
 import { ImportTypesenseJob } from '../jobs/import-typesense.job.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
-import { TypesenseImportService } from '../services/typesense-import.service.js'
+import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
 
 describe('Test import typesense job', () => {
   let app: INestApplication
@@ -21,8 +21,8 @@ describe('Test import typesense job', () => {
 
   describe('Test import typesense job', () => {
     it('should migrate and import typesense', async () => {
-      const spyImport = mock.method(TypesenseImportService.prototype, 'migrate', async () => { })
-      const spyMigrate = mock.method(TypesenseImportService.prototype, 'import', async () => { })
+      const spyImport = mock.method(TypesenseInitializationService.prototype, 'migrate', async () => { })
+      const spyMigrate = mock.method(TypesenseInitializationService.prototype, 'import', async () => { })
 
       job = ImportTypesenseJob.create()
 

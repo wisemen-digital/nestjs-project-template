@@ -7,6 +7,9 @@ class RoleValueDto {
   @IsUUID()
   uuid: string
 
+  @IsNotEmpty()
+  name: string
+
   @IsEnum(Permission, { each: true })
   @IsArray()
   permissions: Permission[]

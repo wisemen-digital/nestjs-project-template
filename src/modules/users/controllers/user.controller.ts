@@ -5,16 +5,18 @@ import { Permission } from '../../permissions/permission.enum.js'
 import { CreateUserDto } from '../dtos/create-user.dto.js'
 import { UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { UpdateUserDto } from '../dtos/update-user.dto.js'
-import { UserService } from '../services/user.service.js'
 import { UserTransformerType, UserTransformer } from '../transformers/user.transformer.js'
 import { UpdateUserGuard } from '../guards/user-update.guard.js'
 import { UserQuery } from '../queries/user.query.js'
-import { type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
+import { generatePaginatedResponse, type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
+import { UserFlowService } from '../services/user-flow.service.js'
 
 @ApiTags('User')
 @Controller('users')
 export class UserController {
-  constructor (private readonly userService: UserService) {}
+  constructor (
+    private readonly userFlowService: UserFlowService
+  ) {}
 
   @Post()
   @ApiResponse({
@@ -26,8 +28,7 @@ export class UserController {
   async createUser (
     @Body() createUserDto: CreateUserDto
   ): Promise<UserTransformerType> {
-    const user = await this.userService.create(createUserDto)
-
+    const user = await this.userFlowService.create(createUserDto)
     return new UserTransformer().item(user)
   }
 
@@ -41,12 +42,9 @@ export class UserController {
   async getUsers (
     @Query() query: UserQuery
   ): Promise<OffsetPaginatedResult<UserTransformerType>> {
-    const usersPaginated = await this.userService.findPaginated(query)
+    const [users, count] = await this.userFlowService.findPaginatedAndCount(query)
 
-    return {
-      items: new UserTransformer().array(usersPaginated.items),
-      meta: usersPaginated.meta
-    }
+    return generatePaginatedResponse(new UserTransformer(), users, count, query.pagination)
   }
 
   @Get(':user')
@@ -59,7 +57,7 @@ export class UserController {
   async getUser (
     @Param('user', ParseUUIDPipe) userUuid: string
   ): Promise<UserTransformerType> {
-    const user = await this.userService.findOne(userUuid)
+    const user = await this.userFlowService.findOneOrFail(userUuid)
 
     return new UserTransformer().item(user)
   }
@@ -75,11 +73,8 @@ export class UserController {
     @Param('user', ParseUUIDPipe) userUuid: string,
     @Body() updateUserDto: UpdateUserDto
   ): Promise<UserTransformerType> {
-    const user = await this.userService.findOne(userUuid)
-
-    await this.userService.update(user, updateUserDto)
-
-    return new UserTransformer().item(user)
+    const updatedUser = await this.userFlowService.update(userUuid, updateUserDto)
+    return new UserTransformer().item(updatedUser)
   }
 
   @Delete(':user')
@@ -91,9 +86,7 @@ export class UserController {
   async deleteUser (
     @Param('user', ParseUUIDPipe) userUuid: string
   ): Promise<void> {
-    const user = await this.userService.findOne(userUuid)
-
-    await this.userService.delete(user.uuid)
+    await this.userFlowService.delete(userUuid)
   }
 
   @Post(':user/password')
@@ -106,8 +99,6 @@ export class UserController {
     @Param('user', ParseUUIDPipe) userUuid: string,
     @Body() updatePasswordDto: UpdatePasswordDto
   ): Promise<void> {
-    const user = await this.userService.findOne(userUuid)
-
-    await this.userService.updatePassword(user.uuid, updatePasswordDto)
+    await this.userFlowService.updatePassword(userUuid, updatePasswordDto)
   }
 }

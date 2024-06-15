@@ -3,13 +3,16 @@ import { type FilterField, type SearchField, type TypesenseCollection, type Sort
 import { type SortDirection } from '../../../utils/query/sort-direction.enum.js'
 import { FilterOptions } from '../enums/typesense-filter-options.enum.js'
 
+export const DEFAULT_LIMIT = 10
+export const DEFAULT_OFFSET = 1
+
 export class TypesenseSearchParamsBuilder<Collection extends TypesenseCollection> {
   private readonly filters: string[] = []
   private queries: string[] = []
   private readonly sorting: string[] = []
   private query: string = ''
-  private offset: number = 1
-  private limit: number = 10
+  private offset: number = DEFAULT_OFFSET
+  private limit: number = DEFAULT_LIMIT
 
   constructor (private readonly collection: Collection) {}
 
@@ -23,7 +26,7 @@ export class TypesenseSearchParamsBuilder<Collection extends TypesenseCollection
 
   withOffset (offset: number | undefined): this {
     if (offset != null) {
-      this.offset = offset + 1
+      this.offset = offset
     }
 
     return this
@@ -80,8 +83,8 @@ export class TypesenseSearchParamsBuilder<Collection extends TypesenseCollection
       query_by: queryBy,
       filter_by: this.filters.join(' && '),
       sort_by: this.sorting.join(','),
-      page: this.offset,
-      per_page: this.limit
+      offset: this.offset,
+      limit: this.limit
     }
 
     return searchParams

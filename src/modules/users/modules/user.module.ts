@@ -5,9 +5,9 @@ import { UserService } from '../services/user.service.js'
 import { User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { RedisCacheModule } from '../../../utils/cache/cache.module.js'
-import { UserSubscriber } from '../subscribers/user.subscriber.js'
 import { UserTypesenseRepository } from '../repositories/user-typesense.repository.js'
 import { TypesenseModule } from '../../typesense/modules/typesense.module.js'
+import { UserFlowService } from '../services/user-flow.service.js'
 
 @Module({
   imports: [
@@ -19,8 +19,8 @@ import { TypesenseModule } from '../../typesense/modules/typesense.module.js'
   providers: [
     UserService,
     UserRepository,
-    UserSubscriber,
-    UserTypesenseRepository
+    UserTypesenseRepository,
+    UserFlowService
   ],
   exports: [UserService]
 })
