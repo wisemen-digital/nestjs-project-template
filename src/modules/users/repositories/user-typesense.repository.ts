@@ -5,6 +5,7 @@ import { TypesenseSearchParamsBuilder } from '../../typesense/builder/search-par
 import { UserTypesenseCollection } from '../../typesense/collections/user.collections.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import { type UserQuery } from '../queries/user.query.js'
+import { emptyFindUuidsResponse } from '../../typesense/types/empty-find-uuids.response.js'
 
 @Injectable()
 export class UserTypesenseRepository {
@@ -27,7 +28,7 @@ export class UserTypesenseRepository {
     )
 
     if ((userUuids != null && userUuids.length === 0) || userUuids == null) {
-      return [[], 0]
+      return emptyFindUuidsResponse
     }
 
     const count = typesenseSearchedValues[TypesenseCollectionName.USER]?.meta.total ?? 0
