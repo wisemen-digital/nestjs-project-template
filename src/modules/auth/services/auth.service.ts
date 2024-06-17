@@ -40,7 +40,7 @@ export class AuthService {
 
   async getUserInfo (req: Request): Promise<User> {
     const userUuid = req.auth.user.uuid
-    return await this.userService.findOne(userUuid)
+    return await this.userService.findOneOrFail(userUuid)
   }
 
   public async authenticate (req: Request, res: Response): Promise<AccessTokenInterface> {

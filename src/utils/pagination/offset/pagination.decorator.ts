@@ -2,27 +2,36 @@ import { applyDecorators, type Type } from '@nestjs/common'
 import { ApiExtraModels, ApiOkResponse, ApiProperty, getSchemaPath } from '@nestjs/swagger'
 import { IsArray } from 'class-validator'
 
-class PaginatedEntityMeta {
+class OffsetPaginatedEntityMeta {
   @ApiProperty()
   readonly total: number
+
+  @ApiProperty()
+  readonly offset: number
+
+  @ApiProperty()
+  readonly limit: number
 }
-class PaginatedEntity<T> {
+
+class OffsetPaginatedEntity<T> {
   @IsArray()
   @ApiProperty({ isArray: true })
   readonly items: T[]
 
-  @ApiProperty({ type: PaginatedEntityMeta })
-  readonly meta: PaginatedEntityMeta
+  @ApiProperty({ type: OffsetPaginatedEntityMeta })
+  readonly meta: OffsetPaginatedEntityMeta
 }
 
-export const PaginationResponse = <T extends Type<unknown>>(entityType: T): MethodDecorator => {
+export const ApiOffsetPaginatedResponse = <T extends Type<unknown>>(
+  entityType: T
+): MethodDecorator => {
   return applyDecorators(
-    ApiExtraModels(PaginatedEntity, entityType),
+    ApiExtraModels(OffsetPaginatedEntity, entityType),
     ApiOkResponse({
       description: 'pagination response',
       schema: {
         allOf: [
-          { $ref: getSchemaPath(PaginatedEntity) },
+          { $ref: getSchemaPath(OffsetPaginatedEntity) },
           {
             properties: {
               items: {
