@@ -48,4 +48,15 @@ export class UserFlowService {
     await this.userService.delete(userUuid)
     await this.typesenseService.deleteFromTypesense(TypesenseCollectionName.USER, userUuid)
   }
+
+  async updateRole (userUuid: string, roleUuid: string): Promise<User> {
+    const updatedUser = await this.userService.updateRole(userUuid, roleUuid)
+
+    await this.typesenseService.importManuallyToTypesense(
+      TypesenseCollectionName.USER,
+      [updatedUser]
+    )
+
+    return updatedUser
+  }
 }
