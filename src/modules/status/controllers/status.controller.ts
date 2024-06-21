@@ -15,4 +15,10 @@ export class StatusController {
       version: process.env.BUILD_NUMBER
     }
   }
+
+  @Get('/health')
+  @Public()
+  getHealthStatus (): { status: string } {
+    return { status: 'OK' }
+  }
 }
