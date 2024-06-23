@@ -22,8 +22,8 @@ export abstract class TypesenseCollection {
       field => ({
         name: field.name,
         type: field.type,
-        sort: field.optional,
-        sortable: field.sort
+        optional: field.optional,
+        sort: field.sort
       })
     )
     const filterFields: CollectionFieldSchema[] = this.filterableFields.map(
