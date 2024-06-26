@@ -36,6 +36,7 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^10.2.4",
     "@nestjs/platform-socket.io": "^10.3.9",
+    "@nestjs/platform-ws": "^10.3.9",
     "@nestjs/swagger": "^7.1.17",
     "@nestjs/typeorm": "^10.0.0",
     "@nestjs/websockets": "^10.3.9",
@@ -64,7 +65,8 @@
     "typeorm": "^0.3.17",
     "typesense": "^1.7.2",
     "uuid": "^9.0.0",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "ws": "^8.17.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.1.17",
