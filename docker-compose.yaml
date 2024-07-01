@@ -10,6 +10,16 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: test_db
 
+  typesense:
+    image: typesense/typesense:0.25.2
+    ports:
+      - '8108:8108'
+    volumes:
+      - ./.typesense:/data
+    environment:
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_API_KEY: api_key
+
   redis:
     image: redis
     ports:
