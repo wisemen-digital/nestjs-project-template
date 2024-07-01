@@ -10,6 +10,7 @@ import { UpdateUserGuard } from '../guards/user-update.guard.js'
 import { UserQuery } from '../queries/user.query.js'
 import { generatePaginatedResponse, type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
 import { UserFlowService } from '../services/user-flow.service.js'
+import { UpdateUserRoleDto } from '../dtos/update-user-role.dto.js'
 
 @ApiTags('User')
 @Controller('users')
@@ -100,5 +101,18 @@ export class UserController {
     @Body() updatePasswordDto: UpdatePasswordDto
   ): Promise<void> {
     await this.userFlowService.updatePassword(userUuid, updatePasswordDto)
+  }
+
+  @Post(':user/roles')
+  @ApiResponse({
+    status: 200,
+    description: 'The users role has been successfully updated.'
+  })
+  @Permissions(Permission.ADMIN)
+  async updateUserRole (
+    @Param('user', ParseUUIDPipe) userUuid: string,
+    @Body() dto: UpdateUserRoleDto
+  ): Promise<void> {
+    await this.userFlowService.updateRole(userUuid, dto.roleUuid)
   }
 }
