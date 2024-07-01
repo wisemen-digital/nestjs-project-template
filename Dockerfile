@@ -36,10 +36,8 @@ COPY --from=build --chown=nobody /app/package.json .
 COPY --from=build --chown=nobody /app/node_modules node_modules
 COPY --from=build --chown=nobody /app/dist dist
 
-ARG COMMIT
-ARG BUILD_NUMBER
-
-ENV COMMIT $COMMIT
+ENV BUILD_COMMIT $BUILD_COMMIT
 ENV BUILD_NUMBER $BUILD_NUMBER
+ENV BUILD_TIMESTAMP $BUILD_TIMESTAMP
 
 EXPOSE 3000
