@@ -24,7 +24,7 @@ export class IsBeforeTodayStringValidator implements ValidatorConstraintInterfac
 
     const formattedDate = dayjs(dateString, 'YYYY-MM-DD')
 
-    return formattedDate.isValid() && formattedDate.isBefore(dayjs())
+    return formattedDate.isValid() && formattedDate.isBefore(dayjs(), 'day')
   }
 
   defaultMessage (args: ValidationArguments): string {
