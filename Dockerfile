@@ -8,10 +8,6 @@ ARG NODE_VERSION=lts
 FROM node:${NODE_VERSION} as build
 RUN corepack enable
 
-ARG BUILD_COMMIT
-ARG BUILD_NUMBER
-ARG BUILD_TIMESTAMP
-
 # Install dependencies
 WORKDIR /app
 COPY package.json pnpm-lock.yaml tsconfig.json ./
@@ -35,6 +31,10 @@ WORKDIR /usr/src/app
 COPY --from=build --chown=nobody /app/package.json .
 COPY --from=build --chown=nobody /app/node_modules node_modules
 COPY --from=build --chown=nobody /app/dist dist
+
+ARG BUILD_COMMIT
+ARG BUILD_NUMBER
+ARG BUILD_TIMESTAMP
 
 ENV BUILD_COMMIT $BUILD_COMMIT
 ENV BUILD_NUMBER $BUILD_NUMBER
