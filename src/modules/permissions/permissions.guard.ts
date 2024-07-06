@@ -1,6 +1,6 @@
 import { Injectable, type CanActivate, type ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { NatsCacheService } from '../nats/nats-cache.service.js'
+import { CacheService } from '../cache/cache.service.js'
 import { Permission } from './permission.enum.js'
 import { PERMISSIONS_KEY } from './permissions.decorator.js'
 
@@ -8,7 +8,7 @@ import { PERMISSIONS_KEY } from './permissions.decorator.js'
 export class PermissionsGuard implements CanActivate {
   constructor (
     private readonly reflector: Reflector,
-    private readonly cache: NatsCacheService
+    private readonly cache: CacheService
   ) {}
 
   async canActivate (context: ExecutionContext): Promise<boolean> {

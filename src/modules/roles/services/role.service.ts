@@ -7,7 +7,7 @@ import { UserRepository } from '../../users/repositories/user.repository.js'
 import { KnownError } from '../../../utils/exceptions/errors.js'
 import { type UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
 import { transaction } from '../../typeorm/utils/transaction.js'
-import { NatsCacheService } from '../../nats/nats-cache.service.js'
+import { CacheService } from '../../cache/cache.service.js'
 
 @Injectable()
 export class RoleService {
@@ -15,7 +15,7 @@ export class RoleService {
     private readonly dataSource: DataSource,
     private readonly roleRepository: RoleRepository,
     private readonly userRepository: UserRepository,
-    private readonly cache: NatsCacheService
+    private readonly cache: CacheService
   ) {}
 
   async findAll (): Promise<Role[]> {

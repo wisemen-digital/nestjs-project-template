@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { RoleRepository } from '../roles/repositories/role.repository.js'
 import { UserRepository } from '../users/repositories/user.repository.js'
 import { Permission } from '../permissions/permission.enum.js'
-import { NatsClient } from './nats.client.js'
+import { RedisClient } from '../redis/redis.client.js'
 
 const prefix = `${process.env.NODE_ENV ?? 'local'}`
 
@@ -10,9 +10,10 @@ const rolePermissionsCache = `${prefix}.role-permissions-cache`
 const userRoleCache = `${prefix}.user-role-cache`
 
 @Injectable()
-export class NatsCacheService {
+export class CacheService {
   constructor (
-    private readonly natsClient: NatsClient,
+    // private readonly client: NatsClient,
+    private readonly client: RedisClient,
     private readonly roleRepository: RoleRepository,
     private readonly userRepository: UserRepository
   ) {
@@ -22,46 +23,46 @@ export class NatsCacheService {
   async getRolePermissions (roleUuid?: string | null): Promise<Permission[]> {
     if (roleUuid == null) return []
 
-    const result = await this.natsClient.cache.get(`${rolePermissionsCache}.${roleUuid}`)
+    const result = await this.client.getCachedValue(`${rolePermissionsCache}.${roleUuid}`)
 
-    if (result != null && result.operation === 'PUT') {
-      return JSON.parse(String(result.value)) as Permission[]
+    if (result != null) {
+      return JSON.parse(String(result)) as Permission[]
     }
 
     const role = await this.roleRepository.findOneBy({ uuid: roleUuid })
     const permissions = role?.permissions ?? []
 
-    await this.natsClient.cache.put(`${rolePermissionsCache}.${roleUuid}`, JSON.stringify(permissions))
+    await this.client.putCachedValue(`${rolePermissionsCache}.${roleUuid}`, JSON.stringify(permissions))
 
     return permissions
   }
 
   async clearRolePermissions (roleUuid?: string): Promise<void> {
     if (roleUuid == null) {
-      await this.natsClient.cache.delete(rolePermissionsCache)
+      await this.client.deleteCachedValue(rolePermissionsCache)
     } else {
-      await this.natsClient.cache.delete(`${rolePermissionsCache}.${roleUuid}`)
+      await this.client.deleteCachedValue(`${rolePermissionsCache}.${roleUuid}`)
     }
   }
 
   async getUserRole (userUuid: string): Promise<string | null> {
-    const result = await this.natsClient.cache.get(`${userRoleCache}.${userUuid}`)
+    const result = await this.client.getCachedValue(`${userRoleCache}.${userUuid}`)
 
-    if (result != null && result.operation === 'PUT') {
-      return JSON.parse(String(result.value))
+    if (result != null) {
+      return JSON.parse(String(result))
     }
 
     const user = await this.userRepository.findOneBy({ uuid: userUuid })
     const roleUuid = user?.roleUuid ?? null
 
-    await this.natsClient.cache.put(`${userRoleCache}.${userUuid}`, JSON.stringify(user?.roleUuid ?? null))
+    await this.client.putCachedValue(`${userRoleCache}.${userUuid}`, JSON.stringify(user?.roleUuid ?? null))
 
     return roleUuid
   }
 
   async clearUserRole (userUuid?: string): Promise<void> {
-    if (userUuid == null) await this.natsClient.cache.delete(userRoleCache)
-    else await this.natsClient.cache.delete(`${userRoleCache}.${userUuid}`)
+    if (userUuid == null) await this.client.deleteCachedValue(userRoleCache)
+    else await this.client.deleteCachedValue(`${userRoleCache}.${userUuid}`)
   }
 
   async getUserPermissions (userUuid: string): Promise<Permission[]> {

@@ -46,4 +46,22 @@ export class NatsClient implements OnModuleInit, OnModuleDestroy {
       ))
     }
   }
+
+  async getCachedValue (key: string): Promise<string | null> {
+    const result = await this.cache.get(key)
+
+    if (result != null && result.operation === 'PUT') {
+      String(result.value)
+    }
+
+    return null
+  }
+
+  async putCachedValue (key: string, value: string): Promise<void> {
+    await this.cache.put(key, value)
+  }
+
+  async deleteCachedValue (key: string): Promise<void> {
+    await this.cache.delete(key)
+  }
 }

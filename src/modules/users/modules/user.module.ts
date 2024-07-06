@@ -7,12 +7,12 @@ import { UserRepository } from '../repositories/user.repository.js'
 import { UserTypesenseRepository } from '../repositories/user-typesense.repository.js'
 import { TypesenseModule } from '../../typesense/modules/typesense.module.js'
 import { UserFlowService } from '../services/user-flow.service.js'
-import { NatsModule } from '../../nats/nats.module.js'
+import { CacheModule } from '../../cache/cache.module.js'
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
-    NatsModule.forFeature(),
+    CacheModule,
     TypesenseModule
   ],
   controllers: [UserController],
