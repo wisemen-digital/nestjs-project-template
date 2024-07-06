@@ -20,7 +20,7 @@ export class CacheService {
 
   }
 
-  async getRolePermissions (roleUuid?: string | null): Promise<Permission[]> {
+  async getRolePermissions (roleUuid: string | null): Promise<Permission[]> {
     if (roleUuid == null) return []
 
     const result = await this.client.getCachedValue(`${rolePermissionsCache}.${roleUuid}`)
@@ -37,10 +37,8 @@ export class CacheService {
     return permissions
   }
 
-  async clearRolePermissions (roleUuid?: string): Promise<void> {
-    if (roleUuid == null) {
-      await this.client.deleteCachedValue(rolePermissionsCache)
-    } else {
+  async clearRolesPermissions (roleUuids: string[]): Promise<void> {
+    for (const roleUuid of roleUuids) {
       await this.client.deleteCachedValue(`${rolePermissionsCache}.${roleUuid}`)
     }
   }
@@ -60,9 +58,8 @@ export class CacheService {
     return roleUuid
   }
 
-  async clearUserRole (userUuid?: string): Promise<void> {
-    if (userUuid == null) await this.client.deleteCachedValue(userRoleCache)
-    else await this.client.deleteCachedValue(`${userRoleCache}.${userUuid}`)
+  async clearUserRole (userUuid: string): Promise<void> {
+    await this.client.deleteCachedValue(`${userRoleCache}.${userUuid}`)
   }
 
   async getUserPermissions (userUuid: string): Promise<Permission[]> {
@@ -78,7 +75,7 @@ export class CacheService {
     return userPermissions.includes(Permission.ADMIN)
   }
 
-  async hasPermission (userUuid: string, permissions: Permission[]): Promise<boolean> {
+  async hasPermissions (userUuid: string, permissions: Permission[]): Promise<boolean> {
     const hasAdminPermission = await this.hasAdminPermission(userUuid)
     const userPermissions = await this.getUserPermissions(userUuid)
 

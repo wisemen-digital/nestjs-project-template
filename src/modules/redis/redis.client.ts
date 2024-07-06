@@ -26,14 +26,14 @@ export class RedisClient implements OnModuleInit, OnModuleDestroy {
   }
 
   async getCachedValue (key: string): Promise<string | null> {
-    return this.client.get(key)
+    return await this.client.get(key)
   }
 
   async putCachedValue (key: string, value: string): Promise<void> {
-    this.client.set(key, value)
+    await this.client.set(key, value)
   }
 
   async deleteCachedValue (key: string): Promise<void> {
-    this.client.del(key)
+    await this.client.del(key)
   }
 }
