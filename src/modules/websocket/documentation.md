@@ -38,3 +38,7 @@ In order to stop retrieving messages from a dedicated topic, you'll have to publ
 }
 ```
 
+## Topic
+
+### notification.{userUuid}
+Global topic for user notifications.
