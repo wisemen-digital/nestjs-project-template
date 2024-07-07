@@ -3,7 +3,7 @@ import { type INestApplication } from '@nestjs/common'
 import dayjs from 'dayjs'
 import { validate } from 'class-validator'
 import { expect } from 'expect'
-import { globalTestSetup } from '../../../../test/setup/setup.js'
+import { testSetup } from '../../test-setup/setup.js'
 import { IsSameOrBeforeDateString } from '../is-same-or-before-date.js'
 
 class TestClass {
@@ -17,7 +17,7 @@ describe('IsSameOrBeforeDateString decorator', async () => {
   let app: INestApplication
 
   before(async () => {
-    ({ app } = await globalTestSetup())
+    ({ app } = await testSetup())
   })
 
   before(async () => {

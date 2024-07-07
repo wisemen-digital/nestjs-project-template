@@ -3,7 +3,7 @@ import { type INestApplication } from '@nestjs/common'
 import dayjs from 'dayjs'
 import { validate } from 'class-validator'
 import { expect } from 'expect'
-import { globalTestSetup } from '../../../../test/setup/setup.js'
+import { testSetup } from '../../test-setup/setup.js'
 import { IsDateWithoutTimeString } from '../is-date-without-time-string.validator.js'
 
 class TestClass {
@@ -15,7 +15,7 @@ describe('IsDateWithoutTimeString decorator', async () => {
   let app: INestApplication
 
   before(async () => {
-    ({ app } = await globalTestSetup())
+    ({ app } = await testSetup())
   })
 
   after(async () => {

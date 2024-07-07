@@ -1,9 +1,11 @@
 import { DataSource } from 'typeorm'
+import { type TypeOrmModuleOptions } from '@nestjs/typeorm'
+import { type DataSourceOptions } from 'typeorm/browser'
 import { mainMigrations } from '../migrations/index.js'
 import { sslHelper } from '../utils/typeorm.js'
 import { mainModels } from '../models/models.js'
 
-export const mainDataSource = new DataSource({
+export const typeormConfig = (): TypeOrmModuleOptions => ({
   name: 'default',
   type: 'postgres',
   url: process.env.DATABASE_URI,
@@ -15,3 +17,12 @@ export const mainDataSource = new DataSource({
   entities: mainModels,
   migrations: mainMigrations
 })
+
+export const mainDataSource = new DataSource(typeormConfig() as DataSourceOptions)
+
+const typeormTestConfig = (): TypeOrmModuleOptions => ({
+  ...typeormConfig(),
+  migrationsRun: true
+})
+
+export const mainDataSourceTest = new DataSource(typeormTestConfig() as DataSourceOptions)

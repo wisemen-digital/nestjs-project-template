@@ -4,15 +4,15 @@ import { type INestApplication, ValidationPipe } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
 import { Test, type TestingModule } from '@nestjs/testing'
 import { expect } from 'expect'
-import { AppModule } from '../../src/app.module.js'
-import { HttpExceptionFilter } from '../../src/utils/exceptions/http-exception.filter.js'
-import { uuid } from '../expect/expectUuid.js'
-import { toHaveErrorCode } from '../expect/expectErrorCode.js'
-import { toHaveStatus } from '../expect/expectStatus.js'
-import { isEnumValue } from '../expect/expectEnum.js'
-import { S3Service } from '../../src/modules/files/services/s3.service.js'
-import { TypesenseInitializationService } from '../../src/modules/typesense/services/typesense-initialization.service.js'
-import { TypesenseCollectionName } from '../../src/modules/typesense/enums/typesense-collection-index.enum.js'
+import { AppModule } from '../../app.module.js'
+import { HttpExceptionFilter } from '../exceptions/http-exception.filter.js'
+import { uuid } from '../../../test/expect/expectUuid.js'
+import { toHaveErrorCode } from '../../../test/expect/expectErrorCode.js'
+import { toHaveStatus } from '../../../test/expect/expectStatus.js'
+import { isEnumValue } from '../../../test/expect/expectEnum.js'
+import { S3Service } from '../../modules/files/services/s3.service.js'
+import { TypesenseInitializationService } from '../../modules/typesense/services/typesense-initialization.service.js'
+import { TypesenseCollectionName } from '../../modules/typesense/enums/typesense-collection-index.enum.js'
 
 export class SetupTestResponse {
   app: INestApplication
@@ -34,7 +34,7 @@ export async function migrateTypesense (moduleRef: TestingModule): Promise<void>
   await typesenseImportService.migrate(true, Object.values(TypesenseCollectionName))
 }
 
-export async function globalTestSetup (): Promise<SetupTestResponse> {
+export async function testSetup (): Promise<SetupTestResponse> {
   mock.method(S3Service.prototype, 'createTemporaryDownloadUrl', () => 'http://localhost:3000')
   mock.method(S3Service.prototype, 'createTemporaryUploadUrl', () => 'http://localhost:3000')
   mock.method(S3Service.prototype, 'upload', async () => { await Promise.resolve() })
