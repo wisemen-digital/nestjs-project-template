@@ -58,7 +58,7 @@ export class AuthenticatedWsAdapter extends WsAdapter {
     return wss
   }
 
-  private async verifyAuthorization (header: string): Promise<string> {
+  private async verifyAuthorization (header: string | null): Promise<string> {
     if (header == null) {
       throw new UnauthorizedException()
     }
