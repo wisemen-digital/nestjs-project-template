@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common'
-import { ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOAuth2, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOffsetPaginatedResponse } from '../../../utils/pagination/offset/pagination.decorator.js'
 import { Permissions, Public } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { CreateUserDto } from '../dtos/create-user.dto.js'
@@ -33,11 +34,8 @@ export class UserController {
   }
 
   @Get()
-  @ApiResponse({
-    status: 200,
-    description: 'The users have been successfully received.',
-    type: [UserTransformerType]
-  })
+  @ApiOffsetPaginatedResponse(UserTransformerType)
+  @ApiOAuth2([])
   @Permissions(Permission.USER_READ)
   async getUsers (
     @Query() query: UserQuery
@@ -53,6 +51,7 @@ export class UserController {
     description: 'The user has been successfully received.',
     type: UserTransformerType
   })
+  @ApiOAuth2([])
   @UseGuards(UpdateUserGuard)
   async getUser (
     @Param('user', ParseUUIDPipe) userUuid: string
@@ -68,6 +67,7 @@ export class UserController {
     description: 'The user has been successfully updated.',
     type: UserTransformerType
   })
+  @ApiOAuth2([])
   @UseGuards(UpdateUserGuard)
   async updateUser (
     @Param('user', ParseUUIDPipe) userUuid: string,
@@ -82,6 +82,7 @@ export class UserController {
     status: 200,
     description: 'The user has been successfully deleted.'
   })
+  @ApiOAuth2([])
   @UseGuards(UpdateUserGuard)
   async deleteUser (
     @Param('user', ParseUUIDPipe) userUuid: string
@@ -94,6 +95,7 @@ export class UserController {
     status: 200,
     description: 'The users password has been successfully updated.'
   })
+  @ApiOAuth2([])
   @UseGuards(UpdateUserGuard)
   async updateUserPassword (
     @Param('user', ParseUUIDPipe) userUuid: string,
