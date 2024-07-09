@@ -9,7 +9,7 @@ import {
 } from 'class-validator'
 
 export class CreateUserDto {
-  @ApiProperty()
+  @ApiProperty({ type: String, format: 'email' })
   @IsNotEmpty()
   @IsEmail()
   email: string
@@ -19,12 +19,12 @@ export class CreateUserDto {
   @MinLength(6)
   password: string
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String, nullable: true, example: 'John' })
   @Optional()
   @IsString()
   firstName: string | null
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String, nullable: true, example: 'Doe' })
   @IsOptional()
   @IsString()
   lastName: string | null
