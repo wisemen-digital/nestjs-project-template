@@ -11,8 +11,8 @@ import { TestContext } from '../../../../test/utils/test-context.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import { TypesenseCollectionService } from '../../typesense/services/typesense-collection.service.js'
+import { RegisterUserDtoBuilder } from '../use-cases/register-user/register-user-dto.builder.js'
 import { UserEntityBuilder } from './builders/entities/user-entity.builder.js'
-import { CreateUserDtoBuilder } from './builders/dtos/create-user-dto.builder.js'
 import { UserSeeder } from './seeders/user.seeder.js'
 import { type SetupUser } from './setup-user.type.js'
 
@@ -37,7 +37,7 @@ describe('Users', async () => {
     await migrateTypesense(moduleRef)
 
     const typesenseCollectionService = moduleRef.get(TypesenseCollectionService)
-    await typesenseCollectionService.importManuallyToTypesense(
+    await typesenseCollectionService.importManually(
       TypesenseCollectionName.USER,
       [adminUser.user, readonlyUser.user]
     )
@@ -142,7 +142,7 @@ describe('Users', async () => {
     })
 
     it('should return 201', async () => {
-      const dto = new CreateUserDtoBuilder()
+      const dto = new RegisterUserDtoBuilder()
         .withEmail('should-return-201@mail.com')
         .build()
 

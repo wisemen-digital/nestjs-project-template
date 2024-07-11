@@ -22,8 +22,7 @@ export class ErrorsInterceptor implements NestInterceptor {
             throw new HttpException('not_found', 404)
           }
           throw err
-        }
-        )
+        })
       )
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 
 import { TypesenseCollectionService } from '../../typesense/services/typesense-collection.service.js'
-import { type CreateUserDto } from '../dtos/create-user.dto.js'
+import { type RegisterUserDto } from '../use-cases/register-user/register-user.dto.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import { type User } from '../entities/user.entity.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
@@ -24,16 +24,16 @@ export class UserFlowService {
     return await this.userService.findOneOrFail(userUuid)
   }
 
-  async create (dto: CreateUserDto): Promise<User> {
+  async create (dto: RegisterUserDto): Promise<User> {
     const user = await this.userService.create(dto)
-    await this.typesenseService.importManuallyToTypesense(TypesenseCollectionName.USER, [user])
+    await this.typesenseService.importManually(TypesenseCollectionName.USER, [user])
 
     return user
   }
 
   async update (userUuid: string, dto: UpdateUserDto): Promise<User> {
     const updatedUser = await this.userService.update(userUuid, dto)
-    await this.typesenseService.importManuallyToTypesense(
+    await this.typesenseService.importManually(
       TypesenseCollectionName.USER,
       [updatedUser]
     )

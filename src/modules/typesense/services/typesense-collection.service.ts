@@ -10,7 +10,7 @@ export class TypesenseCollectionService {
     private readonly collectorFactory: TypesenseCollectorFactory
   ) {}
 
-  async importManuallyToTypesense<T> (
+  async importManually<T> (
     collection: TypesenseCollectionName,
     objects: T[]
   ): Promise<void> {
@@ -22,7 +22,7 @@ export class TypesenseCollectionService {
     )
   }
 
-  async importToTypesense (
+  async import (
     collection: TypesenseCollectionName,
     uuids?: string[]
   ): Promise<void> {

@@ -78,7 +78,7 @@ export class TypesenseInitializationService {
     if (fresh || !exists) {
       const collection = await this.createCollection(createCollection)
 
-      await this.typesenseCollectionService.importToTypesense(aliasName)
+      await this.typesenseCollectionService.import(aliasName)
 
       await this.linkAlias(aliasName, collection.name)
 
@@ -89,7 +89,7 @@ export class TypesenseInitializationService {
   public async import (indexes: TypesenseCollectionName[]): Promise<void> {
     if (indexes.includes(TypesenseCollectionName.USER)) {
       await this.typesenseCollectionService
-        .importToTypesense(TypesenseCollectionName.USER)
+        .import(TypesenseCollectionName.USER)
     }
   }
 }

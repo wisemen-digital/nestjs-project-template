@@ -1,8 +1,7 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
-import { Permissions, Public } from '../../permissions/permissions.decorator.js'
+import { Permissions } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
-import { CreateUserDto } from '../dtos/create-user.dto.js'
 import { UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { UpdateUserDto } from '../dtos/update-user.dto.js'
 import { UserTransformerType, UserTransformer } from '../transformers/user.transformer.js'
@@ -17,20 +16,6 @@ export class UserController {
   constructor (
     private readonly userFlowService: UserFlowService
   ) {}
-
-  @Post()
-  @ApiResponse({
-    status: 201,
-    description: 'The user has been successfully created.',
-    type: UserTransformerType
-  })
-  @Public()
-  async createUser (
-    @Body() createUserDto: CreateUserDto
-  ): Promise<UserTransformerType> {
-    const user = await this.userFlowService.create(createUserDto)
-    return new UserTransformer().item(user)
-  }
 
   @Get()
   @ApiResponse({

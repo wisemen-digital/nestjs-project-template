@@ -13,6 +13,7 @@ import { isEnumValue } from '../expect/expectEnum.js'
 import { S3Service } from '../../src/modules/files/services/s3.service.js'
 import { TypesenseInitializationService } from '../../src/modules/typesense/services/typesense-initialization.service.js'
 import { TypesenseCollectionName } from '../../src/modules/typesense/enums/typesense-collection-index.enum.js'
+import { toHaveApiError } from '../expect/expectApiError.js'
 
 export class SetupTestResponse {
   app: INestApplication
@@ -88,6 +89,7 @@ function setupExpect (): void {
     uuid,
     toHaveErrorCode,
     toHaveStatus,
-    isEnumValue
+    isEnumValue,
+    toHaveApiError
   })
 }

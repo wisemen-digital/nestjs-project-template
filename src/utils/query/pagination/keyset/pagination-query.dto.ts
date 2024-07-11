@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsPositive, Max } from 'class-validator'
+import { IsDateString, IsInt, IsNotEmpty, IsOptional, Max, Min } from 'class-validator'
 
 export class KeysetPaginationQuery {
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: true, minimum: 1, maximum: 100 })
   @Type(() => Number)
   @Max(100)
-  @IsPositive()
+  @Min(1)
   @IsInt()
   limit: number
 

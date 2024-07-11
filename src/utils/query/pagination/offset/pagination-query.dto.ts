@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsInt, IsPositive, Max, Min } from 'class-validator'
+import { IsInt, Max, Min } from 'class-validator'
 
 export class OffsetPaginationQuery {
   @ApiProperty({ minimum: 1, maximum: 100 })
   @Type(() => Number)
   @Max(100)
-  @IsPositive()
+  @Min(1)
   @IsInt()
   limit: number
 
