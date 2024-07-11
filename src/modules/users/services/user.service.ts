@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { type RegisterUserDto } from '../use-cases/register-user/register-user.dto.js'
+import { type RegisterUserRequest } from '../use-cases/register-user/register-user.request.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
@@ -46,7 +46,7 @@ export class UserService {
     if (exists !== null) throw new KnownError('already_exists')
   }
 
-  async create (dto: RegisterUserDto): Promise<User> {
+  async create (dto: RegisterUserRequest): Promise<User> {
     dto.email = dto.email.toLowerCase()
     await this.checkIfExists(dto.email)
     dto.password = await createHash(dto.password)
