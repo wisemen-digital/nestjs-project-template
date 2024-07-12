@@ -2,7 +2,7 @@ import { ApiBadRequestResponse, ApiCreatedResponse, ApiTags } from '@nestjs/swag
 import { Body, Controller, Post } from '@nestjs/common'
 import { Public } from '../../../permissions/permissions.decorator.js'
 import { RegisterUserRequest } from './register-user.request.js'
-import { UserRegisteredResponse } from './user-registered-response.js'
+import { UserRegisteredResponse } from './user-registered.response.js'
 import { EmailAlreadyInUseError } from './email-already-in-use-error.js'
 import { RegisterUserUseCase } from './register-user.use-case.js'
 
@@ -11,8 +11,7 @@ import { RegisterUserUseCase } from './register-user.use-case.js'
 export class RegisterUserController {
   constructor (
     private readonly useCase: RegisterUserUseCase
-  ) {
-  }
+  ) {}
 
   @Post()
   @ApiCreatedResponse({ type: UserRegisteredResponse })
