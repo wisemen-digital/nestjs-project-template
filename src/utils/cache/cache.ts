@@ -79,13 +79,16 @@ export class RedisCacheService {
   }
 
   async hasPermission (userUuid: string, permissions: Permission[]): Promise<boolean> {
-    const hasAdminPermission = await this.hasAdminPermission(userUuid)
-    const userPermissions = await this.getUserPermissions(userUuid)
+    if (permissions.length === 0) {
+      return true
+    }
 
-    return (
-      hasAdminPermission ||
-      permissions.length === 0 ||
-      permissions.some(permission => userPermissions.includes(permission))
-    )
+    const hasAdminPermission = await this.hasAdminPermission(userUuid)
+    if (hasAdminPermission) {
+      return true
+    }
+
+    const userPermissions = await this.getUserPermissions(userUuid)
+    return permissions.some(permission => userPermissions.includes(permission))
   }
 }
