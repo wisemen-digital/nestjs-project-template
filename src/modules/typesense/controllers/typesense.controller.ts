@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { type CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
-import { ApiQuery, ApiResponse } from '@nestjs/swagger'
+import { ApiOAuth2, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { MigrateTypesenseQueryDto } from '../dtos/migrate-typesense-query.dto.js'
 import { ImportTypesenseQueryDto } from '../dtos/import-typesense-query.dto.js'
 import { Permissions } from '../../permissions/permissions.decorator.js'
@@ -8,7 +8,9 @@ import { Permission } from '../../permissions/permission.enum.js'
 import { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
 
+@ApiTags('Typesense')
 @Controller('typesense')
+@ApiOAuth2([])
 export class TypesenseController {
   constructor (private readonly typesenseImportService: TypesenseInitializationService) {}
   @Get('migrate')
