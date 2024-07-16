@@ -10,6 +10,10 @@ import { UserTypesenseRepository } from './repositories/user-typesense.repositor
 import { UserFlowService } from './services/user-flow.service.js'
 import { RegisterUserController } from './use-cases/register-user/register-user.controller.js'
 import { RegisterUserUseCase } from './use-cases/register-user/register-user.use-case.js'
+import {
+  ChangePasswordController
+} from './use-cases/change-password/change-password.controller.js'
+import { ChangePasswordUseCase } from './use-cases/change-password/change-password.use-case.js'
 
 @Module({
   imports: [
@@ -17,13 +21,18 @@ import { RegisterUserUseCase } from './use-cases/register-user/register-user.use
     RedisCacheModule,
     TypesenseModule
   ],
-  controllers: [UserController, RegisterUserController],
+  controllers: [
+    UserController,
+    RegisterUserController,
+    ChangePasswordController
+  ],
   providers: [
     UserService,
     UserRepository,
     UserTypesenseRepository,
     UserFlowService,
-    RegisterUserUseCase
+    RegisterUserUseCase,
+    ChangePasswordUseCase
   ],
   exports: [UserService]
 })

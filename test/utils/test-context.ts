@@ -7,7 +7,11 @@ import { type Client } from '../../src/modules/auth/entities/client.entity.js'
 import { RoleSeeder } from '../../src/modules/roles/tests/seeders/role.seeder.js'
 import { type Role } from '../../src/modules/roles/entities/role.entity.js'
 import { UserEntityBuilder } from '../../src/modules/users/tests/builders/entities/user-entity.builder.js'
-import { type SetupUser } from '../../src/modules/users/tests/setup-user.type.js'
+import { type AuthorizedUser } from '../../src/modules/users/tests/setup-user.type.js'
+import {
+  RoleEntityBuilder
+} from '../../src/modules/roles/tests/builders/entities/role-entity.builder.js'
+import { type Permission } from '../../src/modules/permissions/permission.enum.js'
 
 export class TestContext {
   private readonly tokenSeeder: TokenSeeder
@@ -44,6 +48,12 @@ export class TestContext {
     return this.adminRole
   }
 
+  public async getRole (permissions: Permission[]): Promise<Role> {
+    return await this.roleSeeder.seedOne(
+      new RoleEntityBuilder().withPermissions(permissions).build()
+    )
+  }
+
   public async getReadonlyRole (): Promise<Role> {
     if (this.readonlyRole == null) {
       this.readonlyRole = await this.roleSeeder.seedReadonlyRole()
@@ -52,7 +62,7 @@ export class TestContext {
     return this.readonlyRole
   }
 
-  public async getAdminUser (): Promise<SetupUser> {
+  public async getAdminUser (): Promise<AuthorizedUser> {
     const client = await this.getClient()
     const adminRole = await this.getAdminRole()
     const adminUser = await this.userSeeder.seedOne(
@@ -66,7 +76,20 @@ export class TestContext {
     return { user: adminUser, client, token }
   }
 
-  public async getReadonlyUser (): Promise<SetupUser> {
+  public async getUser (permissions: Permission[]): Promise<AuthorizedUser> {
+    const client = await this.getClient()
+    const role = await this.getRole(permissions)
+    const user = await this.userSeeder.seedOne(
+      new UserEntityBuilder()
+        .withEmail(randEmail())
+        .withRole(role)
+        .build()
+    )
+    const token = await this.tokenSeeder.seedOne(user, client)
+    return { user, client, token }
+  }
+
+  public async getReadonlyUser (): Promise<AuthorizedUser> {
     const client = await this.getClient()
     const readonlyRole = await this.getReadonlyRole()
     const readonlyUser = await this.userSeeder.seedOne(
@@ -80,7 +103,7 @@ export class TestContext {
     return { user: readonlyUser, client, token }
   }
 
-  public async getRandomUser (): Promise<SetupUser> {
+  public async getRandomUser (): Promise<AuthorizedUser> {
     const client = await this.getClient()
 
     const randomUser = await this.userSeeder.seedOne(

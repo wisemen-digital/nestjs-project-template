@@ -33,7 +33,7 @@ export interface ExistsTransformerType {
 export class UserTransformer extends Transformer<User, UserTransformerType> {
   transform (user: User): UserTransformerType {
     return {
-      uuid: user.uuid,
+      uuid: user.uuid.toString(),
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       email: user.email,

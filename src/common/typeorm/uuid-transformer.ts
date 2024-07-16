@@ -2,13 +2,11 @@ import type { ValueTransformer } from 'typeorm'
 import { type ClassConstructor } from 'class-transformer'
 import { type UUID } from '../uuid/uuid.js'
 
-type AnyUuid = ClassConstructor<UUID<string>>
+export class UuidTypeormTransformerFactory {
+  private static readonly cache = new Map<ClassConstructor<UUID>, ValueTransformer>()
 
-export class UuidTransformerFactory {
-  private static readonly cache = new Map<AnyUuid, ValueTransformer>()
-
-  static create (UuidClass: AnyUuid): ValueTransformer {
-    const cachedTransformer = UuidTransformerFactory.cache.get(UuidClass)
+  static create (UuidClass: ClassConstructor<UUID>): ValueTransformer {
+    const cachedTransformer = UuidTypeormTransformerFactory.cache.get(UuidClass)
     if (cachedTransformer !== undefined) {
       return cachedTransformer
     }
@@ -18,7 +16,7 @@ export class UuidTransformerFactory {
       from: (value: string) => new UuidClass(value)
     }
 
-    UuidTransformerFactory.cache.set(UuidClass, newTransformer)
+    UuidTypeormTransformerFactory.cache.set(UuidClass, newTransformer)
     return newTransformer
   }
 }

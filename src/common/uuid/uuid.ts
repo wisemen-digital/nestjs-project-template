@@ -1,7 +1,7 @@
 import { randomUUID } from 'crypto'
 import { isUUID } from 'class-validator'
 
-export class UUID<Brand extends string> {
+export class UUID<Brand extends string = string> {
   private readonly uuid: string
   private readonly _brand: Brand
   constructor (uuid?: string) {

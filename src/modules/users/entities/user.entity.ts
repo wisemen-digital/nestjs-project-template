@@ -4,7 +4,6 @@ import {
   Entity,
   Index,
   OneToMany,
-  PrimaryGeneratedColumn,
   type Relation,
   UpdateDateColumn,
   JoinColumn,
@@ -13,11 +12,15 @@ import {
 import { Client } from '../../auth/entities/client.entity.js'
 import { RefreshToken } from '../../auth/entities/refreshtoken.entity.js'
 import { Role } from '../../roles/entities/role.entity.js'
+import {
+  PrimaryGeneratedUuidColumn
+} from '../../../common/typeorm/primary-generated-uuid-column.js'
+import { UserUuid } from '../user-uuid.js'
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn('uuid')
-  uuid: string
+  @PrimaryGeneratedUuidColumn(UserUuid)
+  uuid: UserUuid
 
   @CreateDateColumn({ precision: 3 })
   createdAt: Date

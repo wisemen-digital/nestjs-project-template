@@ -8,7 +8,7 @@ import { globalTestSetup } from '../../../../../test/setup/setup.js'
 
 import { UserSeeder } from '../../tests/seeders/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/builders/entities/user-entity.builder.js'
-import { RegisterUserDtoBuilder } from './register-user-dto.builder.js'
+import { RegisterUserRequestBuilder } from './register-user-request.builder.js'
 import { EmailAlreadyInUseError } from './email-already-in-use-error.js'
 
 describe('Register user e2e test', async () => {
@@ -58,7 +58,7 @@ describe('Register user e2e test', async () => {
         .build()
     )
 
-    const dto = new RegisterUserDtoBuilder()
+    const dto = new RegisterUserRequestBuilder()
       .withEmail(email)
       .build()
 
@@ -67,11 +67,11 @@ describe('Register user e2e test', async () => {
       .send(dto)
 
     expect(response).toHaveStatus(409)
-    expect(response).toHaveApiError(new EmailAlreadyInUseError('foo'))
+    expect(response).toHaveApiError(new EmailAlreadyInUseError(email))
   })
 
   it('should return 201', async () => {
-    const dto = new RegisterUserDtoBuilder()
+    const dto = new RegisterUserRequestBuilder()
       .withEmail('should-return-201@mail.com')
       .build()
 

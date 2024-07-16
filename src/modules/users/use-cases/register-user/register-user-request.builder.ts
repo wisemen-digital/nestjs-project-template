@@ -1,6 +1,6 @@
 import { RegisterUserRequest } from './register-user.request.js'
 
-export class RegisterUserDtoBuilder {
+export class RegisterUserRequestBuilder {
   private dto: RegisterUserRequest
 
   constructor () {

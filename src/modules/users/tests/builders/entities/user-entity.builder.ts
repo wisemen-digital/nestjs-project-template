@@ -1,6 +1,7 @@
 import { randUuid } from '@ngneat/falso'
 import { User } from '../../../entities/user.entity.js'
 import { type Role } from '../../../../roles/entities/role.entity.js'
+import { UserUuid } from '../../../user-uuid.js'
 
 export class UserEntityBuilder {
   private user: User
@@ -24,7 +25,7 @@ export class UserEntityBuilder {
   }
 
   withUuid (uuid: string): this {
-    this.user.uuid = uuid
+    this.user.uuid = new UserUuid(uuid)
     return this
   }
 

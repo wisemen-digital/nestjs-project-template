@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import { type RegisterUserRequest } from '../use-cases/register-user/register-user.request.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { KnownError } from '../../../common/exceptions/errors.js'
 import { type UserQuery } from '../queries/user.query.js'
 import { UserTypesenseRepository } from '../repositories/user-typesense.repository.js'
-import { createHash, validatePassword } from '../../../common/helpers/hash.helper.js'
-import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { sortEntitiesByUuids } from '../../../common/helpers/sort-entities-by-uuids.helper.js'
+import { verifyPassword } from '../../../common/auth/verify-password.js'
 
 @Injectable()
 export class UserService {
@@ -46,28 +44,11 @@ export class UserService {
     if (exists !== null) throw new KnownError('already_exists')
   }
 
-  async create (dto: RegisterUserRequest): Promise<User> {
-    dto.email = dto.email.toLowerCase()
-    await this.checkIfExists(dto.email)
-    dto.password = await createHash(dto.password)
-    const user = this.userRepository.create(dto)
-
-    return await this.userRepository.save(user)
-  }
-
   async update (userUuid: string, dto: UpdateUserDto): Promise<User> {
     const user = await this.findOneOrFail(userUuid)
     Object.assign(user, dto)
 
     return await this.userRepository.save(user)
-  }
-
-  async updatePassword (userUuid: string, dto: UpdatePasswordDto): Promise<User> {
-    const user = await this.findOneOrFail(userUuid)
-    await validatePassword(dto.oldPassword, user.password)
-
-    await this.userRepository.update(user.uuid, { password: await createHash(dto.password) })
-    return user
   }
 
   async delete (userUuid: string): Promise<User> {
@@ -78,7 +59,7 @@ export class UserService {
   async verify (email: string, password: string): Promise<User | false> {
     try {
       const user = await this.findOneByEmail(email)
-      await validatePassword(password, user.password)
+      await verifyPassword(password, user.password)
 
       return user
     } catch (e) {

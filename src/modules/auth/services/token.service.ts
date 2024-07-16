@@ -58,7 +58,7 @@ export class TokenService {
     client: Client, user: User, scope: string[]
   ): Promise<string> {
     const payload: Omit<AccessTokenPayload, 'exp'> = {
-      uid: user.uuid,
+      uid: user.uuid.toString(),
       cid: client.uuid,
       scope
     }
@@ -85,7 +85,7 @@ export class TokenService {
 
       return {
         tid: refreshToken.uuid,
-        uid: refreshToken.user.uuid,
+        uid: refreshToken.user.uuid.toString(),
         cid: refreshToken.client.uuid,
         client: refreshToken.client,
         user: refreshToken.user,
@@ -104,7 +104,7 @@ export class TokenService {
 
     const payload: Omit<RefreshTokenPayload, 'exp'> = {
       tid: uuidv4(),
-      uid: user.uuid,
+      uid: user.uuid.toString(),
       cid: client.uuid,
       scope: scope ?? []
     }

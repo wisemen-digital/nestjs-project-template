@@ -1,25 +1,39 @@
 import { Injectable } from '@nestjs/common'
-import { DuckUuid, UserUuid } from '../../user-uuid.js'
+import { type UserUuid } from '../../user-uuid.js'
+import { UserRepository } from '../../repositories/user.repository.js'
+import { type User } from '../../entities/user.entity.js'
+import { createHash } from '../../../../common/hash/create-hash.js'
+import { verifyPassword } from '../../../../common/auth/verify-password.js'
+import { KnownError } from '../../../../common/exceptions/errors.js'
 import { type ChangePasswordRequest } from './change-password.request.js'
+import { InvalidOldPasswordError } from './invalid-old-password.error.js'
 
 @Injectable()
 export class ChangePasswordUseCase {
+  constructor (
+    private readonly userRepository: UserRepository
+  ) {}
+
   async changePassword (
     forUserUuid: UserUuid,
     changePasswordRequest: ChangePasswordRequest
-  ): Promise<void> {
-    const duckUuid = new DuckUuid('lsdfjkl')
-    const userUuid = new UserUuid('sldfkj')
+  ): Promise<User> {
+    const user = await this.userRepository.findByUuidOrFail(forUserUuid)
+    await this.verifyPassword(user.password, changePasswordRequest.oldPassword)
+    const newPassword = await createHash(changePasswordRequest.newPassword)
+    await this.userRepository.update({ uuid: forUserUuid.toString() }, { password: newPassword })
+    return user
+  }
 
-    userUuid.equals(duckUuid)
-
-    function foo (duckUuid: DuckUuid) {}
-    foo(userUuid)
-
-    // const user = await this.findOneOrFail(userUuid)
-    // await validatePassword(dto.oldPassword, user.password)
-    //
-    // await this.userRepository.update(user.uuid, { password: await createHash(dto.password) })
-    // return user
+  private async verifyPassword (oldPassword: string, newPassword: string): Promise<void> {
+    try {
+      await verifyPassword(newPassword, oldPassword)
+    } catch (error) {
+      if (error instanceof KnownError) {
+        throw new InvalidOldPasswordError()
+      } else {
+        throw error
+      }
+    }
   }
 }

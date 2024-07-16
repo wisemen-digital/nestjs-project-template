@@ -2,11 +2,16 @@ import { EntityManager } from 'typeorm'
 import { Injectable } from '@nestjs/common'
 import { User } from '../entities/user.entity.js'
 import { TypeOrmRepository } from '../../typeorm/utils/transaction.js'
+import { type UserUuid } from '../user-uuid.js'
 
 @Injectable()
 export class UserRepository extends TypeOrmRepository<User> {
   constructor (entityManager: EntityManager) {
     super(User, entityManager)
+  }
+
+  async findByUuidOrFail (uuid: UserUuid): Promise<User> {
+    return await this.findOneByOrFail({ uuid: uuid.toString() })
   }
 
   async findWithUuids (

@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import type { User } from '../../entities/user.entity.js'
-import { createHash } from '../../../../common/helpers/hash.helper.js'
 import { UserRepository } from '../../repositories/user.repository.js'
 import { UserTypesenseRepository } from '../../repositories/user-typesense.repository.js'
+import { UserUuid } from '../../user-uuid.js'
+import { createHash } from '../../../../common/hash/create-hash.js'
 import type { RegisterUserRequest } from './register-user.request.js'
 import { EmailAlreadyInUseError } from './email-already-in-use-error.js'
 
@@ -35,6 +36,7 @@ export class RegisterUserUseCase {
 
   private async mapDtoToUser (dto: RegisterUserRequest): Promise<User> {
     return this.userRepository.create({
+      uuid: new UserUuid(),
       email: dto.email,
       firstName: dto.firstName,
       lastName: dto.lastName,

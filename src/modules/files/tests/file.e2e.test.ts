@@ -5,7 +5,7 @@ import { expect } from 'expect'
 import { type DataSource } from 'typeorm'
 import { type File } from '../entities/file.entity.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
-import { type SetupUser } from '../../users/tests/setup-user.type.js'
+import { type AuthorizedUser } from '../../users/tests/setup-user.type.js'
 import { globalTestSetup } from '../../../../test/setup/setup.js'
 import { CreateFileDtoBuilder } from './builders/create-file-dto.builder.js'
 import { FileSeeder } from './seeders/file.seeder.js'
@@ -17,7 +17,7 @@ describe('File', async () => {
 
   let context: TestContext
 
-  let adminUser: SetupUser
+  let adminUser: AuthorizedUser
 
   before(async () => {
     ({ app, dataSource } = await globalTestSetup())

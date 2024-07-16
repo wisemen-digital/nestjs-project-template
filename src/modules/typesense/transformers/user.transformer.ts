@@ -14,8 +14,8 @@ export class UserSearchTransformer
   extends Transformer<User, UserSearchTransformerType> {
   transform (user: User): UserSearchTransformerType {
     return {
-      id: user.uuid,
-      uuid: user.uuid,
+      id: user.uuid.toString(),
+      uuid: user.uuid.toString(),
       firstName: user.firstName ?? '',
       lastName: user.lastName ?? '',
       permissions: user.role?.permissions ?? []
