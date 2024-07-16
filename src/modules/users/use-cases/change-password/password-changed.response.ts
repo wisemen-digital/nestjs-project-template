@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import type { User } from '../../entities/user.entity.js'
 
-export class ChangePasswordResponse {
+export class PasswordChangedResponse {
   @ApiProperty({ type: String, format: 'uuid' })
   uuid: string
 

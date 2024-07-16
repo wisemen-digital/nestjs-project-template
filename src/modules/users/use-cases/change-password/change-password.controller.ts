@@ -5,7 +5,7 @@ import { UuidParam } from '../../../../common/uuid/uuid-param.js'
 import { UserUuid } from '../../user-uuid.js'
 import { ChangePasswordUseCase } from './change-password.use-case.js'
 import { ChangePasswordRequest } from './change-password.request.js'
-import { ChangePasswordResponse } from './change-password.response.js'
+import { PasswordChangedResponse } from './password-changed.response.js'
 import { InvalidOldPasswordError } from './invalid-old-password.error.js'
 
 @ApiTags('User')
@@ -22,8 +22,8 @@ export class ChangePasswordController {
   async updateUserPassword (
     @UuidParam('user', UserUuid) userUuid: UserUuid,
     @Body() changePasswordRequest: ChangePasswordRequest
-  ): Promise<ChangePasswordResponse> {
+  ): Promise<PasswordChangedResponse> {
     const user = await this.useCase.changePassword(userUuid, changePasswordRequest)
-    return new ChangePasswordResponse(user)
+    return new PasswordChangedResponse(user)
   }
 }
