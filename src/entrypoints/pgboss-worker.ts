@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from '../app.module.js'
-import { initSentry } from '../helpers/sentry.js'
+import { initSentry } from '../common/sentry/sentry.js'
 import { PgBossWorkerModule } from '../modules/pgboss-worker/pgboss-worker.module.js'
 import { QueueName } from '../modules/pgboss/types/queue-name.enum.js'
 

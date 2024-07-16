@@ -1,4 +1,4 @@
-import { type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
+import { type OffsetPaginatedResult } from '../../../common/pagination/offset/paginated-result.interface.js'
 import { type UserSearchSchema } from '../collections/user.collections.js'
 
 export enum TypesenseCollectionName {

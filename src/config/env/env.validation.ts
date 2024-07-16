@@ -1,5 +1,5 @@
 import Joi from 'joi'
-import { EnvType } from '../../utils/envs/env.enum.js'
+import { EnvType } from '../../common/envs/env.enum.js'
 
 const validSslTypes = ['false', 'true', 'ignore']
 

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import type { User } from '../../entities/user.entity.js'
-
-import { createHash } from '../../../../utils/helpers/hash.helper.js'
+import { createHash } from '../../../../common/helpers/hash.helper.js'
 import { UserRepository } from '../../repositories/user.repository.js'
 import { UserTypesenseRepository } from '../../repositories/user-typesense.repository.js'
 import type { RegisterUserRequest } from './register-user.request.js'

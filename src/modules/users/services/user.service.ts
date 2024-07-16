@@ -3,12 +3,12 @@ import { type RegisterUserRequest } from '../use-cases/register-user/register-us
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
+import { KnownError } from '../../../common/exceptions/errors.js'
 import { type UserQuery } from '../queries/user.query.js'
 import { UserTypesenseRepository } from '../repositories/user-typesense.repository.js'
-import { createHash, validatePassword } from '../../../utils/helpers/hash.helper.js'
+import { createHash, validatePassword } from '../../../common/helpers/hash.helper.js'
 import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
-import { sortEntitiesByUuids } from '../../../utils/helpers/sort-entities-by-uuids.helper.js'
+import { sortEntitiesByUuids } from '../../../common/helpers/sort-entities-by-uuids.helper.js'
 
 @Injectable()
 export class UserService {

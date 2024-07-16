@@ -12,7 +12,10 @@ import {
 import { Client } from '../../auth/entities/client.entity.js'
 import { RefreshToken } from '../../auth/entities/refreshtoken.entity.js'
 import { Role } from '../../roles/entities/role.entity.js'
-import { PrimaryGeneratedUuidColumn, UserUuid } from '../user-uuid.js'
+import { UserUuid } from '../user-uuid.js'
+import {
+  PrimaryGeneratedUuidColumn
+} from '../../../common/typeorm/primary-generated-uuid-column.js'
 
 @Entity()
 export class User2 {

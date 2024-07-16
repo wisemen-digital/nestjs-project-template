@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InOrIgnore } from '../../../../utils/query/in-or-ignore.js'
+import { InOrIgnore } from '../../../../common/query/in-or-ignore.js'
 import { UserRepository } from '../../../users/repositories/user.repository.js'
 import { type UserSearchTransformerType, UserSearchTransformer } from '../../transformers/user.transformer.js'
 import { type User } from '../../../users/entities/user.entity.js'

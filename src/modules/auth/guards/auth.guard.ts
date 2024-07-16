@@ -7,7 +7,7 @@ import { Reflector } from '@nestjs/core'
 import { IS_PUBLIC_KEY } from '../../permissions/permissions.decorator.js'
 import { type AccessTokenInterface } from '../entities/accesstoken.entity.js'
 import { AuthService } from '../services/auth.service.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
+import { KnownError } from '../../../common/exceptions/errors.js'
 
 export interface Request {
   auth: AccessTokenInterface

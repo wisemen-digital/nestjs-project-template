@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { RedisCacheModule } from '../../utils/cache/cache.module.js'
+import { RedisCacheModule } from '../../common/cache/cache.module.js'
 import { TypesenseModule } from '../typesense/modules/typesense.module.js'
 import { UserController } from './controllers/user.controller.js'
 import { UserService } from './services/user.service.js'

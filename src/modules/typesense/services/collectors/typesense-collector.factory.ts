@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { TypesenseCollectionName } from '../../enums/typesense-collection-index.enum.js'
-import { exhaustiveCheck } from '../../../../utils/helpers/exhaustive-check.helper.js'
+import { exhaustiveCheck } from '../../../../common/helpers/exhaustive-check.helper.js'
 import { UserTypesenseCollector } from './user-typesense.collector.js'
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Injectable, type CanActivate, type ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { RedisCacheService } from '../../../utils/cache/cache.js'
+import { RedisCacheService } from '../../../common/cache/cache.js'
 import { Permission } from '../../permissions/permission.enum.js'
 
 @Injectable()

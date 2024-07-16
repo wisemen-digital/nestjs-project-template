@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { ApiErrorMeta } from '../../../../utils/exceptions/api-errors/api-error-meta.decorator.js'
-import { ApiErrorCode } from '../../../../utils/exceptions/api-errors/api-error-code.decorator.js'
-import { ConflictApiError } from '../../../../utils/exceptions/api-errors/conflict-api-error.js'
+import { ApiErrorMeta } from '../../../../common/exceptions/api-errors/api-error-meta.decorator.js'
+import { ApiErrorCode } from '../../../../common/exceptions/api-errors/api-error-code.decorator.js'
+import { ConflictApiError } from '../../../../common/exceptions/api-errors/conflict-api-error.js'
 
 class EmailAlreadyInUseErrorMeta {
   @ApiProperty({

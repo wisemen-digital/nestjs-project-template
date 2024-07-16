@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core'
 import { DataSource } from 'typeorm'
 import { AppModule } from '../../app.module.js'
-import { initSentry } from '../../helpers/sentry.js'
+import { initSentry } from '../../common/sentry/sentry.js'
 import { PgBossService } from '../../modules/pgboss/services/pgboss.service.js'
 import { ImportTypesenseJob } from '../../modules/typesense/jobs/import-typesense.job.js'
 

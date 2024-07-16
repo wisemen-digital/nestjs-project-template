@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt'
 import { type User } from '../../../users/entities/user.entity.js'
 import { TokenService } from '../../services/token.service.js'
 import { RefreshTokenRepository } from '../../repositories/refresh-token.repository.js'
-import { getPrivateKey, getPublicKey } from '../../../../utils/auth/keys.js'
+import { getPrivateKey, getPublicKey } from '../../../../common/auth/keys.js'
 import { type Client } from '../../entities/client.entity.js'
 
 export class TokenSeeder {

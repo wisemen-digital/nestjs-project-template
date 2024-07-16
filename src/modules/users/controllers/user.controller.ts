@@ -7,7 +7,7 @@ import { UpdateUserDto } from '../dtos/update-user.dto.js'
 import { UserTransformerType, UserTransformer } from '../transformers/user.transformer.js'
 import { UpdateUserGuard } from '../guards/user-update.guard.js'
 import { UserQuery } from '../queries/user.query.js'
-import { generatePaginatedResponse, type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
+import { generatePaginatedResponse, type OffsetPaginatedResult } from '../../../common/pagination/offset/paginated-result.interface.js'
 import { UserFlowService } from '../services/user-flow.service.js'
 
 @ApiTags('User')

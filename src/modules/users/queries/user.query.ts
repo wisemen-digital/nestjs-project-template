@@ -1,7 +1,7 @@
 import { Equals, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
-import { OffsetPaginatedSearchQuery } from '../../../utils/query/pagination/offset/paginated-search-query.dto.js'
+import { OffsetPaginatedSearchQuery } from '../../../common/query/pagination/offset/paginated-search-query.dto.js'
 import { UsersFilterQuery } from './user-filter.query.js'
 
 export class UserQuery extends OffsetPaginatedSearchQuery {

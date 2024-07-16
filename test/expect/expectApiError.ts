@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { type ExpectationResult, type MatcherFunction } from 'expect'
-import { type ApiError } from '../../src/utils/exceptions/api-errors/api-error.js'
+import { type ApiError } from '../../src/common/exceptions/api-errors/api-error.js'
 
 export const toHaveApiError: MatcherFunction<[ApiError]> =
 function (received: { body?: unknown }, error: ApiError): ExpectationResult {

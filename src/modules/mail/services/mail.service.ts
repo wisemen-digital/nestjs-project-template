@@ -3,7 +3,7 @@ import { type User } from '../../users/entities/user.entity.js'
 import { ScalewayMailClient } from '../clients/scaleway-mail.client.js'
 import { ForgotPasswordTranslation } from '../translations/forgot-password.translation.js'
 import { MjmlRenderer } from '../renderer/mjml.renderer.js'
-import { mergeObjects } from '../../../utils/helpers/merge-objects.js'
+import { mergeObjects } from '../../../common/helpers/merge-objects.js'
 
 @Injectable()
 export class MailService {
