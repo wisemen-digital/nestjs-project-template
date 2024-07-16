@@ -19,7 +19,6 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "pnpm test:setup && ENV_FILE=.env.test node --test -r dotenv/config --test-reporter=spec",
     "test:setup": "pnpm build && DOTENV_CONFIG_PATH=.env.test node -r dotenv/config dist/src/utils/test-setup/global-setup.js",
-    "test:pipeline": "pnpm test:setup && DOTENV_CONFIG_PATH=.env.test node --test -r dotenv/config --test-reporter=tap --test-reporter-destination=stdout --test-reporter=junit --test-reporter-destination=\"test-report-junit.xml\"",
     "typeorm": "pnpm clean && pnpm build && node -r dotenv/config ./node_modules/typeorm/cli -d ./dist/src/config/sql/sources/main.js"
   },
   "dependencies": {
