@@ -4,7 +4,7 @@ import { TypesenseInitializationService } from '../../modules/typesense/services
 import { TypesenseCollectionName } from '../../modules/typesense/enums/typesense-collection-index.enum.js'
 import { mainDataSourceTest } from '../../config/sql/sources/main.js'
 
-export async function globalTestSetup (): Promise<void> {
+async function globalTestSetup (): Promise<void> {
   const moduleRef = await Test.createTestingModule({
     imports: [AppModule]
   }).compile()
