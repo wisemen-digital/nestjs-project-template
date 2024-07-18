@@ -5,6 +5,7 @@ import { FileLink } from '../../../modules/files/entities/file-link.entity.js'
 import { File } from '../../../modules/files/entities/file.entity.js'
 import { Role } from '../../../modules/roles/entities/role.entity.js'
 import { User } from '../../../modules/users/entities/user.entity.js'
+import { Notification } from '../../../modules/notifications/entities/notification.entity.js'
 
 export const mainModels = {
   Client,
@@ -12,6 +13,7 @@ export const mainModels = {
   RefreshToken,
   Role,
   User,
+  Notification,
   File,
   FileLink
 }
