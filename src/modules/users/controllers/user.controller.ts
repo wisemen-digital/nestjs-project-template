@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common'
-import { ApiOAuth2, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ApiOffsetPaginatedResponse } from '../../../utils/pagination/offset/pagination.decorator.js'
 import { Permissions, Public } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
@@ -11,6 +11,8 @@ import { UpdateUserGuard } from '../guards/user-update.guard.js'
 import { UserQuery } from '../queries/user.query.js'
 import { generatePaginatedResponse, type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
 import { UserFlowService } from '../services/user-flow.service.js'
+import { NotificationTransformer, type NotificationTransformerType } from '../../notifications/transformers/notification.transformer.js'
+import { UpdateNotificationDto } from '../../notifications/dtos/update-notification.dto.js'
 
 @ApiTags('User')
 @Controller('users')
@@ -26,7 +28,7 @@ export class UserController {
     type: UserTransformerType
   })
   @Public()
-  async createUser (
+  public async createUser (
     @Body() createUserDto: CreateUserDto
   ): Promise<UserTransformerType> {
     const user = await this.userFlowService.create(createUserDto)
@@ -35,9 +37,9 @@ export class UserController {
 
   @Get()
   @ApiOffsetPaginatedResponse(UserTransformerType)
-  @ApiOAuth2([])
+  @ApiBearerAuth()
   @Permissions(Permission.USER_READ)
-  async getUsers (
+  public async getUsers (
     @Query() query: UserQuery
   ): Promise<OffsetPaginatedResult<UserTransformerType>> {
     const [users, count] = await this.userFlowService.findPaginatedAndCount(query)
@@ -51,9 +53,9 @@ export class UserController {
     description: 'The user has been successfully received.',
     type: UserTransformerType
   })
-  @ApiOAuth2([])
+  @ApiBearerAuth()
   @UseGuards(UpdateUserGuard)
-  async getUser (
+  public async getUser (
     @Param('user', ParseUUIDPipe) userUuid: string
   ): Promise<UserTransformerType> {
     const user = await this.userFlowService.findOneOrFail(userUuid)
@@ -67,9 +69,9 @@ export class UserController {
     description: 'The user has been successfully updated.',
     type: UserTransformerType
   })
-  @ApiOAuth2([])
+  @ApiBearerAuth()
   @UseGuards(UpdateUserGuard)
-  async updateUser (
+  public async updateUser (
     @Param('user', ParseUUIDPipe) userUuid: string,
     @Body() updateUserDto: UpdateUserDto
   ): Promise<UserTransformerType> {
@@ -82,9 +84,9 @@ export class UserController {
     status: 200,
     description: 'The user has been successfully deleted.'
   })
-  @ApiOAuth2([])
+  @ApiBearerAuth()
   @UseGuards(UpdateUserGuard)
-  async deleteUser (
+  public async deleteUser (
     @Param('user', ParseUUIDPipe) userUuid: string
   ): Promise<void> {
     await this.userFlowService.delete(userUuid)
@@ -95,12 +97,44 @@ export class UserController {
     status: 200,
     description: 'The users password has been successfully updated.'
   })
-  @ApiOAuth2([])
+  @ApiBearerAuth()
   @UseGuards(UpdateUserGuard)
-  async updateUserPassword (
+  public async updateUserPassword (
     @Param('user', ParseUUIDPipe) userUuid: string,
     @Body() updatePasswordDto: UpdatePasswordDto
   ): Promise<void> {
     await this.userFlowService.updatePassword(userUuid, updatePasswordDto)
+  }
+
+  @Get(':user/devices/:deviceUuid')
+  @ApiResponse({
+    status: 200,
+    description: 'The user notification settings have been successfully received.'
+  })
+  @ApiBearerAuth()
+  public async getOneNotification (
+    @Param('user', ParseUUIDPipe) userUuid: string,
+    @Param('deviceUuid', ParseUUIDPipe) deviceUuid: string
+  ): Promise<NotificationTransformerType[]> {
+    const notification = await this.userFlowService.findNotificationSettings(userUuid, deviceUuid)
+
+    return new NotificationTransformer().item(notification)
+  }
+
+  @Post(':user/devices/:deviceUuid')
+  @ApiResponse({
+    status: 201,
+    description: 'The user notification settings have been successfully updated.'
+  })
+  @ApiBearerAuth()
+  public async createNotification (
+    @Param('user', ParseUUIDPipe) userUuid: string,
+    @Param('deviceUuid', ParseUUIDPipe) deviceUuid: string,
+    @Body() updateNotificationDto: UpdateNotificationDto
+  ): Promise<NotificationTransformerType[]> {
+    const notification = await this.userFlowService
+      .updateNotificationSettings(userUuid, deviceUuid, updateNotificationDto)
+
+    return new NotificationTransformer().item(notification)
   }
 }
