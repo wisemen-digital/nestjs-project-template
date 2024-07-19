@@ -1,27 +1,25 @@
 import { Controller, Get } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
-import { ApiStatusType } from '../types/api-status.type.js'
-import { Public } from '../../permissions/permissions.decorator.js'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
+import { Public } from '../../permissions/decorators/permissions.decorator.js'
+import { ApiStatusTransformer, ApiStatusTransformerType } from '../transformers/api-status.transformer.js'
+import { HealthStatusTransformer, HealthStatusTransformerType } from '../transformers/health-status.transformer.js'
+import { getApiStatusResponse, getHealthStatusResponse } from '../docs/status-response.docs.js'
 
 @ApiTags('Default')
 @Controller({
   version: ''
 })
+@Public()
 export class StatusController {
-  @Get()
-  @Public()
-  getApiStatus (): ApiStatusType {
-    return {
-      environment: process.env.NODE_ENV,
-      commit: process.env.BUILD_COMMIT,
-      version: process.env.BUILD_NUMBER,
-      timestamp: process.env.BUILD_TIMESTAMP
-    }
+  @Get('/')
+  @ApiResponse(getApiStatusResponse)
+  public getApiStatus (): ApiStatusTransformerType {
+    return new ApiStatusTransformer().item(0)
   }
 
   @Get('/health')
-  @Public()
-  getHealthStatus (): { status: string } {
-    return { status: 'OK' }
+  @ApiResponse(getHealthStatusResponse)
+  public getHealthStatus (): HealthStatusTransformerType {
+    return new HealthStatusTransformer().item(0)
   }
 }
