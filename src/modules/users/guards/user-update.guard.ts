@@ -1,20 +1,21 @@
 import { Injectable, type CanActivate, type ExecutionContext } from '@nestjs/common'
-import { Reflector } from '@nestjs/core'
 import { RedisCacheService } from '../../../common/cache/cache.js'
 import { Permission } from '../../permissions/permission.enum.js'
 
 @Injectable()
-export class UpdateUserGuard implements CanActivate {
+export class AllowSelfAndAdminsGuard implements CanActivate {
   constructor (
-    private readonly reflector: Reflector,
     private readonly cache: RedisCacheService
   ) {}
 
   async canActivate (context: ExecutionContext): Promise<boolean> {
     const { auth, params } = context.switchToHttp().getRequest()
 
-    const userPermissions = await this.cache.getUserPermissions(auth.user.uuid)
-
-    return auth.user.uuid === params.user || userPermissions.includes(Permission.ADMIN)
+    if (auth.user.uuid === params.userUuid) {
+      return true
+    } else {
+      const userPermissions = await this.cache.getUserPermissions(auth.user.uuid)
+      return userPermissions.includes(Permission.ADMIN)
+    }
   }
 }

@@ -11,23 +11,19 @@ import { toHaveErrorCode } from '../expect/expectErrorCode.js'
 import { toHaveStatus } from '../expect/expectStatus.js'
 import { isEnumValue } from '../expect/expectEnum.js'
 import { S3Service } from '../../src/modules/files/services/s3.service.js'
-import { TypesenseInitializationService } from '../../src/modules/typesense/services/typesense-initialization.service.js'
-import { TypesenseCollectionName } from '../../src/modules/typesense/enums/typesense-collection-index.enum.js'
+import {
+  TypesenseInitializationService
+} from '../../src/modules/typesense/services/typesense-initialization.service.js'
+import {
+  TypesenseCollectionName
+} from '../../src/modules/typesense/enums/typesense-collection-index.enum.js'
 import { toHaveApiError } from '../expect/expectApiError.js'
+import { isTestEnv } from '../../src/common/envs/env-checks.js'
 
-export class SetupTestResponse {
+export class E2ETestSetup {
   app: INestApplication
   moduleRef: TestingModule
   dataSource: DataSource
-}
-
-export async function setupTest (dataSource: DataSource): Promise<void> {
-  if (process.env.NODE_ENV !== 'test') {
-    throw new Error('NODE_ENV must be set to test')
-  }
-
-  await setupTransaction(dataSource)
-  setupExpect()
 }
 
 export async function migrateTypesense (moduleRef: TestingModule): Promise<void> {
@@ -35,21 +31,65 @@ export async function migrateTypesense (moduleRef: TestingModule): Promise<void>
   await typesenseImportService.migrate(true, Object.values(TypesenseCollectionName))
 }
 
-export async function globalTestSetup (): Promise<SetupTestResponse> {
+export async function globalTestSetup (): Promise<E2ETestSetup> {
+  mockS3()
+  initExpect()
+
+  const testModule = await compileTestModule()
+  const dataSource = testModule.get(DataSource)
+
+  const [app, _] = await Promise.all([
+    initApp(testModule),
+    startTransaction(dataSource)
+  ])
+
+  if (!isTestEnv()) {
+    throw new Error('NODE_ENV must be set to test')
+  }
+
+  return { app, moduleRef: testModule, dataSource }
+}
+
+async function startTransaction (dataSource: DataSource): Promise<void> {
+  const qr = dataSource.createQueryRunner()
+  await qr.connect()
+  await qr.startTransaction()
+
+  Object.defineProperty(dataSource.manager, 'queryRunner', {
+    configurable: true,
+    value: qr
+  })
+}
+
+function initExpect (): void {
+  expect.extend({
+    uuid,
+    toHaveErrorCode,
+    toHaveStatus,
+    isEnumValue,
+    toHaveApiError
+  })
+}
+
+function mockS3 (): void {
   mock.method(S3Service.prototype, 'createTemporaryDownloadUrl', () => 'http://localhost:3000')
   mock.method(S3Service.prototype, 'createTemporaryUploadUrl', () => 'http://localhost:3000')
   mock.method(S3Service.prototype, 'upload', async () => { await Promise.resolve() })
   mock.method(S3Service.prototype, 'uploadStream', async () => { await Promise.resolve() })
   mock.method(S3Service.prototype, 'delete', async () => { await Promise.resolve() })
   mock.method(S3Service.prototype, 'list', async () => { await Promise.resolve([]) })
+}
 
-  const moduleRef = await Test.createTestingModule({
+async function compileTestModule (): Promise<TestingModule> {
+  return await Test.createTestingModule({
     imports: [
       AppModule.forRoot()
     ]
   }).compile()
+}
 
-  const app = moduleRef.createNestApplication()
+async function initApp (testModule: TestingModule): Promise<INestApplication> {
+  const app = testModule.createNestApplication()
 
   app.useGlobalPipes(
     new ValidationPipe({
@@ -66,30 +106,5 @@ export async function globalTestSetup (): Promise<SetupTestResponse> {
   app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
 
   await app.init()
-
-  const dataSource = moduleRef.get(DataSource)
-  await setupTest(dataSource)
-
-  return { app, moduleRef, dataSource }
-}
-
-async function setupTransaction (dataSource: DataSource): Promise<void> {
-  const qr = dataSource.createQueryRunner()
-  await qr.connect()
-  await qr.startTransaction()
-
-  Object.defineProperty(dataSource.manager, 'queryRunner', {
-    configurable: true,
-    value: qr
-  })
-}
-
-function setupExpect (): void {
-  expect.extend({
-    uuid,
-    toHaveErrorCode,
-    toHaveStatus,
-    isEnumValue,
-    toHaveApiError
-  })
+  return app
 }

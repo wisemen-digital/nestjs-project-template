@@ -3,7 +3,7 @@ import { type CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
 import { ApiQuery, ApiResponse } from '@nestjs/swagger'
 import { MigrateTypesenseQueryDto } from '../dtos/migrate-typesense-query.dto.js'
 import { ImportTypesenseQueryDto } from '../dtos/import-typesense-query.dto.js'
-import { Permissions } from '../../permissions/permissions.decorator.js'
+import { RequirePermissions } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
@@ -18,7 +18,7 @@ export class TypesenseController {
     status: 200,
     description: 'Successfully migrated collections'
   })
-  @Permissions(Permission.ADMIN)
+  @RequirePermissions(Permission.ADMIN)
   async migrate (
     @Query() query: MigrateTypesenseQueryDto
   ): Promise<void> {
@@ -31,7 +31,7 @@ export class TypesenseController {
     status: 200,
     description: 'Successfully imported collections'
   })
-  @Permissions(Permission.ADMIN)
+  @RequirePermissions(Permission.ADMIN)
   async import (
     @Query() query: ImportTypesenseQueryDto
   ): Promise<void> {
@@ -43,7 +43,7 @@ export class TypesenseController {
     status: 200,
     description: 'Successfully returned collections'
   })
-  @Permissions(Permission.ADMIN)
+  @RequirePermissions(Permission.ADMIN)
   async getCollections (): Promise<CollectionSchema[]> {
     return await this.typesenseImportService.retrieveCollections()
   }

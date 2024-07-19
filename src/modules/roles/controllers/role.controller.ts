@@ -5,7 +5,7 @@ import { CreateRoleDto } from '../dtos/create-role.dto.js'
 import { RoleCount } from '../transformers/role-count.type.js'
 import { RoleService } from '../services/role.service.js'
 import { UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
-import { Permissions } from '../../permissions/permissions.decorator.js'
+import { RequirePermissions } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
 
 @ApiTags('roles')
@@ -21,7 +21,7 @@ export class RoleController {
     description: 'The roles has been successfully received.',
     type: [RoleTransformerType]
   })
-  @Permissions(Permission.ROLE_READ)
+  @RequirePermissions(Permission.ROLE_READ)
   async getRoles (): Promise<RoleTransformerType[]> {
     const roles = await this.roleService.findAll()
 
@@ -34,7 +34,7 @@ export class RoleController {
     description: 'The role has been successfully created.',
     type: RoleTransformerType
   })
-  @Permissions(Permission.ROLE_CREATE)
+  @RequirePermissions(Permission.ROLE_CREATE)
   async createRole (
     @Body() createRoleDto: CreateRoleDto
   ): Promise<RoleTransformerType> {
@@ -49,7 +49,7 @@ export class RoleController {
     description: 'The roles has been successfully created.',
     type: [RoleTransformerType]
   })
-  @Permissions(Permission.ROLE_UPDATE)
+  @RequirePermissions(Permission.ROLE_UPDATE)
   async updateRolesBulk (
     @Body() updateRolesBulk: UpdateRolesBulkDto
   ): Promise<RoleTransformerType[]> {
@@ -64,7 +64,7 @@ export class RoleController {
     description: 'The role has been successfully received.',
     type: RoleTransformerType
   })
-  @Permissions(Permission.ROLE_READ)
+  @RequirePermissions(Permission.ROLE_READ)
   async getRole (
     @Param('role', ParseUUIDPipe) uuid: string
   ): Promise<RoleTransformerType> {
@@ -79,7 +79,7 @@ export class RoleController {
     description: 'The role has been successfully updated.',
     type: RoleTransformerType
   })
-  @Permissions(Permission.ROLE_UPDATE)
+  @RequirePermissions(Permission.ROLE_UPDATE)
   async updateRole (
     @Body() updateRoleDto: CreateRoleDto,
     @Param('role', ParseUUIDPipe) uuid: string
@@ -94,7 +94,7 @@ export class RoleController {
     status: 200,
     description: 'The role has been successfully deleted.'
   })
-  @Permissions(Permission.ROLE_DELETE)
+  @RequirePermissions(Permission.ROLE_DELETE)
   async deleteRole (
     @Param('role', ParseUUIDPipe) uuid: string
   ): Promise<void> {
@@ -107,7 +107,7 @@ export class RoleController {
     description: 'The role count has been successfully received.',
     type: RoleCount
   })
-  @Permissions(Permission.ROLE_READ)
+  @RequirePermissions(Permission.ROLE_READ)
   async getRoleCount (
     @Param('role', ParseUUIDPipe) uuid: string
   ): Promise<RoleCount> {
