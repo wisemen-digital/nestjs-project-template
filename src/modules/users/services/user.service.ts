@@ -10,18 +10,16 @@ import { UserTypesenseRepository } from '../repositories/user-typesense.reposito
 import { createHash, validatePassword } from '../../../utils/helpers/hash.helper.js'
 import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { sortEntitiesByUuids } from '../../../utils/helpers/sort-entities-by-uuids.helper.js'
-import { RedisCacheService } from '../../../utils/cache/cache.js'
-import { RoleService } from '../../roles/services/role.service.js'
-import { transaction } from '../../typeorm/utils/transaction.js'
+import { RoleRepository } from '../../roles/repositories/role.repository.js'
 
 @Injectable()
 export class UserService {
   constructor (
     private readonly dataSource: DataSource,
+
     private readonly userRepository: UserRepository,
     private readonly userTypesenseRepository: UserTypesenseRepository,
-    private readonly roleService: RoleService,
-    private readonly redisCacheService: RedisCacheService
+    private readonly roleRepository: RoleRepository
   ) {}
 
   async findPaginated (
@@ -93,18 +91,14 @@ export class UserService {
     }
   }
 
-  async updateRole (uuid: string, roleUuid: string): Promise<User> {
-    const user = await this.userRepository.findOneOrFail({ where: { uuid } })
-
-    const role = await this.roleService.findOne(roleUuid)
+  async updateRole (userUuid: string, roleUuid: string): Promise<User> {
+    const user = await this.userRepository.findOneByOrFail({ uuid: userUuid })
+    const role = await this.roleRepository.findOneByOrFail({ uuid: roleUuid })
 
     user.role = role
     user.roleUuid = role.uuid
 
-    await transaction(this.dataSource, async () => {
-      await this.userRepository.update(user.uuid, { roleUuid: role.uuid })
-      await this.redisCacheService.clearUserRole(user.uuid)
-    })
+    await this.userRepository.update(user.uuid, { roleUuid: role.uuid })
 
     return user
   }
