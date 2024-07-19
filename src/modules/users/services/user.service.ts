@@ -12,6 +12,7 @@ import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { sortEntitiesByUuids } from '../../../utils/helpers/sort-entities-by-uuids.helper.js'
 import { RedisCacheService } from '../../../utils/cache/cache.js'
 import { RoleService } from '../../roles/services/role.service.js'
+import { transaction } from '../../typeorm/utils/transaction.js'
 
 @Injectable()
 export class UserService {
@@ -100,9 +101,8 @@ export class UserService {
     user.role = role
     user.roleUuid = role.uuid
 
-    await this.dataSource.transaction(async manager => {
-      await new UserRepository(manager).update(user.uuid, { roleUuid: role.uuid })
-
+    await transaction(this.dataSource, async () => {
+      await this.userRepository.update(user.uuid, { roleUuid: role.uuid })
       await this.redisCacheService.clearUserRole(user.uuid)
     })
 
