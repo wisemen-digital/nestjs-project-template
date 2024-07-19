@@ -1,7 +1,7 @@
 import { Injectable, type CanActivate, type ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { RedisCacheService } from '../../../utils/cache/cache.js'
-import { Permission } from '../../permissions/permission.enum.js'
+import { Permission } from '../../permissions/enums/permission.enum.js'
+import { RedisCacheService } from '../../cache/services/cache.service.js'
 
 @Injectable()
 export class UpdateUserGuard implements CanActivate {
@@ -21,3 +21,5 @@ export class UpdateUserGuard implements CanActivate {
     }
   }
 }
+
+export class DeleteUserGuard extends UpdateUserGuard {}
