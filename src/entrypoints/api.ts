@@ -4,7 +4,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { AppModule } from '../app.module.js'
 import { initSentry } from '../utils/sentry.js'
 import { HttpExceptionFilter } from '../utils/exceptions/http-exception.filter.js'
-import { buildDocumentationConfig } from '../helpers/documentation.js'
+import { buildDocumentationConfig } from '../config/documentation.js'
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(
