@@ -22,18 +22,17 @@ export const emptyOffsetPaginatedResult = <T>(): OffsetPaginatedResult<T> => {
   }
 }
 
-export function generatePaginatedResponse <T, S> (
+export function offsetPaginatedResponse <T, S, Q extends { pagination?: OffsetPaginationQuery }> (
   transformer: Transformer<T, S>,
-  items: T[],
-  count: number,
-  pagination: OffsetPaginationQuery | undefined
+  [items, count]: [items: T[], count: number],
+  query: Q | undefined
 ): OffsetPaginatedResult<S> {
   return {
     items: transformer.array(items),
     meta: {
       total: count,
-      offset: pagination?.offset ?? DEFAULT_OFFSET,
-      limit: pagination?.limit ?? DEFAULT_LIMIT
+      offset: query?.pagination?.offset ?? DEFAULT_OFFSET,
+      limit: query?.pagination?.limit ?? DEFAULT_LIMIT
     }
   }
 }

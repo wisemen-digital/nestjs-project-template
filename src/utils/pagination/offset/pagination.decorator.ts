@@ -28,7 +28,7 @@ export const ApiOffsetPaginatedResponse = <T extends Type<unknown>>(
   return applyDecorators(
     ApiExtraModels(OffsetPaginatedEntity, entityType),
     ApiOkResponse({
-      description: 'pagination response',
+      description: 'Paginated response',
       schema: {
         allOf: [
           { $ref: getSchemaPath(OffsetPaginatedEntity) },
