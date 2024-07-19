@@ -5,9 +5,9 @@ import { type Role } from '../entities/role.entity.js'
 import { type CreateRoleDto } from '../dtos/create-role.dto.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { KnownError } from '../../../utils/exceptions/errors.js'
-import { RedisCacheService } from '../../../utils/cache/cache.js'
 import { type UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
-import { transaction } from '../../typeorm/utils/transaction.js'
+import { transaction } from '../../../utils/typeorm/transaction.js'
+import { RedisCacheService } from '../../cache/services/cache.service.js'
 
 @Injectable()
 export class RoleService {

@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer'
 import { IsNotEmpty, IsUUID, IsEnum, IsArray, ValidateNested } from 'class-validator'
-import { Permission } from '../../permissions/permission.enum.js'
+import { Permission } from '../../permissions/enums/permission.enum.js'
 
 class RoleValueDto {
   @IsNotEmpty()

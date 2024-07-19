@@ -1,119 +1,87 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common'
-import { ApiOAuth2, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { RoleTransformer, RoleTransformerType } from '../transformers/role.transformer.js'
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { RoleTransformer, type RoleTransformerType } from '../transformers/role.transformer.js'
 import { CreateRoleDto } from '../dtos/create-role.dto.js'
-import { RoleCount } from '../transformers/role-count.type.js'
+import { RoleCountTransformer, type RoleCountTransformerType } from '../transformers/role-count.transformer.js'
 import { RoleService } from '../services/role.service.js'
 import { UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
-import { Permissions } from '../../permissions/permissions.decorator.js'
-import { Permission } from '../../permissions/permission.enum.js'
+import { Permissions } from '../../permissions/decorators/permissions.decorator.js'
+import { Permission } from '../../permissions/enums/permission.enum.js'
+import { getRolesResponse, createRoleResponse, updateRolesBulkResponse, deleteRoleResponse, getRoleCountResponse, getRoleResponse, updateRoleResponse } from '../docs/role-response.docs.js'
 
 @ApiTags('Roles')
 @Controller('roles')
-@ApiOAuth2([])
+@ApiBearerAuth()
 export class RoleController {
   constructor (
     private readonly roleService: RoleService
   ) {}
 
-  @Get()
-  @ApiResponse({
-    status: 200,
-    description: 'The roles has been successfully received.',
-    type: [RoleTransformerType]
-  })
+  @Get('/')
+  @ApiResponse(getRolesResponse)
   @Permissions(Permission.ROLE_READ)
-  async getRoles (): Promise<RoleTransformerType[]> {
+  public async getRoles (): Promise<RoleTransformerType[]> {
     const roles = await this.roleService.findAll()
-
     return new RoleTransformer().array(roles)
   }
 
-  @Post()
-  @ApiResponse({
-    status: 201,
-    description: 'The role has been successfully created.',
-    type: RoleTransformerType
-  })
+  @Post('/')
+  @ApiResponse(createRoleResponse)
   @Permissions(Permission.ROLE_CREATE)
-  async createRole (
+  public async createRole (
     @Body() createRoleDto: CreateRoleDto
   ): Promise<RoleTransformerType> {
     const role = await this.roleService.create(createRoleDto)
-
     return new RoleTransformer().item(role)
   }
 
-  @Post('bulk')
-  @ApiResponse({
-    status: 201,
-    description: 'The roles has been successfully created.',
-    type: [RoleTransformerType]
-  })
+  @Post('/bulk')
+  @ApiResponse(updateRolesBulkResponse)
   @Permissions(Permission.ROLE_UPDATE)
-  async updateRolesBulk (
+  public async updateRolesBulk (
     @Body() updateRolesBulk: UpdateRolesBulkDto
   ): Promise<RoleTransformerType[]> {
     const roles = await this.roleService.updateBulk(updateRolesBulk)
-
     return new RoleTransformer().array(roles)
   }
 
-  @Get(':role')
-  @ApiResponse({
-    status: 200,
-    description: 'The role has been successfully received.',
-    type: RoleTransformerType
-  })
+  @Get('/:roleUuid')
+  @ApiResponse(getRoleResponse)
   @Permissions(Permission.ROLE_READ)
-  async getRole (
-    @Param('role', ParseUUIDPipe) uuid: string
+  public async getRole (
+    @Param('roleUuid', ParseUUIDPipe) roleUuid: string
   ): Promise<RoleTransformerType> {
-    const role = await this.roleService.findOne(uuid)
-
+    const role = await this.roleService.findOne(roleUuid)
     return new RoleTransformer().item(role)
   }
 
-  @Post(':role')
-  @ApiResponse({
-    status: 200,
-    description: 'The role has been successfully updated.',
-    type: RoleTransformerType
-  })
+  @Post('/:roleUuid')
+  @ApiResponse(updateRoleResponse)
   @Permissions(Permission.ROLE_UPDATE)
-  async updateRole (
-    @Body() updateRoleDto: CreateRoleDto,
-    @Param('role', ParseUUIDPipe) uuid: string
+  public async updateRole (
+    @Param('roleUuid', ParseUUIDPipe) roleUuid: string,
+    @Body() updateRoleDto: CreateRoleDto
   ): Promise<RoleTransformerType> {
-    const role = await this.roleService.update(uuid, updateRoleDto)
-
+    const role = await this.roleService.update(roleUuid, updateRoleDto)
     return new RoleTransformer().item(role)
   }
 
-  @Delete(':role')
-  @ApiResponse({
-    status: 200,
-    description: 'The role has been successfully deleted.'
-  })
+  @Delete('/:roleUuid')
+  @ApiResponse(deleteRoleResponse)
   @Permissions(Permission.ROLE_DELETE)
-  async deleteRole (
-    @Param('role', ParseUUIDPipe) uuid: string
+  public async deleteRole (
+    @Param('roleUuid', ParseUUIDPipe) roleUuid: string
   ): Promise<void> {
-    await this.roleService.delete(uuid)
+    await this.roleService.delete(roleUuid)
   }
 
-  @Post(':role/count')
-  @ApiResponse({
-    status: 200,
-    description: 'The role count has been successfully received.',
-    type: RoleCount
-  })
+  @Get('/:roleUuid/count')
+  @ApiResponse(getRoleCountResponse)
   @Permissions(Permission.ROLE_READ)
-  async getRoleCount (
-    @Param('role', ParseUUIDPipe) uuid: string
-  ): Promise<RoleCount> {
-    const count = await this.roleService.count(uuid)
-
-    return { count }
+  public async getRoleCount (
+    @Param('roleUuid', ParseUUIDPipe) roleUuid: string
+  ): Promise<RoleCountTransformerType> {
+    const count = await this.roleService.count(roleUuid)
+    return new RoleCountTransformer().item(count)
   }
 }
