@@ -30,7 +30,12 @@ async function bootstrap (): Promise<void> {
   const config = buildDocumentationConfig()
   const document = SwaggerModule.createDocument(app, config)
 
-  SwaggerModule.setup('api/docs', app, document)
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha'
+    }
+  })
 
   const httpAdapterHost = app.get(HttpAdapterHost)
 
