@@ -1,7 +1,9 @@
 import { Controller, Get } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 import { ApiStatusType } from '../types/api-status.type.js'
 import { Public } from '../../permissions/permissions.decorator.js'
 
+@ApiTags('Default')
 @Controller({
   version: ''
 })

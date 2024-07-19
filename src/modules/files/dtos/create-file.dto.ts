@@ -10,7 +10,7 @@ export class CreateFileDto {
   @Transform(({ value }) => value.toLowerCase())
   name: string
 
-  @ApiProperty()
+  @ApiProperty({ type: 'string', enum: MimeType })
   @IsNotEmpty()
   @IsEnum(MimeType)
   mimeType: MimeType
