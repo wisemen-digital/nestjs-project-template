@@ -24,6 +24,8 @@ import { RedisCacheService } from './services/cache.service.js'
     RoleRepository,
     UserRepository
   ],
-  exports: [RedisCacheService]
+  exports: [
+    RedisCacheService
+  ]
 })
 export class RedisCacheModule {}

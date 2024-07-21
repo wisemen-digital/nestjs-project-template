@@ -44,7 +44,6 @@ import { ClientRepository } from './repositories/client.repository.js'
     PkceRepository
   ],
   exports: [
-    JwtModule,
     AuthService
   ]
 })
