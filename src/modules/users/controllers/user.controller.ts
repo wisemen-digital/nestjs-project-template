@@ -1,21 +1,21 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common'
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { Body, Controller, Delete, Get, Post, Query, UseGuards } from '@nestjs/common'
+import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { ApiOffsetPaginatedResponse } from '../../../utils/pagination/offset/pagination.decorator.js'
-import { Permissions } from '../../permissions/decorators/permissions.decorator.js'
-import { Permission } from '../../permissions/enums/permission.enum.js'
 import { CreateUserDto } from '../dtos/create-user.dto.js'
-import { UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { UpdateUserDto } from '../dtos/update-user.dto.js'
 import { UserTransformerType, UserTransformer } from '../transformers/user.transformer.js'
-import { DeleteUserGuard, UpdateUserGuard } from '../guards/user-update.guard.js'
 import { UserQuery } from '../queries/user.query.js'
-import { offsetPaginatedResponse, type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
 import { UserFlowService } from '../services/user-flow.service.js'
+import { offsetPaginatedResponse, type OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
+import { Permissions, Public } from '../../permissions/decorators/permissions.decorator.js'
+import { Permission } from '../../permissions/enums/permission.enum.js'
+import { UserGuard } from '../guards/user.guard.js'
 import { createUserResponse, deleteUserResponse, getUserResponse, updateUserPasswordResponse, updateUserResponse } from '../docs/user-response.docs.js'
+import { UuidParam } from '../../../utils/params/uuid-param.utiil.js'
+import { UpdatePasswordDto } from '../dtos/update-password.dto.js'
 
 @ApiTags('User')
 @Controller('users')
-@ApiBearerAuth()
 export class UserController {
   constructor (
     private readonly userFlowService: UserFlowService
@@ -23,6 +23,7 @@ export class UserController {
 
   @Post('/')
   @ApiResponse(createUserResponse)
+  @Public()
   async createUser (
     @Body() createUserDto: CreateUserDto
   ): Promise<UserTransformerType> {
@@ -42,9 +43,9 @@ export class UserController {
 
   @Get('/:userUuid')
   @ApiResponse(getUserResponse)
-  @UseGuards(UpdateUserGuard)
+  @UseGuards(UserGuard)
   async getUser (
-    @Param('userUuid', ParseUUIDPipe) userUuid: string
+    @UuidParam('userUuid') userUuid: string
   ): Promise<UserTransformerType> {
     const user = await this.userFlowService.findOneOrFail(userUuid)
     return new UserTransformer().item(user)
@@ -52,9 +53,9 @@ export class UserController {
 
   @Post('/:userUuid')
   @ApiResponse(updateUserResponse)
-  @UseGuards(UpdateUserGuard)
+  @UseGuards(UserGuard)
   async updateUser (
-    @Param('userUuid', ParseUUIDPipe) userUuid: string,
+    @UuidParam('userUuid') userUuid: string,
     @Body() updateUserDto: UpdateUserDto
   ): Promise<UserTransformerType> {
     const updatedUser = await this.userFlowService.update(userUuid, updateUserDto)
@@ -63,18 +64,18 @@ export class UserController {
 
   @Delete('/:userUuid')
   @ApiResponse(deleteUserResponse)
-  @UseGuards(DeleteUserGuard)
+  @UseGuards(UserGuard)
   async deleteUser (
-    @Param('userUuid', ParseUUIDPipe) userUuid: string
+    @UuidParam('userUuid') userUuid: string
   ): Promise<void> {
     await this.userFlowService.delete(userUuid)
   }
 
   @Post('/:userUuid/password')
   @ApiResponse(updateUserPasswordResponse)
-  @UseGuards(UpdateUserGuard)
+  @UseGuards(UserGuard)
   async updateUserPassword (
-    @Param('userUuid', ParseUUIDPipe) userUuid: string,
+    @UuidParam('userUuid') userUuid: string,
     @Body() updatePasswordDto: UpdatePasswordDto
   ): Promise<void> {
     await this.userFlowService.updatePassword(userUuid, updatePasswordDto)
