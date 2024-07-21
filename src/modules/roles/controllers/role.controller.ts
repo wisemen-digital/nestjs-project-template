@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Post } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { RoleTransformer, type RoleTransformerType } from '../transformers/role.transformer.js'
 import { CreateRoleDto } from '../dtos/create-role.dto.js'
@@ -8,6 +8,7 @@ import { UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
 import { Permissions } from '../../permissions/decorators/permissions.decorator.js'
 import { Permission } from '../../permissions/enums/permission.enum.js'
 import { getRolesResponse, createRoleResponse, updateRolesBulkResponse, deleteRoleResponse, getRoleCountResponse, getRoleResponse, updateRoleResponse } from '../docs/role-response.docs.js'
+import { UuidParam } from '../../../utils/params/uuid-param.utiil.js'
 
 @ApiTags('Roles')
 @Controller('roles')
@@ -49,7 +50,7 @@ export class RoleController {
   @ApiResponse(getRoleResponse)
   @Permissions(Permission.ROLE_READ)
   public async getRole (
-    @Param('roleUuid', ParseUUIDPipe) roleUuid: string
+    @UuidParam('roleUuid') roleUuid: string
   ): Promise<RoleTransformerType> {
     const role = await this.roleService.findOne(roleUuid)
     return new RoleTransformer().item(role)
@@ -59,7 +60,7 @@ export class RoleController {
   @ApiResponse(updateRoleResponse)
   @Permissions(Permission.ROLE_UPDATE)
   public async updateRole (
-    @Param('roleUuid', ParseUUIDPipe) roleUuid: string,
+    @UuidParam('roleUuid') roleUuid: string,
     @Body() updateRoleDto: CreateRoleDto
   ): Promise<RoleTransformerType> {
     const role = await this.roleService.update(roleUuid, updateRoleDto)
@@ -70,7 +71,7 @@ export class RoleController {
   @ApiResponse(deleteRoleResponse)
   @Permissions(Permission.ROLE_DELETE)
   public async deleteRole (
-    @Param('roleUuid', ParseUUIDPipe) roleUuid: string
+    @UuidParam('roleUuid') roleUuid: string
   ): Promise<void> {
     await this.roleService.delete(roleUuid)
   }
@@ -79,7 +80,7 @@ export class RoleController {
   @ApiResponse(getRoleCountResponse)
   @Permissions(Permission.ROLE_READ)
   public async getRoleCount (
-    @Param('roleUuid', ParseUUIDPipe) roleUuid: string
+    @UuidParam('roleUuid') roleUuid: string
   ): Promise<RoleCountTransformerType> {
     const count = await this.roleService.count(roleUuid)
     return new RoleCountTransformer().item(count)
