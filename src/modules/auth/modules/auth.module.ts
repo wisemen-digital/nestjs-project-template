@@ -45,7 +45,6 @@ import { getPrivateKey, getPublicKey } from '../../../utils/auth/keys.js'
   ],
   exports: [
     JwtModule,
-    TokenService,
     AuthService
   ]
 })
