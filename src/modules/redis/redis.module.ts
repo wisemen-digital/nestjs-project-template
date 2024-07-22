@@ -1,13 +1,13 @@
 import { type DynamicModule, Module, type Provider } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import configuration from '../../config/env/configuration.js'
-import { NatsClient } from './nats.client.js'
+import { RedisClient } from './redis.client.js'
 
 @Module({})
-export class NatsModule {
+export class RedisModule {
   static forRoot (providers: Provider[] = []): DynamicModule {
     return {
-      module: NatsModule,
+      module: RedisModule,
       imports: [
         ConfigModule.forRoot({
           envFilePath: process.env.ENV_FILE,
@@ -15,11 +15,11 @@ export class NatsModule {
         })
       ],
       providers: [
-        NatsClient,
+        RedisClient,
         ...providers
       ],
       exports: [
-        NatsClient
+        RedisClient
       ]
     }
   }

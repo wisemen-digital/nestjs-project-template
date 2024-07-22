@@ -1,7 +1,7 @@
 import { Injectable, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common'
-import { type NatsConnection, connect, credsAuthenticator, type Authenticator, type Payload, type Subscription, type SubscriptionOptions } from 'nats'
+import { type NatsConnection, connect, type KV, credsAuthenticator, type Authenticator, type Payload, type Subscription, type SubscriptionOptions } from 'nats'
 import { ConfigService } from '@nestjs/config'
-import { isLocalEnv, isTestEnv } from '../../utils/envs/env-checks.js'
+import { isTestEnv } from '../../utils/envs/env-checks.js'
 
 interface SubscribeOptions {
   loadBalance: boolean
@@ -10,6 +10,7 @@ interface SubscribeOptions {
 @Injectable()
 export class NatsClient implements OnModuleInit, OnModuleDestroy {
   public client: NatsConnection
+  public cache: KV
   private readonly queueName: string
 
   constructor (
@@ -31,6 +32,8 @@ export class NatsClient implements OnModuleInit, OnModuleDestroy {
       authenticator: this.getAuthenticator(),
       timeout: 3000
     })
+
+    this.cache = await this.client.jetstream().views.kv('cache')
   }
 
   async onModuleDestroy (): Promise<void> {
@@ -38,7 +41,7 @@ export class NatsClient implements OnModuleInit, OnModuleDestroy {
   }
 
   private getAuthenticator (): Authenticator | undefined {
-    if (isTestEnv() || isLocalEnv()) {
+    if (isTestEnv()) {
       return undefined
     } else {
       const nkey = this.configService.get('NATS_NKEY')
@@ -62,5 +65,23 @@ export class NatsClient implements OnModuleInit, OnModuleDestroy {
 
   publish (subject: string, message: Payload | undefined): void {
     this.client.publish(subject, message)
+  }
+
+  async getCachedValue (key: string): Promise<string | null> {
+    const result = await this.cache.get(key)
+
+    if (result != null && result.operation === 'PUT') {
+      String(result.value)
+    }
+
+    return null
+  }
+
+  async putCachedValue (key: string, value: string): Promise<void> {
+    await this.cache.put(key, value)
+  }
+
+  async deleteCachedValue (key: string): Promise<void> {
+    await this.cache.delete(key)
   }
 }
