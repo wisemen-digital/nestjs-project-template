@@ -1,11 +1,15 @@
 import { Controller, Get, Post, Req, Res } from '@nestjs/common'
 import { Response } from 'express'
+import { ApiBody, ApiExtraModels, ApiOAuth2, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { AuthService } from '../services/auth.service.js'
 import { Public } from '../../permissions/decorators/permissions.decorator.js'
 import { Request } from '../guards/auth.guard.js'
 import { AuthTransformer } from '../transformers/auth.transformer.js'
-import { UserTransformer, type UserTransformerType } from '../../users/transformers/user.transformer.js'
+import { UserTransformer, UserTransformerType } from '../../users/transformers/user.transformer.js'
+import { TokenResponse } from '../types/token.response.js'
+import { PasswordGrantBody } from '../types/password-grant.body.js'
+import { RefreshGrantBody } from '../types/refresh-grant.body.js'
 import { getUserInfoResponse } from '../docs/auth-response.docs.js'
 
 @ApiTags('Authentication')
@@ -20,6 +24,20 @@ export class AuthController {
 
   @Post('/token')
   @Public()
+  @ApiResponse({
+    status: 200,
+    description: 'The token has been successfully created.',
+    type: TokenResponse
+  })
+  @ApiExtraModels(PasswordGrantBody, RefreshGrantBody)
+  @ApiBody({
+    schema: {
+      oneOf: [
+        { $ref: getSchemaPath(PasswordGrantBody) },
+        { $ref: getSchemaPath(RefreshGrantBody) }
+      ]
+    }
+  })
   public async createToken (
     @Req() req: Request,
     @Res() res: Response
