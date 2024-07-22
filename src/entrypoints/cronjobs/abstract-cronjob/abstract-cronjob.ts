@@ -1,6 +1,5 @@
 import { type INestApplicationContext } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
-import { initSentry } from '../../../helpers/sentry.js'
 import { AppModule } from '../../../app.module.js'
 
 export abstract class AbstractCronjob {
@@ -13,8 +12,6 @@ export abstract class AbstractCronjob {
   }
 
   private async init (): Promise<void> {
-    initSentry()
-
     this.app = await NestFactory.createApplicationContext(
       AppModule.forRoot([])
     )

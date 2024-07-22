@@ -1,7 +1,9 @@
 import yargs from 'yargs'
+import { initSentry } from '../helpers/sentry.js'
 import { CronjobFactory, CronJobType } from './cronjobs/factories/cronjob.factory.js'
 
 async function bootstrap (): Promise<void> {
+  initSentry()
   const args = await yargs(process.argv)
     .option('job', {
       alias: 'j',
