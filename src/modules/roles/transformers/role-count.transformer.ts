@@ -2,7 +2,7 @@ import { Transformer } from '@appwise/transformer'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class RoleCountTransformerType {
-  @ApiProperty({ type: Number, description: 'The count of the roles' })
+  @ApiProperty({ type: Number, description: 'The count of roles' })
   count: number
 }
 

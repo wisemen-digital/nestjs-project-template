@@ -26,5 +26,5 @@ export const deleteUserResponse: ApiResponseOptions = {
 
 export const updateUserPasswordResponse: ApiResponseOptions = {
   status: 200,
-  description: 'The users password has been successfully updated.'
+  description: 'The user\'s password has been successfully updated.'
 }
