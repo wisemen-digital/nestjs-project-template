@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Transformer } from '@appwise/transformer'
 import { notificationContent } from '../content/notification.content.js'
 import { type Notification } from '../entities/notification.entity.js'
+import { getBit } from '../utils/get-bit.util.js'
 
 export class NotificationTransformerType {
   @ApiProperty({ type: 'string', description: 'Title of the notification' })
@@ -10,7 +11,7 @@ export class NotificationTransformerType {
   @ApiProperty({ type: 'number', description: 'Bit value representing notification' })
   bit: number
 
-  @ApiProperty({ type: 'boolean', description: 'Enable or disable' })
+  @ApiProperty({ type: 'boolean', description: 'Enabled or disabled' })
   state: boolean
 
   @ApiProperty({ type: 'number', description: 'Group of the notification' })
@@ -19,7 +20,7 @@ export class NotificationTransformerType {
 
 export class NotificationTransformer extends
   Transformer<Notification, NotificationTransformerType[]> {
-  transform (
+  protected transform (
     notification: Notification,
     language: string
   ): NotificationTransformerType[] {
@@ -28,7 +29,7 @@ export class NotificationTransformer extends
         title: content.title[language],
         bit: content.bit,
         group: content.group,
-        state: ((notification.config >> content.bit) & 1) === 1
+        state: getBit(notification.config, content.bit)
       }
     })
   }

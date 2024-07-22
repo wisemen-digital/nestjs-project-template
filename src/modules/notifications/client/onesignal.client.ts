@@ -1,13 +1,11 @@
 import assert from 'assert'
 import { DefaultApi, type LanguageStringMap, createConfiguration } from '@onesignal/node-onesignal'
-import { captureException } from '@sentry/node'
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import dayjs from 'dayjs'
 import { type NotificationType } from '../content/notification.type.js'
 import { getContentForType } from '../content/notification.content.js'
-import { isNotificationEnabled } from '../utils/is-notification-enabled.util.js'
-import { isTestEnv } from '../../../utils/envs/env-checks.js'
 import { type Notification } from '../entities/notification.entity.js'
+import { getBit } from '../utils/get-bit.util.js'
 
 @Injectable()
 export class OneSignalClient {
@@ -52,12 +50,8 @@ export class OneSignalClient {
     sendAfter: Date,
     additionalOptions?: { content?: LanguageStringMap, data?: object }
   ): Promise<void> {
-    if (isTestEnv()) {
-      return
-    }
-
     const deviceUuids = notifications
-      .filter(notification => isNotificationEnabled(type, notification.config))
+      .filter(notification => getBit(notification.config, type))
       .map(setting => setting.deviceUuid)
 
     if (deviceUuids.length === 0) {
@@ -67,36 +61,22 @@ export class OneSignalClient {
     const content = getContentForType(type)
     const sendAfterTimestamp = dayjs(sendAfter).toISOString()
 
-    try {
-      await this.client.createNotification({
-        id: notificationUuid,
-        app_id: this.appId,
-        contents: additionalOptions?.content ?? content.content,
-        headings: content.heading,
-        priority: this.HIGH_PRIORITY,
-        include_aliases: {
-          external_id: deviceUuids
-        },
-        target_channel: 'push',
-        send_after: sendAfterTimestamp,
-        data: additionalOptions?.data
-      })
-    } catch (error) {
-      Logger.error('OneSignalClient - Failed to send notification', error)
-      captureException(error)
-    }
+    await this.client.createNotification({
+      id: notificationUuid,
+      app_id: this.appId,
+      contents: { ...content.content, ...additionalOptions?.content },
+      headings: content.heading,
+      priority: this.HIGH_PRIORITY,
+      include_aliases: {
+        external_id: deviceUuids
+      },
+      target_channel: 'push',
+      send_after: sendAfterTimestamp,
+      data: additionalOptions?.data
+    })
   }
 
   public async cancelNotification (notificationUuid: string): Promise<void> {
-    if (isTestEnv()) {
-      return
-    }
-
-    try {
-      await this.client.cancelNotification(this.appId, notificationUuid)
-    } catch (error) {
-      Logger.error('OneSignalClient - Failed to cancel notification', error)
-      captureException(error)
-    }
+    await this.client.cancelNotification(this.appId, notificationUuid)
   }
 }
