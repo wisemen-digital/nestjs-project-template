@@ -26,10 +26,10 @@
       "entryFile": "entrypoints/pgboss-worker",
       "sourceRoot": "src"
     },
-    "import-typesense-cronjob": {
+    "cronjob": {
       "type": "application",
       "root": "src",
-      "entryFile": "entrypoints/cronjobs/import-typesense.cronjob",
+      "entryFile": "entrypoints/cronjob",
       "sourceRoot": "src"
     }
   }
