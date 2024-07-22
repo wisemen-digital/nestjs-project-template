@@ -2,6 +2,7 @@ import { type DynamicModule, Module, type Provider } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import configuration from '../../config/env/configuration.js'
 import { NatsClient } from './nats.client.js'
+import { ExamplePublisher } from './publishers/example.publisher.js'
 
 @Module({})
 export class NatsModule {
@@ -16,6 +17,7 @@ export class NatsModule {
       ],
       providers: [
         NatsClient,
+        ExamplePublisher,
         ...providers
       ],
       exports: [

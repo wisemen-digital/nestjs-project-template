@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { StringCodec } from 'nats'
-import { NatsClient } from '../../nats/nats.client.js'
-import { Topic } from '../../websocket/topic.enum.js'
+import { NatsClient } from '../nats.client.js'
+import { NatsTopics } from '../../websocket/topic.enum.js'
 
 @Injectable()
-export class NotificationPublisher {
+export class ExamplePublisher {
   constructor (
     private readonly natsClient: NatsClient
   ) {}
@@ -13,7 +13,7 @@ export class NotificationPublisher {
     const sc = StringCodec()
 
     this.natsClient.publish(
-      `${Topic.NOTIFICATION}.${userUuid}`,
+      `${NatsTopics.EXAMPLE}.${userUuid}`,
       sc.encode(JSON.stringify(notification))
     )
   }

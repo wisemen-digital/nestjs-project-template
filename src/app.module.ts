@@ -18,7 +18,6 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
 import { ErrorsInterceptor } from './utils/exceptions/errors.interceptor.js'
 import { PgBossModule } from './modules/pgboss/modules/pgboss.module.js'
 import { envValidationSchema } from './config/env/env.validation.js'
-import { NotificationModule } from './modules/notifications/notification.module.js'
 import { NatsModule } from './modules/nats/nats.module.js'
 import { CacheModule } from './modules/cache/cache.module.js'
 import { RedisModule } from './modules/redis/redis.module.js'
@@ -65,7 +64,6 @@ export class AppModule {
         FileModule,
         StatusModule,
         NatsModule.forRoot(),
-        NotificationModule,
         CacheModule,
 
         ...modules

@@ -1,3 +1,3 @@
-export enum Topic {
-  NOTIFICATION = 'notification',
+export enum NatsTopics {
+  EXAMPLE = 'example',
 }
