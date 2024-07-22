@@ -1,13 +1,13 @@
 import { Injectable, type CanActivate, type ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { RedisCacheService } from '../../cache/services/cache.service.js'
+import { CacheService } from '../../cache/services/cache.service.js'
 import { Permission } from '../../permissions/enums/permission.enum.js'
 
 @Injectable()
 export class UserGuard implements CanActivate {
   constructor (
     private readonly reflector: Reflector,
-    private readonly cache: RedisCacheService
+    private readonly cache: CacheService
   ) {}
 
   async canActivate (context: ExecutionContext): Promise<boolean> {

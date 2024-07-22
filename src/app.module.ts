@@ -11,7 +11,7 @@ import { TypesenseModule } from './modules/typesense/typesense.module.js'
 import { MailModule } from './modules/mail/mail.module.js'
 import { RoleModule } from './modules/roles/role.module.js'
 import { PermissionModule } from './modules/permissions/permissions.module.js'
-import { RedisCacheModule } from './modules/cache/cache.module.js'
+import { CacheModule } from './modules/cache/cache.module.js'
 import configuration from './config/env/configuration.js'
 import { StatusModule } from './modules/status/status.module.js'
 import { FileModule } from './modules/files/file.module.js'
@@ -19,6 +19,7 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
 import { ErrorsInterceptor } from './utils/exceptions/errors.interceptor.js'
 import { PgBossModule } from './modules/pgboss/modules/pgboss.module.js'
 import { envValidationSchema } from './config/env/env.validation.js'
+import { RedisModule } from './modules/redis/redis.module.js'
 
 @Module({})
 export class AppModule {
@@ -56,10 +57,11 @@ export class AppModule {
 
         // Utils
         MailModule,
-        RedisCacheModule,
+        RedisModule.forRoot(),
         TypesenseModule,
         FileModule,
         StatusModule,
+        CacheModule,
 
         ...modules
       ],
