@@ -89,6 +89,9 @@ dependencies:
   ejs:
     specifier: ^3.1.10
     version: 3.1.10
+  isBetween:
+    specifier: link:dayjs/plugin/isBetween
+    version: link:dayjs/plugin/isBetween
   joi:
     specifier: ^17.13.1
     version: 17.13.1

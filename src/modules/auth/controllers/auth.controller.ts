@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Req, Res } from '@nestjs/common'
 import { Response } from 'express'
-import { ApiBody, ApiExtraModels, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger'
+import { ApiBody, ApiExtraModels, ApiOAuth2, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger'
 import { AuthService } from '../services/auth.service.js'
 import { Public } from '../../permissions/permissions.decorator.js'
 import { Request } from '../guards/auth.guard.js'
@@ -53,6 +53,7 @@ export class AuthController {
   }
 
   @Get('/userinfo')
+  @ApiOAuth2([])
   @ApiResponse({
     status: 200,
     description: 'The user info has been successfully retrieved.',

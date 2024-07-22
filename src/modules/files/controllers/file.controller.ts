@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, HttpCode, Param, ParseUUIDPipe, Post, Req, Res } from '@nestjs/common'
-import { ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOAuth2, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { Request } from '../../auth/guards/auth.guard.js'
 import { CreateFileDto } from '../dtos/create-file.dto.js'
@@ -9,6 +9,7 @@ import { confirmFileUploadApiResponse, createFileApiResponse, downloadFileApiRes
 
 @ApiTags('File')
 @Controller('file')
+@ApiOAuth2([])
 export class FileController {
   constructor (
     private readonly fileFlowService: FileFlowService
