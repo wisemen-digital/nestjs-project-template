@@ -9,6 +9,7 @@ import { Permissions } from '../../permissions/decorators/permissions.decorator.
 import { Permission } from '../../permissions/enums/permission.enum.js'
 import { getRolesResponse, createRoleResponse, updateRolesBulkResponse, deleteRoleResponse, getRoleCountResponse, getRoleResponse, updateRoleResponse } from '../docs/role-response.docs.js'
 import { UuidParam } from '../../../utils/params/uuid-param.utiil.js'
+import { UpdateRoleDto } from '../dtos/update-role.dto.js'
 
 @ApiTags('Roles')
 @Controller('roles')
@@ -61,7 +62,7 @@ export class RoleController {
   @Permissions(Permission.ROLE_UPDATE)
   public async updateRole (
     @UuidParam('roleUuid') roleUuid: string,
-    @Body() updateRoleDto: CreateRoleDto
+    @Body() updateRoleDto: UpdateRoleDto
   ): Promise<RoleTransformerType> {
     const role = await this.roleService.update(roleUuid, updateRoleDto)
     return new RoleTransformer().item(role)

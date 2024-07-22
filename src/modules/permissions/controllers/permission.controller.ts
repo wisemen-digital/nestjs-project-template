@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common'
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Permission } from '../enums/permission.enum.js'
 import { getPermissionsResponse } from '../docs/permission-response.docs.js'
+import { Permissions } from '../decorators/permissions.decorator.js'
 
 @ApiTags('Permissions')
 @Controller('permissions')
@@ -9,6 +10,7 @@ import { getPermissionsResponse } from '../docs/permission-response.docs.js'
 export class PermissionController {
   @Get('/')
   @ApiResponse(getPermissionsResponse)
+  @Permissions(Permission.PERMISSION_READ)
   public getPermissions (): Permission[] {
     return Object.values(Permission)
   }

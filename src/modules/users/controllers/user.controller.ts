@@ -44,6 +44,7 @@ export class UserController {
   @Get('/:userUuid')
   @ApiResponse(getUserResponse)
   @UseGuards(UserGuard)
+  @Permissions(Permission.USER_READ)
   async getUser (
     @UuidParam('userUuid') userUuid: string
   ): Promise<UserTransformerType> {
@@ -54,6 +55,7 @@ export class UserController {
   @Post('/:userUuid')
   @ApiResponse(updateUserResponse)
   @UseGuards(UserGuard)
+  @Permissions(Permission.USER_UPDATE)
   async updateUser (
     @UuidParam('userUuid') userUuid: string,
     @Body() updateUserDto: UpdateUserDto
@@ -65,6 +67,7 @@ export class UserController {
   @Delete('/:userUuid')
   @ApiResponse(deleteUserResponse)
   @UseGuards(UserGuard)
+  @Permissions(Permission.USER_DELETE)
   async deleteUser (
     @UuidParam('userUuid') userUuid: string
   ): Promise<void> {
@@ -74,6 +77,7 @@ export class UserController {
   @Post('/:userUuid/password')
   @ApiResponse(updateUserPasswordResponse)
   @UseGuards(UserGuard)
+  @Permissions(Permission.USER_UPDATE)
   async updateUserPassword (
     @UuidParam('userUuid') userUuid: string,
     @Body() updatePasswordDto: UpdatePasswordDto

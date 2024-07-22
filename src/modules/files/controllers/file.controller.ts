@@ -7,6 +7,8 @@ import { type CreateFileResponse, CreateFileResponseTransformer } from '../trans
 import { FileFlowService } from '../services/file.flows.service.js'
 import { confirmFileUploadResponse, createFileResponse, downloadFileResponse, removeFileResponse } from '../docs/file-response.docs.js'
 import { UuidParam } from '../../../utils/params/uuid-param.utiil.js'
+import { Permissions } from '../../permissions/decorators/permissions.decorator.js'
+import { Permission } from '../../permissions/enums/permission.enum.js'
 
 @ApiTags('Files')
 @Controller('files')
@@ -18,6 +20,7 @@ export class FileController {
 
   @Post('/')
   @ApiResponse(createFileResponse)
+  @Permissions(Permission.FILE_CREATE)
   public async createFile (
     @Req() req: Request,
     @Body() createFileDto: CreateFileDto
@@ -29,6 +32,7 @@ export class FileController {
 
   @Delete('/:fileUuid')
   @ApiResponse(removeFileResponse)
+  @Permissions(Permission.FILE_DELETE)
   public async removeFile (
     @UuidParam('fileUuid') fileUuid: string
   ): Promise<void> {
@@ -38,6 +42,7 @@ export class FileController {
   @Post('/:fileUuid/confirm-upload')
   @ApiResponse(confirmFileUploadResponse)
   @HttpCode(200)
+  @Permissions(Permission.FILE_UPDATE)
   public async confirmFileUpload (
     @UuidParam('fileUuid') fileUuid: string
   ): Promise<void> {
@@ -47,6 +52,7 @@ export class FileController {
   @Post('/:fileUuid/download')
   @ApiResponse(downloadFileResponse)
   @HttpCode(302)
+  @Permissions(Permission.FILE_READ)
   public async downloadFile (
     @UuidParam('fileUuid') fileUuid: string,
     @Res() res: Response
