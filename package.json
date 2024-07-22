@@ -22,7 +22,7 @@
   },
   "dependencies": {
     "@appwise/express-dto-router": "^1.1.5",
-    "@appwise/oauth2-server": "^0.0.10",
+    "@appwise/oauth2-server": "^0.1.6",
     "@appwise/time": "^0.0.14",
     "@appwise/transformer": "^0.0.2",
     "@aws-sdk/client-s3": "^3.569.0",
@@ -47,6 +47,7 @@
     "colors": "^1.4.0",
     "dayjs": "^1.11.10",
     "ejs": "^3.1.10",
+    "isBetween": "link:dayjs/plugin/isBetween",
     "joi": "^17.13.1",
     "jsonwebtoken": "^9.0.2",
     "mjml": "^4.15.3",
@@ -59,7 +60,8 @@
     "typeorm": "^0.3.17",
     "typesense": "^1.7.2",
     "uuid": "^9.0.0",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.1.17",
@@ -74,6 +76,7 @@
     "@types/node": "^20.5.9",
     "@types/supertest": "^2.0.12",
     "@types/uuid": "^9.0.3",
+    "@types/yargs": "^17.0.32",
     "@typescript-eslint/eslint-plugin": "^6.5.0",
     "@typescript-eslint/parser": "^6.5.0",
     "dotenv": "^16.3.1",
