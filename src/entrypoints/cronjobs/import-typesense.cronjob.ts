@@ -1,25 +1,15 @@
-import { NestFactory } from '@nestjs/core'
 import { DataSource } from 'typeorm'
-import { AppModule } from '../../app.module.js'
-import { initSentry } from '../../helpers/sentry.js'
 import { PgBossService } from '../../modules/pgboss/services/pgboss.service.js'
 import { ImportTypesenseJob } from '../../modules/typesense/jobs/import-typesense.job.js'
+import { AbstractCronjob } from './abstract-cronjob/abstract-cronjob.js'
 
-async function bootstrap (): Promise<void> {
-  const app = await NestFactory.createApplicationContext(
-    AppModule.forRoot([])
-  )
+export class ImportTypesenseCronjob extends AbstractCronjob {
+  async execute (): Promise<void> {
+    const scheduler = this.app.get(PgBossService)
+    const dataSource = this.app.get(DataSource)
 
-  initSentry()
+    const job = ImportTypesenseJob.create()
 
-  const scheduler = app.get(PgBossService)
-  const dataSource = app.get(DataSource)
-
-  const job = ImportTypesenseJob.create()
-
-  await scheduler.scheduleJobs(dataSource.manager, [job])
-
-  await app.close()
+    await scheduler.scheduleJobs(dataSource.manager, [job])
+  }
 }
-
-await bootstrap()
