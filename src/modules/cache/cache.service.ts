@@ -75,7 +75,7 @@ export class CacheService {
     return userPermissions.includes(Permission.ADMIN)
   }
 
-  async hasPermission (userUuid: string, permissions: Permission[]): Promise<boolean> {
+  async hasPermissions (userUuid: string, permissions: Permission[]): Promise<boolean> {
     if (permissions.length === 0) {
       return true
     }
