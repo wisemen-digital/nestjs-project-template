@@ -3,6 +3,8 @@ import { EntityManager, In } from 'typeorm'
 import { type UpdateNotificationDto } from '../dtos/update-notification.dto.js'
 import { Notification } from '../entities/notification.entity.js'
 import { TypeOrmRepository } from '../../typeorm/utils/transaction.js'
+import { setBit } from '../utils/set-bit.util.js'
+import { DEFAULT_NOTIFICATION_CONFIG } from '../config/notifications.config.js'
 
 @Injectable()
 export class NotificationRepository extends TypeOrmRepository<Notification> {
@@ -14,7 +16,8 @@ export class NotificationRepository extends TypeOrmRepository<Notification> {
     userUuid: string,
     deviceUuid: string
   ): Promise<Notification> {
-    await this.insert({ userUuid, deviceUuid })
+    const config = DEFAULT_NOTIFICATION_CONFIG
+    await this.insert({ userUuid, deviceUuid, config })
     return await this.findOneByOrFail({ userUuid, deviceUuid })
   }
 
@@ -22,11 +25,9 @@ export class NotificationRepository extends TypeOrmRepository<Notification> {
     userUuid: string,
     deviceUuid: string
   ): Promise<Notification> {
-    const notification = await this.findOne({
-      where: {
-        userUuid,
-        deviceUuid
-      }
+    const notification = await this.findOneBy({
+      userUuid,
+      deviceUuid
     })
 
     if (notification == null) {
@@ -40,12 +41,7 @@ export class NotificationRepository extends TypeOrmRepository<Notification> {
     notification: Notification,
     dto: UpdateNotificationDto
   ): Promise<Notification> {
-    if (dto.state) {
-      notification.config |= (1 << dto.bit)
-    } else {
-      notification.config &= ~(1 << dto.bit)
-    }
-
+    notification.config = setBit(notification.config, dto.bit, dto.state)
     return await this.save(notification)
   }
 
