@@ -13,13 +13,13 @@ export class UserTransformerType {
   @ApiProperty()
   updatedAt: Date
 
-  @ApiProperty()
+  @ApiProperty({ type: String, format: 'email' })
   email: string
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String, nullable: true, example: 'John' })
   firstName: string | null
 
-  @ApiProperty({ type: String, nullable: true })
+  @ApiProperty({ type: String, nullable: true, example: 'Doe' })
   lastName: string | null
 
   @ApiProperty({ type: () => RoleTransformerType, nullable: true })
