@@ -4,15 +4,15 @@ export class PasswordGrantBody {
   @ApiProperty({ type: String, example: 'password' })
   grant_type: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   username: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   password: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   client_id: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   client_secret: string
 }
