@@ -1,7 +1,7 @@
 import { Injectable, type OnModuleDestroy, type OnModuleInit } from '@nestjs/common'
 import { type NatsConnection, connect, type KV, credsAuthenticator, type Authenticator, type Payload, type Subscription, type SubscriptionOptions } from 'nats'
 import { ConfigService } from '@nestjs/config'
-import { isTestEnv } from '../../utils/envs/env-checks.js'
+import { isLocalEnv, isTestEnv } from '../../utils/envs/env-checks.js'
 
 interface SubscribeOptions {
   loadBalance: boolean
@@ -41,7 +41,7 @@ export class NatsClient implements OnModuleInit, OnModuleDestroy {
   }
 
   private getAuthenticator (): Authenticator | undefined {
-    if (isTestEnv()) {
+    if (isTestEnv() || isLocalEnv()) {
       return undefined
     } else {
       const nkey = this.configService.get('NATS_NKEY')
