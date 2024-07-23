@@ -18,10 +18,6 @@ export class UserFlowService {
     return await this.userService.findPaginated(query)
   }
 
-  async findOneOrFail (userUuid: string): Promise<User> {
-    return await this.userService.findOneOrFail(userUuid)
-  }
-
   async update (userUuid: string, dto: UpdateUserDto): Promise<User> {
     const updatedUser = await this.userService.update(userUuid, dto)
     await this.typesenseService.importManually(

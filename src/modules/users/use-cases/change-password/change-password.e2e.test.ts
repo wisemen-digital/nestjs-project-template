@@ -13,6 +13,7 @@ import { TestContext } from '../../../../../test/utils/test-context.js'
 import { type AuthorizedUser } from '../../tests/setup-user.type.js'
 import { type Client } from '../../../auth/entities/client.entity.js'
 import { Permission } from '../../../permissions/permission.enum.js'
+import { type Role } from '../../../roles/entities/role.entity.js'
 import { ChangePasswordRequestBuilder } from './change-password-request.builder.js'
 import { InvalidOldPasswordError } from './invalid-old-password.error.js'
 
@@ -21,6 +22,7 @@ describe('Change password e2e test', async () => {
   let dataSource: DataSource
   let entityManager: EntityManager
   let client: Client
+  let updateUserRole: Role
   let adminUser: AuthorizedUser
   let authorizedUser: AuthorizedUser
 
@@ -41,6 +43,7 @@ describe('Change password e2e test', async () => {
     adminUser = await context.getAdminUser()
     authorizedUser = await context.getUser([Permission.USER_UPDATE])
     client = await context.getClient()
+    updateUserRole = await context.getRole([Permission.USER_UPDATE])
   })
 
   after(async () => {
@@ -103,6 +106,7 @@ describe('Change password e2e test', async () => {
       new UserEntityBuilder()
         .withEmail('test4@email.com')
         .withPassword(oldPassword)
+        .withRole(updateUserRole)
         .build()
     )
 
@@ -119,7 +123,7 @@ describe('Change password e2e test', async () => {
     expect(response).toHaveStatus(201)
   })
 
-  it('responds with 201 when an admin changes another user\'s password', async () => {
+  it('responds with 200 when an admin changes another user\'s password', async () => {
     const oldPassword = 'OldPassword'
     const user = await new UserSeeder(entityManager).seedOne(
       new UserEntityBuilder()

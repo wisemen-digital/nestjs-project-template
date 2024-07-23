@@ -1,8 +1,7 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post, Query, UseGuards } from '@nestjs/common'
+import { Controller, Delete, Get, Param, ParseUUIDPipe, Query, UseGuards } from '@nestjs/common'
 import { ApiResponse, ApiTags } from '@nestjs/swagger'
 import { RequirePermissions } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
-import { UpdateUserDto } from '../dtos/update-user.dto.js'
 import { UserTransformerType, UserTransformer } from '../transformers/user.transformer.js'
 import { AllowSelfAndAdminsGuard } from '../guards/user-update.guard.js'
 import { UserQuery } from '../queries/user.query.js'
@@ -29,21 +28,6 @@ export class UserController {
     const [users, count] = await this.userFlowService.findPaginatedAndCount(query)
 
     return generatePaginatedResponse(new UserTransformer(), users, count, query.pagination)
-  }
-
-  @Post(':user')
-  @ApiResponse({
-    status: 201,
-    description: 'The user has been successfully updated.',
-    type: UserTransformerType
-  })
-  @UseGuards(AllowSelfAndAdminsGuard)
-  async updateUser (
-    @Param('user', ParseUUIDPipe) userUuid: string,
-    @Body() updateUserDto: UpdateUserDto
-  ): Promise<UserTransformerType> {
-    const updatedUser = await this.userFlowService.update(userUuid, updateUserDto)
-    return new UserTransformer().item(updatedUser)
   }
 
   @Delete(':user')

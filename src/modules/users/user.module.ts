@@ -16,6 +16,10 @@ import {
 import { ChangePasswordUseCase } from './use-cases/change-password/change-password.use-case.js'
 import { ViewUserController } from './use-cases/view-user/view-user.controller.js'
 import { ViewUserUseCase } from './use-cases/view-user/view-user.use-case.js'
+import { ChangeUserNameUseCase } from './use-cases/change-user-name/change-user-name.use-case.js'
+import {
+  ChangeUserNameController
+} from './use-cases/change-user-name/change-user-name.controller.js'
 
 @Module({
   imports: [
@@ -27,7 +31,8 @@ import { ViewUserUseCase } from './use-cases/view-user/view-user.use-case.js'
     UserController,
     RegisterUserController,
     ChangePasswordController,
-    ViewUserController
+    ViewUserController,
+    ChangeUserNameController
   ],
   providers: [
     UserService,
@@ -36,7 +41,8 @@ import { ViewUserUseCase } from './use-cases/view-user/view-user.use-case.js'
     UserFlowService,
     RegisterUserUseCase,
     ChangePasswordUseCase,
-    ViewUserUseCase
+    ViewUserUseCase,
+    ChangeUserNameUseCase
   ],
   exports: [UserService]
 })

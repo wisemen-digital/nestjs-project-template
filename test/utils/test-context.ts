@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { type EntityManager } from 'typeorm'
 import { randEmail } from '@ngneat/falso'
 import { TokenSeeder } from '../../src/modules/auth/tests/seeders/token.seeder.js'
@@ -50,7 +51,10 @@ export class TestContext {
 
   public async getRole (permissions: Permission[]): Promise<Role> {
     return await this.roleSeeder.seedOne(
-      new RoleEntityBuilder().withPermissions(permissions).build()
+      new RoleEntityBuilder()
+        .withName(randomUUID())
+        .withPermissions(permissions)
+        .build()
     )
   }
 
