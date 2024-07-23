@@ -63,7 +63,7 @@ export class OneSignalClient {
     const sendAfterTimestamp = dayjs(sendAfter).toISOString()
 
     const maxDevices = 2000
-    const offset = 0
+    let offset = 0
 
     do {
       const deviceUuidsBatch = deviceUuids.slice(offset, offset + maxDevices)
@@ -81,6 +81,8 @@ export class OneSignalClient {
         send_after: sendAfterTimestamp,
         data: additionalOptions?.data
       })
+
+      offset += maxDevices
     } while (offset < deviceUuids.length)
   }
 
