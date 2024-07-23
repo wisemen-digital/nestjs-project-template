@@ -23,7 +23,8 @@ export const mainDataSource = new DataSource(typeormConfig() as DataSourceOption
 
 const typeormTestConfig = (): TypeOrmModuleOptions => ({
   ...typeormConfig(),
-  migrationsRun: true
+  migrationsRun: true,
+  synchronize: true
 })
 
 export const mainDataSourceTest = new DataSource(typeormTestConfig() as DataSourceOptions)
