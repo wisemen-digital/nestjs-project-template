@@ -28,6 +28,10 @@ export class UserService {
     return [sortedUsers, count]
   }
 
+  async findOne (uuid: string): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { uuid } })
+  }
+
   async findOneOrFail (uuid: string): Promise<User> {
     return await this.userRepository.findOneByOrFail({ uuid })
   }
