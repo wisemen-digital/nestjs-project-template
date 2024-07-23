@@ -17,7 +17,8 @@
     "start:prod": "node dist/main",
     "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
-    "test": "pnpm test:setup && ENV_FILE=.env.test node --test -r dotenv/config --test-reporter=spec",
+    "test": "ENV_FILE=.env.test node --test -r dotenv/config --test-reporter=spec",
+    "test:pipeline": "pnpm test:setup && pnpm test",
     "test:setup": "pnpm build && DOTENV_CONFIG_PATH=.env.test node -r dotenv/config dist/src/utils/test-setup/global-setup.js",
     "typeorm": "pnpm clean && pnpm build && node -r dotenv/config ./node_modules/typeorm/cli -d ./dist/src/config/sql/sources/main.js"
   },
