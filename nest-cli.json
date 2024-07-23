@@ -9,6 +9,10 @@
       {
         "include": "**/*.mjml",
         "outDir": "dist/src"
+      },
+      {
+        "include": "modules/websocket/documentation.md",
+        "outDir": "dist/src"
       }
     ],
     "deleteOutDir": true
@@ -30,6 +34,12 @@
       "type": "application",
       "root": "src",
       "entryFile": "entrypoints/cronjob",
+      "sourceRoot": "src"
+    },
+    "websocket-server": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/websocket-server",
       "sourceRoot": "src"
     }
   }
