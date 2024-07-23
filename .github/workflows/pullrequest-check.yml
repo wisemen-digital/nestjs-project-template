@@ -14,3 +14,4 @@ jobs:
     with:
       test-typesense-enabled: true
       test-redis-enabled: true
+      test-nats-enabled: true

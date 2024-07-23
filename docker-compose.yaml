@@ -15,10 +15,22 @@ services:
     ports:
       - '8108:8108'
     volumes:
-      - ./.typesense:/data
+      - ./.typesense:/data/typesense
     environment:
       TYPESENSE_DATA_DIR: /data
       TYPESENSE_API_KEY: api_key
+
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+    volumes:
+      - ./.nats:/data/nats
+    command:
+      - "--debug"
+      - "--http_port=8222"
+      - "--js"
+      - "--sd=/nats/data"
 
   redis:
     image: redis
