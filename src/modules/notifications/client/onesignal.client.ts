@@ -14,8 +14,6 @@ export class OneSignalClient {
   appId: string
   appKey: string
 
-  private readonly HIGH_PRIORITY = 10
-
   constructor () {
     const appId = process.env.ONESIGNAL_APP_ID
     const appKey = process.env.ONESIGNAL_API_KEY
@@ -51,13 +49,8 @@ export class OneSignalClient {
     sendAfter: Date,
     additionalOptions?: { content?: LanguageStringMap, data?: object }
   ): Promise<void> {
-    const deviceUuids = notifications
-      .filter(notification => getBit(notification.config, type))
-      .map(setting => setting.deviceUuid)
-
-    if (deviceUuids.length === 0) {
-      return
-    }
+    const deviceUuids = this.getTargetDeviceUuids(notifications, type)
+    if (deviceUuids.length === 0) return
 
     const content = getContentForType(type)
     const sendAfterTimestamp = dayjs(sendAfter).toISOString()
@@ -84,6 +77,15 @@ export class OneSignalClient {
 
       offset += maxDevices
     } while (offset < deviceUuids.length)
+  }
+
+  private getTargetDeviceUuids (
+    notifications: Notification[],
+    type: NotificationType
+  ): string[] {
+    return notifications
+      .filter(notification => getBit(notification.config, type))
+      .map(setting => setting.deviceUuid)
   }
 
   public async cancelNotification (notificationUuid: string): Promise<void> {
