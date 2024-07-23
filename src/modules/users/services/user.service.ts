@@ -29,13 +29,11 @@ export class UserService {
   }
 
   async findOneOrFail (uuid: string): Promise<User> {
-    return await this.userRepository.findOneOrFail({ where: { uuid } })
+    return await this.userRepository.findOneByOrFail({ uuid })
   }
 
   async findOneByEmail (email: string): Promise<User> {
-    return await this.userRepository.findOneOrFail({
-      where: { email: email.toLowerCase() }
-    })
+    return await this.userRepository.findOneByOrFail({ email: email.toLowerCase() })
   }
 
   async checkIfExists (email: string): Promise<void> {

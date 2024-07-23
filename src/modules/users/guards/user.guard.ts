@@ -12,12 +12,14 @@ export class UserGuard implements CanActivate {
 
   async canActivate (context: ExecutionContext): Promise<boolean> {
     const { auth, params } = context.switchToHttp().getRequest()
+    const authUuid = auth.user.uuid
+    const paramsUuid = params.userUuid
 
-    if (auth.user.uuid === params.userUuid) {
+    if (authUuid === paramsUuid) {
       return true
     }
 
-    const userPermissions = await this.cache.getUserPermissions(auth.user.uuid)
+    const userPermissions = await this.cache.getUserPermissions(authUuid)
     if (userPermissions.includes(Permission.ADMIN)) {
       return true
     }

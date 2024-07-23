@@ -5,7 +5,6 @@ import { expect } from 'expect'
 import { randEmail, randUuid } from '@ngneat/falso'
 import { type DataSource } from 'typeorm'
 import { type TestingModule } from '@nestjs/testing'
-import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
 import { globalTestSetup, migrateTypesense } from '../../../../test/setup/setup.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
 import { Permission } from '../../permissions/enums/permission.enum.js'
@@ -24,7 +23,7 @@ describe('Users', async () => {
   let context: TestContext
 
   let adminUser: SetupUser
-  let readonlyUser: SetupUser
+  let defaultUser: SetupUser
 
   before(async () => {
     ({ app, moduleRef, dataSource } = await globalTestSetup())
@@ -32,14 +31,14 @@ describe('Users', async () => {
     context = new TestContext(dataSource.manager)
 
     adminUser = await context.getAdminUser()
-    readonlyUser = await context.getReadonlyUser()
+    defaultUser = await context.getDefaultUser()
 
     await migrateTypesense(moduleRef)
 
     const typesenseCollectionService = moduleRef.get(TypesenseCollectionService)
     await typesenseCollectionService.importManuallyToTypesense(
       TypesenseCollectionName.USER,
-      [adminUser.user, readonlyUser.user]
+      [adminUser.user, defaultUser.user]
     )
   })
 
@@ -60,7 +59,7 @@ describe('Users', async () => {
             limit: 10,
             offset: 0
           },
-          'filter[permissions][0]': Permission.READ_ONLY
+          'filter[permissions][0]': Permission.USER_READ
         })
 
       expect(response).toHaveStatus(200)
@@ -68,8 +67,8 @@ describe('Users', async () => {
       expect(response.body.meta.total).toBe(1)
       expect(response.body.meta.limit).toBe(10)
       expect(response.body.meta.offset).toBe(0)
-      expect(response.body.items[0].role.permissions).toContain(Permission.READ_ONLY)
-      expect(response.body.items[0].uuid).toBe(readonlyUser.user.uuid)
+      expect(response.body.items[0].role.permissions).toContain(Permission.USER_READ)
+      expect(response.body.items[0].uuid).toBe(defaultUser.user.uuid)
     })
   })
 
@@ -108,14 +107,14 @@ describe('Users', async () => {
     it('should return 403 when user is not admin', async () => {
       const response = await request(app.getHttpServer())
         .get(`/users/${adminUser.user.uuid}`)
-        .set('Authorization', `Bearer ${readonlyUser.token}`)
+        .set('Authorization', `Bearer ${defaultUser.token}`)
 
       expect(response).toHaveStatus(403)
     })
 
     it('should return user when user is admin', async () => {
       const response = await request(app.getHttpServer())
-        .get(`/users/${readonlyUser.user.uuid}`)
+        .get(`/users/${defaultUser.user.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response).toHaveStatus(200)
@@ -165,8 +164,8 @@ describe('Users', async () => {
 
     it('should return 201 when user is self', async () => {
       const response = await request(app.getHttpServer())
-        .post(`/users/${readonlyUser.user.uuid}`)
-        .set('Authorization', `Bearer ${readonlyUser.token}`)
+        .post(`/users/${defaultUser.user.uuid}`)
+        .set('Authorization', `Bearer ${defaultUser.token}`)
         .send({
           firstName: 'John',
           lastName: 'Doe'
@@ -187,7 +186,7 @@ describe('Users', async () => {
     it('should return 403 when user is not admin', async () => {
       const response = await request(app.getHttpServer())
         .post(`/users/${adminUser.user.uuid}`)
-        .set('Authorization', `Bearer ${readonlyUser.token}`)
+        .set('Authorization', `Bearer ${defaultUser.token}`)
         .send({
           firstName: 'John',
           lastName: 'Doe'
@@ -198,7 +197,7 @@ describe('Users', async () => {
 
     it('should return 201 when user is admin', async () => {
       const response = await request(app.getHttpServer())
-        .post(`/users/${readonlyUser.user.uuid}`)
+        .post(`/users/${defaultUser.user.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
         .send({
           firstName: 'John',
@@ -229,21 +228,28 @@ describe('Users', async () => {
     it('should return 403 when user is not admin', async () => {
       const response = await request(app.getHttpServer())
         .delete(`/users/${adminUser.user.uuid}`)
-        .set('Authorization', `Bearer ${readonlyUser.token}`)
+        .set('Authorization', `Bearer ${defaultUser.token}`)
 
       expect(response).toHaveStatus(403)
     })
 
     it('should return 200 when user is admin', async () => {
+      const user = await new UserSeeder(dataSource.manager).seedOne(
+        new UserEntityBuilder()
+          .withEmail(randEmail())
+          .withPassword('Lol123')
+          .build()
+      )
+
       const response = await request(app.getHttpServer())
-        .delete(`/users/${readonlyUser.user.uuid}`)
+        .delete(`/users/${user.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response).toHaveStatus(200)
     })
 
     it('should return 200 when user is self', async () => {
-      const randomUser = await context.getRandomUser()
+      const randomUser = await context.getDefaultUser()
 
       const response = await request(app.getHttpServer())
         .delete(`/users/${randomUser.user.uuid}`)
@@ -277,7 +283,7 @@ describe('Users', async () => {
     it('should return 403 when user is not admin', async () => {
       const response = await request(app.getHttpServer())
         .post(`/users/${adminUser.user.uuid}/password`)
-        .set('Authorization', `Bearer ${readonlyUser.token}`)
+        .set('Authorization', `Bearer ${defaultUser.token}`)
         .send({
           password: 'newPassword',
           oldPassword: 'password'
@@ -286,24 +292,12 @@ describe('Users', async () => {
     })
 
     it('should return 201 when user is self', async () => {
-      const oldPassword = 'Password123'
-
-      const client = await context.getClient()
-
-      const user = await new UserSeeder(dataSource.manager).seedOne(
-        new UserEntityBuilder()
-          .withEmail(randEmail())
-          .withPassword(oldPassword)
-          .build()
-      )
-      const token = await new TokenSeeder(dataSource.manager).seedOne(user, client)
-
       const response = await request(app.getHttpServer())
-        .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${token}`)
+        .post(`/users/${defaultUser.user.uuid}/password`)
+        .set('Authorization', `Bearer ${defaultUser.token}`)
         .send({
-          password: 'newPassword',
-          oldPassword
+          oldPassword: 'Password123',
+          password: 'newPassword'
         })
 
       expect(response).toHaveStatus(201)
@@ -340,7 +334,7 @@ describe('Users', async () => {
 
       const response = await request(app.getHttpServer())
         .post(`/users/${user.uuid}/password`)
-        .set('Authorization', `Bearer ${readonlyUser.token}`)
+        .set('Authorization', `Bearer ${defaultUser.token}`)
         .send({
           password: 'newPassword',
           oldPassword
@@ -350,7 +344,7 @@ describe('Users', async () => {
     })
 
     it('should return 400 when password is missing', async () => {
-      const randomUser = await context.getRandomUser()
+      const randomUser = await context.getDefaultUser()
 
       const response = await request(app.getHttpServer())
         .post(`/users/${randomUser.user.uuid}/password`)

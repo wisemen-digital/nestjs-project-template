@@ -10,19 +10,42 @@ export class RoleSeeder extends AbstractSeeder<Role> {
   }
 
   async seedAdminRole (): Promise<Role> {
-    return await this.findRoleByName('admin') ??
-      await this.seedRole('admin', [Permission.ADMIN])
+    const role = await this.findRoleByName('admin')
+
+    if (role !== null) {
+      return role
+    }
+
+    return await this.seedRole('admin', [Permission.ADMIN])
   }
 
   async seedReadonlyRole (): Promise<Role> {
-    return await this.findRoleByName('readonly') ??
-      await this.seedRole('readonly', [Permission.READ_ONLY])
+    const role = await this.findRoleByName('readonly')
+
+    if (role !== null) {
+      return role
+    }
+
+    return await this.seedRole('readonly', [Permission.READ_ONLY])
+  }
+
+  async seedUserRole (): Promise<Role> {
+    const role = await this.findRoleByName('user')
+
+    if (role !== null) {
+      return role
+    }
+
+    const userPermissions = [
+      Permission.USER_READ,
+      Permission.USER_UPDATE,
+      Permission.USER_DELETE
+    ]
+    return await this.seedRole('user', userPermissions)
   }
 
   private async findRoleByName (name: string): Promise<Role | null> {
-    return await this.repository.findOne({
-      where: { name }
-    })
+    return await this.repository.findOneBy({ name })
   }
 
   private async seedRole (name: string, permissions: Permission[]): Promise<Role> {
