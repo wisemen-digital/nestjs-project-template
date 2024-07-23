@@ -13,12 +13,12 @@ import { isEnumValue } from '../../../test/expect/expectEnum.js'
 import { S3Service } from '../../modules/files/services/s3.service.js'
 import { TypesenseInitializationService } from '../../modules/typesense/services/typesense-initialization.service.js'
 import { TypesenseCollectionName } from '../../modules/typesense/enums/typesense-collection-index.enum.js'
-import { mainDataSourceTest } from '../../config/sql/sources/main.js'
+import { mainDataSource, mainDataSourceTest } from '../../config/sql/sources/main.js'
 
 export const testingModule = async (): Promise<TestingModule> => await Test.createTestingModule({
   imports: [AppModule.forRoot()]
 })
-  .overrideProvider(DataSource)
+  .overrideProvider(mainDataSource)
   .useClass(mainDataSourceTest)
   .compile()
 

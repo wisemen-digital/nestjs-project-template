@@ -5,12 +5,11 @@ import { testingModule } from './setup.js'
 
 async function globalTestSetup (): Promise<void> {
   const moduleRef = await testingModule()
-  const dataSource = moduleRef.get(DataSource)
 
   const typesenseInitService = moduleRef.get(TypesenseInitializationService)
   await typesenseInitService.migrate(true, Object.values(TypesenseCollectionName))
 
-  await dataSource.initialize()
+  const dataSource = moduleRef.get(DataSource)
   await dataSource.runMigrations({ transaction: 'each' })
 
   // eslint-disable-next-line no-console
