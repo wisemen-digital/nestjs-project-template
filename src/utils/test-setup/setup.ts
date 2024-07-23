@@ -13,6 +13,14 @@ import { isEnumValue } from '../../../test/expect/expectEnum.js'
 import { S3Service } from '../../modules/files/services/s3.service.js'
 import { TypesenseInitializationService } from '../../modules/typesense/services/typesense-initialization.service.js'
 import { TypesenseCollectionName } from '../../modules/typesense/enums/typesense-collection-index.enum.js'
+import { mainDataSourceTest } from '../../config/sql/sources/main.js'
+
+export const testingModule = async (): Promise<TestingModule> => await Test.createTestingModule({
+  imports: [AppModule.forRoot()]
+})
+  .overrideProvider(DataSource)
+  .useClass(mainDataSourceTest)
+  .compile()
 
 export class SetupTestResponse {
   app: INestApplication
@@ -42,11 +50,7 @@ export async function testSetup (): Promise<SetupTestResponse> {
   mock.method(S3Service.prototype, 'delete', async () => { await Promise.resolve() })
   mock.method(S3Service.prototype, 'list', async () => { await Promise.resolve([]) })
 
-  const moduleRef = await Test.createTestingModule({
-    imports: [
-      AppModule.forRoot()
-    ]
-  }).compile()
+  const moduleRef = await testingModule()
 
   const app = moduleRef.createNestApplication()
 

@@ -14,6 +14,7 @@ export const typeormConfig = (): TypeOrmModuleOptions => ({
   logging: false,
   synchronize: false,
   migrationsRun: false,
+  autoLoadEntities: true,
   entities: mainModels,
   migrations: mainMigrations
 })
