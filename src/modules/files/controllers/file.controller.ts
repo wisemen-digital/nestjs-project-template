@@ -42,7 +42,7 @@ export class FileController {
   @Post('/:fileUuid/confirm-upload')
   @ApiResponse(confirmFileUploadResponse)
   @HttpCode(200)
-  @Permissions(Permission.FILE_UPDATE)
+  @Permissions(Permission.FILE_CREATE)
   public async confirmFileUpload (
     @UuidParam('fileUuid') fileUuid: string
   ): Promise<void> {
