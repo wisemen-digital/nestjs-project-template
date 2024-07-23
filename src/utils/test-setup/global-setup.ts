@@ -10,7 +10,7 @@ async function globalTestSetup (): Promise<void> {
   await typesenseInitService.migrate(true, Object.values(TypesenseCollectionName))
 
   const dataSource = moduleRef.get(DataSource)
-  await dataSource.initialize()
+  if (!dataSource.isInitialized) await dataSource.initialize()
   await dataSource.runMigrations({ transaction: 'each' })
 
   // eslint-disable-next-line no-console
