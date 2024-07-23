@@ -1,9 +1,10 @@
 import { Controller, Get } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiOAuth2, ApiTags } from '@nestjs/swagger'
 import { Permission } from '../permission.enum.js'
 
-@ApiTags('permissions')
+@ApiTags('Permissions')
 @Controller('permissions')
+@ApiOAuth2([])
 export class PermissionController {
   @Get()
   getPermissions (): Permission[] {

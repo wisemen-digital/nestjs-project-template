@@ -28,6 +28,10 @@ export class UserService {
     return [sortedUsers, count]
   }
 
+  async findOne (uuid: string): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { uuid } })
+  }
+
   async findOneOrFail (uuid: string): Promise<User> {
     return await this.userRepository.findOneOrFail({ where: { uuid } })
   }
@@ -39,11 +43,11 @@ export class UserService {
   }
 
   async checkIfExists (email: string): Promise<void> {
-    const exists = await this.userRepository.findOne({
+    const exists = await this.userRepository.exist({
       where: { email }
     })
 
-    if (exists !== null) throw new KnownError('already_exists')
+    if (exists) throw new KnownError('already_exists')
   }
 
   async create (dto: CreateUserDto): Promise<User> {
