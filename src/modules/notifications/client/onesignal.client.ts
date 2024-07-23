@@ -62,19 +62,26 @@ export class OneSignalClient {
     const content = getContentForType(type)
     const sendAfterTimestamp = dayjs(sendAfter).toISOString()
 
-    await this.client.createNotification({
-      id: notificationUuid,
-      app_id: this.appId,
-      contents: { ...content.content, ...additionalOptions?.content },
-      headings: content.heading,
-      priority: ONESIGNAL_PRIORITY.HIGH,
-      include_aliases: {
-        external_id: deviceUuids
-      },
-      target_channel: 'push',
-      send_after: sendAfterTimestamp,
-      data: additionalOptions?.data
-    })
+    const maxDevices = 2000
+    const offset = 0
+
+    do {
+      const deviceUuidsBatch = deviceUuids.slice(offset, offset + maxDevices)
+
+      await this.client.createNotification({
+        id: notificationUuid,
+        app_id: this.appId,
+        contents: { ...content.content, ...additionalOptions?.content },
+        headings: content.heading,
+        priority: ONESIGNAL_PRIORITY.HIGH,
+        include_aliases: {
+          external_id: deviceUuidsBatch
+        },
+        target_channel: 'push',
+        send_after: sendAfterTimestamp,
+        data: additionalOptions?.data
+      })
+    } while (offset < deviceUuids.length)
   }
 
   public async cancelNotification (notificationUuid: string): Promise<void> {
