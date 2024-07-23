@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { StringCodec } from 'nats'
-import { NatsClient } from '../nats.client.js'
+import { NatsClient } from '../clients/nats.client.js'
 import { NatsTopics } from '../../websocket/topic.enum.js'
 
 @Injectable()
