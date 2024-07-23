@@ -6,6 +6,7 @@ import { type NotificationType } from '../content/notification.type.js'
 import { getContentForType } from '../content/notification.content.js'
 import { type Notification } from '../entities/notification.entity.js'
 import { getBit } from '../utils/get-bit.util.js'
+import { ONESIGNAL_PRIORITY } from '../const/priorities.const.js'
 
 @Injectable()
 export class OneSignalClient {
@@ -66,7 +67,7 @@ export class OneSignalClient {
       app_id: this.appId,
       contents: { ...content.content, ...additionalOptions?.content },
       headings: content.heading,
-      priority: this.HIGH_PRIORITY,
+      priority: ONESIGNAL_PRIORITY.HIGH,
       include_aliases: {
         external_id: deviceUuids
       },
