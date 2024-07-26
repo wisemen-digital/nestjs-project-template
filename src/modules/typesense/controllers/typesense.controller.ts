@@ -6,7 +6,7 @@ import { ImportTypesenseQueryDto } from '../dtos/import-typesense-query.dto.js'
 import { Permissions } from '../../permissions/decorators/permissions.decorator.js'
 import { Permission } from '../../permissions/enums/permission.enum.js'
 import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
-import { getCollectionsTypenseResponse, importTypesenseResponse, migrateTypesenseResponse } from '../docs/typesense-response.docs.js'
+import { GET_COLLECTIONS_TYPESENSE_RESPONSE, IMPORT_TYPESESE_RESPONSE, MIGRATE_TYPESENSE_RESPONSE } from '../docs/typesense-response.docs.js'
 
 @ApiTags('Typesense')
 @Controller('typesense')
@@ -17,7 +17,7 @@ export class TypesenseController {
   ) {}
 
   @Get('/migrate')
-  @ApiResponse(migrateTypesenseResponse)
+  @ApiResponse(MIGRATE_TYPESENSE_RESPONSE)
   @Permissions(Permission.ADMIN)
   async migrate (
     @Query() query: MigrateTypesenseQueryDto
@@ -26,7 +26,7 @@ export class TypesenseController {
   }
 
   @Get('/import')
-  @ApiResponse(importTypesenseResponse)
+  @ApiResponse(IMPORT_TYPESESE_RESPONSE)
   @Permissions(Permission.ADMIN)
   async import (
     @Query() query: ImportTypesenseQueryDto
@@ -35,7 +35,7 @@ export class TypesenseController {
   }
 
   @Get('/collections')
-  @ApiResponse(getCollectionsTypenseResponse)
+  @ApiResponse(GET_COLLECTIONS_TYPESENSE_RESPONSE)
   @Permissions(Permission.ADMIN)
   async getCollections (): Promise<CollectionSchema[]> {
     return await this.typesenseImportService.retrieveCollections()

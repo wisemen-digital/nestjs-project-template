@@ -5,7 +5,7 @@ import { AuthService } from '../services/auth.service.js'
 import { Permissions, Public } from '../../permissions/decorators/permissions.decorator.js'
 import { Request } from '../guards/auth.guard.js'
 import { AuthTransformer } from '../transformers/auth.transformer.js'
-import { createTokenResponse, getUserInfoResponse } from '../docs/auth-response.docs.js'
+import { CREATE_TOKEN_RESPONSE, GET_USER_INFO_RESPONSE } from '../docs/auth-response.docs.js'
 import { type UserTransformerType, UserTransformer } from '../../users/transformers/user.transformer.js'
 import { ApiOneOfBody } from '../../../utils/decorators/api-one-of-body.util.js'
 import { PasswordGrantBody } from '../types/password-grant.body.js'
@@ -24,7 +24,7 @@ export class AuthController {
 
   @Post('/token')
   @Public()
-  @ApiResponse(createTokenResponse)
+  @ApiResponse(CREATE_TOKEN_RESPONSE)
   @ApiOneOfBody(PasswordGrantBody, RefreshGrantBody)
   public async createToken (
     @Req() req: Request,
@@ -43,7 +43,7 @@ export class AuthController {
 
   @Get('/userinfo')
   @ApiBearerAuth()
-  @ApiResponse(getUserInfoResponse)
+  @ApiResponse(GET_USER_INFO_RESPONSE)
   @Permissions(Permission.USER_READ)
   public async getUserInfo (
     @Req() req: Request

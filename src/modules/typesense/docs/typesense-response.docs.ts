@@ -1,16 +1,16 @@
 import { type ApiResponseOptions } from '@nestjs/swagger'
 
-export const migrateTypesenseResponse: ApiResponseOptions = {
+export const MIGRATE_TYPESENSE_RESPONSE: ApiResponseOptions = {
   status: 200,
   description: 'Successfully migrated collections.'
 }
 
-export const importTypesenseResponse: ApiResponseOptions = {
+export const IMPORT_TYPESESE_RESPONSE: ApiResponseOptions = {
   status: 200,
   description: 'Successfully imported collections.'
 }
 
-export const getCollectionsTypenseResponse: ApiResponseOptions = {
+export const GET_COLLECTIONS_TYPESENSE_RESPONSE: ApiResponseOptions = {
   status: 200,
   description: 'Successfully retrieved collections.'
 }

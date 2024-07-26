@@ -10,7 +10,7 @@ import { offsetPaginatedResponse, type OffsetPaginatedResult } from '../../../ut
 import { Permissions, Public } from '../../permissions/decorators/permissions.decorator.js'
 import { Permission } from '../../permissions/enums/permission.enum.js'
 import { UserGuard } from '../guards/user.guard.js'
-import { createUserResponse, deleteUserResponse, getUserResponse, updateUserPasswordResponse, updateUserResponse } from '../docs/user-response.docs.js'
+import { CREATE_USER_RESPONSE, DELETE_USER_RESPONSE, GET_USER_RESPONSE, UPDATE_USER_PASSWORD_RESPONSE, UPDATE_USER_RESPONSE } from '../docs/user-response.docs.js'
 import { UuidParam } from '../../../utils/params/uuid-param.utiil.js'
 import { UpdatePasswordDto } from '../dtos/update-password.dto.js'
 
@@ -22,7 +22,7 @@ export class UserController {
   ) {}
 
   @Post('/')
-  @ApiResponse(createUserResponse)
+  @ApiResponse(CREATE_USER_RESPONSE)
   @Public()
   async createUser (
     @Body() createUserDto: CreateUserDto
@@ -42,7 +42,7 @@ export class UserController {
   }
 
   @Get('/:userUuid')
-  @ApiResponse(getUserResponse)
+  @ApiResponse(GET_USER_RESPONSE)
   @UseGuards(UserGuard)
   @Permissions(Permission.USER_READ)
   async getUser (
@@ -53,7 +53,7 @@ export class UserController {
   }
 
   @Post('/:userUuid')
-  @ApiResponse(updateUserResponse)
+  @ApiResponse(UPDATE_USER_RESPONSE)
   @UseGuards(UserGuard)
   @Permissions(Permission.USER_UPDATE)
   async updateUser (
@@ -65,7 +65,7 @@ export class UserController {
   }
 
   @Delete('/:userUuid')
-  @ApiResponse(deleteUserResponse)
+  @ApiResponse(DELETE_USER_RESPONSE)
   @UseGuards(UserGuard)
   @Permissions(Permission.USER_DELETE)
   async deleteUser (
@@ -75,7 +75,7 @@ export class UserController {
   }
 
   @Post('/:userUuid/password')
-  @ApiResponse(updateUserPasswordResponse)
+  @ApiResponse(UPDATE_USER_PASSWORD_RESPONSE)
   @UseGuards(UserGuard)
   @Permissions(Permission.USER_UPDATE)
   async updateUserPassword (

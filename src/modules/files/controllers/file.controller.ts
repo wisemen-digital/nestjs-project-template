@@ -5,7 +5,7 @@ import { Request } from '../../auth/guards/auth.guard.js'
 import { CreateFileDto } from '../dtos/create-file.dto.js'
 import { type CreateFileResponse, CreateFileResponseTransformer } from '../transformers/file-created.transformer.js'
 import { FileFlowService } from '../services/file.flows.service.js'
-import { confirmFileUploadResponse, createFileResponse, downloadFileResponse, removeFileResponse } from '../docs/file-response.docs.js'
+import { CONFIRM_FILE_UPLOAD_RESPONSE, CREATE_FILE_RESPONSE, DOWNLOAD_FILE_RESPONSE, REMOVE_FILE_RESPONSE } from '../docs/file-response.docs.js'
 import { UuidParam } from '../../../utils/params/uuid-param.utiil.js'
 import { Permissions } from '../../permissions/decorators/permissions.decorator.js'
 import { Permission } from '../../permissions/enums/permission.enum.js'
@@ -19,7 +19,7 @@ export class FileController {
   ) {}
 
   @Post('/')
-  @ApiResponse(createFileResponse)
+  @ApiResponse(CREATE_FILE_RESPONSE)
   @Permissions(Permission.FILE_CREATE)
   public async createFile (
     @Req() req: Request,
@@ -31,7 +31,7 @@ export class FileController {
   }
 
   @Delete('/:fileUuid')
-  @ApiResponse(removeFileResponse)
+  @ApiResponse(REMOVE_FILE_RESPONSE)
   @Permissions(Permission.FILE_DELETE)
   public async removeFile (
     @UuidParam('fileUuid') fileUuid: string
@@ -40,7 +40,7 @@ export class FileController {
   }
 
   @Post('/:fileUuid/confirm-upload')
-  @ApiResponse(confirmFileUploadResponse)
+  @ApiResponse(CONFIRM_FILE_UPLOAD_RESPONSE)
   @HttpCode(200)
   @Permissions(Permission.FILE_CREATE)
   public async confirmFileUpload (
@@ -50,7 +50,7 @@ export class FileController {
   }
 
   @Post('/:fileUuid/download')
-  @ApiResponse(downloadFileResponse)
+  @ApiResponse(DOWNLOAD_FILE_RESPONSE)
   @HttpCode(302)
   @Permissions(Permission.FILE_READ)
   public async downloadFile (

@@ -1,30 +1,30 @@
 import { type ApiResponseOptions } from '@nestjs/swagger'
 import { UserTransformerType } from '../transformers/user.transformer.js'
 
-export const createUserResponse: ApiResponseOptions = {
+export const CREATE_USER_RESPONSE: ApiResponseOptions = {
   status: 201,
   description: 'The user has been successfully created.',
   type: UserTransformerType
 }
 
-export const getUserResponse: ApiResponseOptions = {
+export const GET_USER_RESPONSE: ApiResponseOptions = {
   status: 200,
   description: 'The user has been successfully received.',
   type: UserTransformerType
 }
 
-export const updateUserResponse: ApiResponseOptions = {
+export const UPDATE_USER_RESPONSE: ApiResponseOptions = {
   status: 201,
   description: 'The user has been successfully updated.',
   type: UserTransformerType
 }
 
-export const deleteUserResponse: ApiResponseOptions = {
+export const DELETE_USER_RESPONSE: ApiResponseOptions = {
   status: 200,
   description: 'The user has been successfully deleted.'
 }
 
-export const updateUserPasswordResponse: ApiResponseOptions = {
+export const UPDATE_USER_PASSWORD_RESPONSE: ApiResponseOptions = {
   status: 200,
   description: 'The user\'s password has been successfully updated.'
 }

@@ -7,7 +7,7 @@ import { RoleService } from '../services/role.service.js'
 import { UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
 import { Permissions } from '../../permissions/decorators/permissions.decorator.js'
 import { Permission } from '../../permissions/enums/permission.enum.js'
-import { getRolesResponse, createRoleResponse, updateRolesBulkResponse, deleteRoleResponse, getRoleCountResponse, getRoleResponse, updateRoleResponse } from '../docs/role-response.docs.js'
+import { GET_ROLES_RESPONSE, CREATE_ROLE_RESPONSE, UPDATE_ROLES_BULK_RESPONSE, DELETE_ROLE_RESPONSE, GET_ROLE_COUNT_RESPONSE, GET_ROLE_RESPONSE, UPDATE_ROLE_RESPONSE } from '../docs/role-response.docs.js'
 import { UuidParam } from '../../../utils/params/uuid-param.utiil.js'
 import { UpdateRoleDto } from '../dtos/update-role.dto.js'
 
@@ -20,7 +20,7 @@ export class RoleController {
   ) {}
 
   @Get('/')
-  @ApiResponse(getRolesResponse)
+  @ApiResponse(GET_ROLES_RESPONSE)
   @Permissions(Permission.ROLE_READ)
   public async getRoles (): Promise<RoleTransformerType[]> {
     const roles = await this.roleService.findAll()
@@ -28,7 +28,7 @@ export class RoleController {
   }
 
   @Post('/')
-  @ApiResponse(createRoleResponse)
+  @ApiResponse(CREATE_ROLE_RESPONSE)
   @Permissions(Permission.ROLE_CREATE)
   public async createRole (
     @Body() createRoleDto: CreateRoleDto
@@ -38,7 +38,7 @@ export class RoleController {
   }
 
   @Post('/bulk')
-  @ApiResponse(updateRolesBulkResponse)
+  @ApiResponse(UPDATE_ROLES_BULK_RESPONSE)
   @Permissions(Permission.ROLE_UPDATE)
   public async updateRolesBulk (
     @Body() updateRolesBulk: UpdateRolesBulkDto
@@ -48,7 +48,7 @@ export class RoleController {
   }
 
   @Get('/:roleUuid')
-  @ApiResponse(getRoleResponse)
+  @ApiResponse(GET_ROLE_RESPONSE)
   @Permissions(Permission.ROLE_READ)
   public async getRole (
     @UuidParam('roleUuid') roleUuid: string
@@ -58,7 +58,7 @@ export class RoleController {
   }
 
   @Post('/:roleUuid')
-  @ApiResponse(updateRoleResponse)
+  @ApiResponse(UPDATE_ROLE_RESPONSE)
   @Permissions(Permission.ROLE_UPDATE)
   public async updateRole (
     @UuidParam('roleUuid') roleUuid: string,
@@ -69,7 +69,7 @@ export class RoleController {
   }
 
   @Delete('/:roleUuid')
-  @ApiResponse(deleteRoleResponse)
+  @ApiResponse(DELETE_ROLE_RESPONSE)
   @Permissions(Permission.ROLE_DELETE)
   public async deleteRole (
     @UuidParam('roleUuid') roleUuid: string
@@ -78,7 +78,7 @@ export class RoleController {
   }
 
   @Get('/:roleUuid/count')
-  @ApiResponse(getRoleCountResponse)
+  @ApiResponse(GET_ROLE_COUNT_RESPONSE)
   @Permissions(Permission.ROLE_READ)
   public async getRoleCount (
     @UuidParam('roleUuid') roleUuid: string
