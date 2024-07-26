@@ -1,6 +1,6 @@
 import { type Transformer } from '@appwise/transformer'
 import { type OffsetPaginationQuery } from '../../query/pagination/offset/pagination-query.dto.js'
-import { DEFAULT_LIMIT, DEFAULT_OFFSET } from '../../../modules/typesense/builder/search-params.builder.js'
+import { DEFAULT_TYPESENSE_LIMIT, DEFAULT_TYPESENSE_OFFSET } from '../../../modules/typesense/builder/search-params.builder.js'
 
 export interface OffsetPaginatedResult <T> {
   meta: {
@@ -31,8 +31,8 @@ export function offsetPaginatedResponse <T, S, Q extends { pagination?: OffsetPa
     items: transformer.array(items),
     meta: {
       total: count,
-      offset: query?.pagination?.offset ?? DEFAULT_OFFSET,
-      limit: query?.pagination?.limit ?? DEFAULT_LIMIT
+      offset: query?.pagination?.offset ?? DEFAULT_TYPESENSE_OFFSET,
+      limit: query?.pagination?.limit ?? DEFAULT_TYPESENSE_LIMIT
     }
   }
 }
