@@ -1,3 +1,5 @@
 import { Param, ParseUUIDPipe } from '@nestjs/common'
 
-export const UuidParam = (param: string): ParameterDecorator => Param(param, ParseUUIDPipe)
+export function UuidParam (param: string): ParameterDecorator {
+  return Param(param, ParseUUIDPipe)
+}
