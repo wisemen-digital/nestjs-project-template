@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Post, Query, UseGuards } from '@nestjs/common'
-import { ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { ApiOffsetPaginatedResponse } from '../../../utils/pagination/offset/pagination.decorator.js'
 import { CreateUserDto } from '../dtos/create-user.dto.js'
 import { UpdateUserDto } from '../dtos/update-user.dto.js'
@@ -22,7 +22,7 @@ export class UserController {
   ) {}
 
   @Post('/')
-  @ApiResponse(CREATE_USER_RESPONSE)
+  @ApiCreatedResponse(CREATE_USER_RESPONSE)
   @Public()
   async createUser (
     @Body() createUserDto: CreateUserDto
@@ -42,7 +42,7 @@ export class UserController {
   }
 
   @Get('/:userUuid')
-  @ApiResponse(GET_USER_RESPONSE)
+  @ApiOkResponse(GET_USER_RESPONSE)
   @UseGuards(UserGuard)
   @Permissions(Permission.USER_READ)
   async getUser (
@@ -53,7 +53,7 @@ export class UserController {
   }
 
   @Post('/:userUuid')
-  @ApiResponse(UPDATE_USER_RESPONSE)
+  @ApiCreatedResponse(UPDATE_USER_RESPONSE)
   @UseGuards(UserGuard)
   @Permissions(Permission.USER_UPDATE)
   async updateUser (
@@ -65,7 +65,7 @@ export class UserController {
   }
 
   @Delete('/:userUuid')
-  @ApiResponse(DELETE_USER_RESPONSE)
+  @ApiOkResponse(DELETE_USER_RESPONSE)
   @UseGuards(UserGuard)
   @Permissions(Permission.USER_DELETE)
   async deleteUser (
@@ -75,7 +75,7 @@ export class UserController {
   }
 
   @Post('/:userUuid/password')
-  @ApiResponse(UPDATE_USER_PASSWORD_RESPONSE)
+  @ApiCreatedResponse(UPDATE_USER_PASSWORD_RESPONSE)
   @UseGuards(UserGuard)
   @Permissions(Permission.USER_UPDATE)
   async updateUserPassword (

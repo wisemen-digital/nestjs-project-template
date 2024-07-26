@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Req, Res } from '@nestjs/common'
 import { Response } from 'express'
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { AuthService } from '../services/auth.service.js'
 import { Permissions, Public } from '../../permissions/decorators/permissions.decorator.js'
 import { Request } from '../guards/auth.guard.js'
@@ -24,7 +24,7 @@ export class AuthController {
 
   @Post('/token')
   @Public()
-  @ApiResponse(CREATE_TOKEN_RESPONSE)
+  @ApiCreatedResponse(CREATE_TOKEN_RESPONSE)
   @ApiOneOfBody(PasswordGrantBody, RefreshGrantBody)
   public async createToken (
     @Req() req: Request,
@@ -43,7 +43,7 @@ export class AuthController {
 
   @Get('/userinfo')
   @ApiBearerAuth()
-  @ApiResponse(GET_USER_INFO_RESPONSE)
+  @ApiOkResponse(GET_USER_INFO_RESPONSE)
   @Permissions(Permission.USER_READ)
   public async getUserInfo (
     @Req() req: Request

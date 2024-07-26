@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { type CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { MigrateTypesenseQueryDto } from '../dtos/migrate-typesense-query.dto.js'
 import { ImportTypesenseQueryDto } from '../dtos/import-typesense-query.dto.js'
 import { Permissions } from '../../permissions/decorators/permissions.decorator.js'
@@ -17,7 +17,7 @@ export class TypesenseController {
   ) {}
 
   @Get('/migrate')
-  @ApiResponse(MIGRATE_TYPESENSE_RESPONSE)
+  @ApiOkResponse(MIGRATE_TYPESENSE_RESPONSE)
   @Permissions(Permission.ADMIN)
   async migrate (
     @Query() query: MigrateTypesenseQueryDto
@@ -26,7 +26,7 @@ export class TypesenseController {
   }
 
   @Get('/import')
-  @ApiResponse(IMPORT_TYPESESE_RESPONSE)
+  @ApiOkResponse(IMPORT_TYPESESE_RESPONSE)
   @Permissions(Permission.ADMIN)
   async import (
     @Query() query: ImportTypesenseQueryDto
@@ -35,7 +35,7 @@ export class TypesenseController {
   }
 
   @Get('/collections')
-  @ApiResponse(GET_COLLECTIONS_TYPESENSE_RESPONSE)
+  @ApiOkResponse(GET_COLLECTIONS_TYPESENSE_RESPONSE)
   @Permissions(Permission.ADMIN)
   async getCollections (): Promise<CollectionSchema[]> {
     return await this.typesenseImportService.retrieveCollections()

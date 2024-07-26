@@ -1,5 +1,5 @@
 import { Controller, Post, Req, Body, HttpCode, Res, Delete } from '@nestjs/common'
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { Request } from '../../auth/guards/auth.guard.js'
 import { CreateFileDto } from '../dtos/create-file.dto.js'
@@ -19,7 +19,7 @@ export class FileController {
   ) {}
 
   @Post('/')
-  @ApiResponse(CREATE_FILE_RESPONSE)
+  @ApiCreatedResponse(CREATE_FILE_RESPONSE)
   @Permissions(Permission.FILE_CREATE)
   public async createFile (
     @Req() req: Request,
@@ -31,7 +31,7 @@ export class FileController {
   }
 
   @Delete('/:fileUuid')
-  @ApiResponse(REMOVE_FILE_RESPONSE)
+  @ApiOkResponse(REMOVE_FILE_RESPONSE)
   @Permissions(Permission.FILE_DELETE)
   public async removeFile (
     @UuidParam('fileUuid') fileUuid: string
@@ -40,7 +40,7 @@ export class FileController {
   }
 
   @Post('/:fileUuid/confirm-upload')
-  @ApiResponse(CONFIRM_FILE_UPLOAD_RESPONSE)
+  @ApiCreatedResponse(CONFIRM_FILE_UPLOAD_RESPONSE)
   @HttpCode(200)
   @Permissions(Permission.FILE_CREATE)
   public async confirmFileUpload (
@@ -50,7 +50,7 @@ export class FileController {
   }
 
   @Post('/:fileUuid/download')
-  @ApiResponse(DOWNLOAD_FILE_RESPONSE)
+  @ApiCreatedResponse(DOWNLOAD_FILE_RESPONSE)
   @HttpCode(302)
   @Permissions(Permission.FILE_READ)
   public async downloadFile (
