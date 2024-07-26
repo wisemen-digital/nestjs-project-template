@@ -11,7 +11,7 @@ export class MigrateTypesenseQueryDto {
   @IsOptional()
   @IsBoolean()
   @Type(() => Boolean)
-  @ApiProperty({ type: Boolean, description: 'Whether to refresh the Typesense collections.' })
+  @ApiProperty({ type: Boolean, required: false, description: 'Whether to refresh the Typesense collections.' })
   fresh: boolean = false
 
   @IsOptional()
