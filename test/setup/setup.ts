@@ -13,6 +13,8 @@ import { isEnumValue } from '../expect/expectEnum.js'
 import { S3Service } from '../../src/modules/files/services/s3.service.js'
 import { TypesenseInitializationService } from '../../src/modules/typesense/services/typesense-initialization.service.js'
 import { TypesenseCollectionName } from '../../src/modules/typesense/enums/typesense-collection-index.enum.js'
+import { OneSignalClient } from '../../src/modules/notifications/client/onesignal.client.js'
+import { isTestEnv } from '../../src/utils/envs/env-checks.js'
 
 export class SetupTestResponse {
   app: INestApplication
@@ -21,7 +23,7 @@ export class SetupTestResponse {
 }
 
 export async function setupTest (dataSource: DataSource): Promise<void> {
-  if (process.env.NODE_ENV !== 'test') {
+  if (!isTestEnv()) {
     throw new Error('NODE_ENV must be set to test')
   }
 
@@ -41,6 +43,8 @@ export async function globalTestSetup (): Promise<SetupTestResponse> {
   mock.method(S3Service.prototype, 'uploadStream', async () => { await Promise.resolve() })
   mock.method(S3Service.prototype, 'delete', async () => { await Promise.resolve() })
   mock.method(S3Service.prototype, 'list', async () => { await Promise.resolve([]) })
+  mock.method(OneSignalClient.prototype, 'sendNotification', async () => { await Promise.resolve([]) })
+  mock.method(OneSignalClient.prototype, 'cancelNotification', async () => { await Promise.resolve([]) })
 
   const moduleRef = await Test.createTestingModule({
     imports: [

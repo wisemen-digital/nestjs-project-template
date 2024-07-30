@@ -40,6 +40,7 @@
     "@nestjs/typeorm": "^10.0.0",
     "@nestjs/websockets": "^10.3.10",
     "@ngneat/falso": "^7.1.0",
+    "@onesignal/node-onesignal": "5.0.0-alpha-01",
     "@sentry/node": "^7.91.0",
     "@sentry/tracing": "^7.91.0",
     "axios": "^1.7.1",
