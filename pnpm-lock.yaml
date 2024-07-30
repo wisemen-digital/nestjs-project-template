@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 dependencies:
   '@appwise/express-dto-router':
     specifier: ^1.1.5
@@ -65,8 +69,8 @@ dependencies:
     specifier: ^7.91.0
     version: 7.91.0
   axios:
-    specifier: ^1.7.0
-    version: 1.7.0
+    specifier: ^1.7.1
+    version: 1.7.1
   bcryptjs:
     specifier: ^2.4.3
     version: 2.4.3
@@ -140,7 +144,7 @@ devDependencies:
     version: 10.1.17
   '@nestjs/schematics':
     specifier: ^10.0.2
-    version: 10.0.2(chokidar@3.5.3)(typescript@5.1.6)
+    version: 10.0.2(typescript@5.2.2)
   '@nestjs/testing':
     specifier: ^10.2.4
     version: 10.2.4(@nestjs/common@10.2.4)(@nestjs/core@10.2.4)(@nestjs/platform-express@10.2.4)
@@ -348,7 +352,7 @@ packages:
     dependencies:
       '@azure/msal-node': 1.18.4
       '@node-oauth/oauth2-server': 5.1.0
-      axios: 1.7.0
+      axios: 1.7.1
       jose: 4.15.9
       jsonwebtoken: 9.0.2
       jwk-to-pem: 2.0.5
@@ -1852,6 +1856,21 @@ packages:
       jsonc-parser: 3.2.0
       pluralize: 8.0.0
       typescript: 5.1.6
+    transitivePeerDependencies:
+      - chokidar
+    dev: true
+
+  /@nestjs/schematics@10.0.2(typescript@5.2.2):
+    resolution: {integrity: sha512-DaZZjymYoIfRqC5W62lnYXIIods1PDY6CGc8+IpRwyinzffjKxZ3DF3exu+mdyvllzkXo9DTXkoX4zOPSJHCkw==}
+    peerDependencies:
+      typescript: '>=4.8.2'
+    dependencies:
+      '@angular-devkit/core': 16.1.8(chokidar@3.5.3)
+      '@angular-devkit/schematics': 16.1.8(chokidar@3.5.3)
+      comment-json: 4.2.3
+      jsonc-parser: 3.2.0
+      pluralize: 8.0.0
+      typescript: 5.2.2
     transitivePeerDependencies:
       - chokidar
     dev: true
@@ -4761,8 +4780,8 @@ packages:
       - debug
     dev: false
 
-  /axios@1.7.0:
-    resolution: {integrity: sha512-IiB0wQeKyPRdsFVhBgIo31FbzOyf2M6wYl7/NVutFwFBRMiAbjNiydJIHKeLmPugF4kJLfA1uWZ82Is2QzqqFA==}
+  /axios@1.7.1:
+    resolution: {integrity: sha512-+LV37nQcd1EpFalkXksWNBiA17NZ5m5/WspmHGmZmdx1qBOg/VNq/c4eRJiA9VQQHBOs+N0ZhhdU10h2TyNK7Q==}
     dependencies:
       follow-redirects: 1.15.6
       form-data: 4.0.0
@@ -11623,7 +11642,3 @@ packages:
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
