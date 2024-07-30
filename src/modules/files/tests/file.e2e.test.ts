@@ -34,14 +34,14 @@ describe('File', async () => {
   describe('Create file', () => {
     it('should return 401 when creating a file without a token', async () => {
       const response = await request(app.getHttpServer())
-        .post('/file')
+        .post('/files')
 
       expect(response).toHaveStatus(401)
     })
 
     it('should return 400 when creating a file with an invalid body', async () => {
       const response = await request(app.getHttpServer())
-        .post('/file')
+        .post('/files')
         .set('Authorization', `Bearer ${adminUser.token}`)
         .send({})
 
@@ -53,7 +53,7 @@ describe('File', async () => {
         .build()
 
       const response = await request(app.getHttpServer())
-        .post('/file')
+        .post('/files')
         .set('Authorization', `Bearer ${adminUser.token}`)
         .send(fileDto)
 
@@ -71,14 +71,14 @@ describe('File', async () => {
 
     it('should return 401 when downloading a file without a token', async () => {
       const response = await request(app.getHttpServer())
-        .post(`/file/${file.uuid}/download`)
+        .post(`/files/${file.uuid}/download`)
 
       expect(response).toHaveStatus(401)
     })
 
     it('should redirect to s3 download link', async () => {
       const response = await request(app.getHttpServer())
-        .post(`/file/${file.uuid}/download`)
+        .post(`/files/${file.uuid}/download`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response).toHaveStatus(302)
@@ -95,14 +95,14 @@ describe('File', async () => {
 
     it('should return 401 when deleting a file when no token is provided', async () => {
       const response = await request(app.getHttpServer())
-        .delete(`/file/${file.uuid}`)
+        .delete(`/files/${file.uuid}`)
 
       expect(response).toHaveStatus(401)
     })
 
     it('should delete the file', async () => {
       const response = await request(app.getHttpServer())
-        .delete(`/file/${file.uuid}`)
+        .delete(`/files/${file.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
       expect(response).toHaveStatus(200)

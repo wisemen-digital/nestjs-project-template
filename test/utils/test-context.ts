@@ -18,6 +18,7 @@ export class TestContext {
   private client?: Client
   private adminRole?: Role
   private readonlyRole?: Role
+  private userRole?: Role
 
   constructor (
     private readonly manager: EntityManager
@@ -29,7 +30,7 @@ export class TestContext {
   }
 
   public async getClient (): Promise<Client> {
-    if (this.client == null) {
+    if (this.client === undefined) {
       this.client = await this.clientSeeder.getTestClient()
     }
 
@@ -37,7 +38,7 @@ export class TestContext {
   }
 
   public async getAdminRole (): Promise<Role> {
-    if (this.adminRole == null) {
+    if (this.adminRole === undefined) {
       this.adminRole = await this.roleSeeder.seedAdminRole()
     }
 
@@ -45,11 +46,19 @@ export class TestContext {
   }
 
   public async getReadonlyRole (): Promise<Role> {
-    if (this.readonlyRole == null) {
+    if (this.readonlyRole === undefined) {
       this.readonlyRole = await this.roleSeeder.seedReadonlyRole()
     }
 
     return this.readonlyRole
+  }
+
+  public async getUserRole (): Promise<Role> {
+    if (this.userRole === undefined) {
+      this.userRole = await this.roleSeeder.seedUserRole()
+    }
+
+    return this.userRole
   }
 
   public async getAdminUser (): Promise<SetupUser> {
@@ -57,6 +66,7 @@ export class TestContext {
     const adminRole = await this.getAdminRole()
     const adminUser = await this.userSeeder.seedOne(
       new UserEntityBuilder()
+        .withFirstName('Admin')
         .withEmail(randEmail())
         .withRole(adminRole)
         .build()
@@ -71,6 +81,7 @@ export class TestContext {
     const readonlyRole = await this.getReadonlyRole()
     const readonlyUser = await this.userSeeder.seedOne(
       new UserEntityBuilder()
+        .withFirstName('Readonly')
         .withEmail(randEmail())
         .withRole(readonlyRole)
         .build()
@@ -80,17 +91,19 @@ export class TestContext {
     return { user: readonlyUser, client, token }
   }
 
-  public async getRandomUser (): Promise<SetupUser> {
+  public async getDefaultUser (): Promise<SetupUser> {
     const client = await this.getClient()
-
-    const randomUser = await this.userSeeder.seedOne(
+    const userRole = await this.getUserRole()
+    const defaultUser = await this.userSeeder.seedOne(
       new UserEntityBuilder()
+        .withFirstName('Default')
         .withEmail(randEmail())
+        .withPassword('Password123')
+        .withRole(userRole)
         .build()
     )
+    const token = await this.tokenSeeder.seedOne(defaultUser, client)
 
-    const token = await this.tokenSeeder.seedOne(randomUser, client)
-
-    return { user: randomUser, client, token }
+    return { user: defaultUser, client, token }
   }
 }

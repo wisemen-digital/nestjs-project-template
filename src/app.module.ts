@@ -3,23 +3,23 @@ import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import { AuthGuard } from './modules/auth/guards/auth.guard.js'
-import { AuthModule } from './modules/auth/modules/auth.module.js'
-import { PermissionsGuard } from './modules/permissions/permissions.guard.js'
-import { UserModule } from './modules/users/modules/user.module.js'
+import { AuthModule } from './modules/auth/auth.module.js'
+import { PermissionsGuard } from './modules/permissions/guards/permissions.guard.js'
+import { UserModule } from './modules/users/user.module.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
-import { TypesenseModule } from './modules/typesense/modules/typesense.module.js'
-import { MailModule } from './modules/mail/modules/mail.module.js'
+import { TypesenseModule } from './modules/typesense/typesense.module.js'
+import { MailModule } from './modules/mail/mail.module.js'
 import { RoleModule } from './modules/roles/role.module.js'
 import { PermissionModule } from './modules/permissions/permissions.module.js'
+import { CacheModule } from './modules/cache/cache.module.js'
 import configuration from './config/env/configuration.js'
-import { StatusModule } from './modules/status/modules/status.module.js'
-import { FileModule } from './modules/files/modules/file.module.js'
+import { StatusModule } from './modules/status/status.module.js'
+import { FileModule } from './modules/files/file.module.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
 import { ErrorsInterceptor } from './utils/exceptions/errors.interceptor.js'
 import { PgBossModule } from './modules/pgboss/modules/pgboss.module.js'
 import { envValidationSchema } from './config/env/env.validation.js'
 import { NatsModule } from './modules/nats/nats.module.js'
-import { CacheModule } from './modules/cache/cache.module.js'
 import { RedisModule } from './modules/redis/redis.module.js'
 
 @Module({})
@@ -58,7 +58,6 @@ export class AppModule {
 
         // Utils
         MailModule,
-        // NatsModule.forRoot(),
         RedisModule.forRoot(),
         TypesenseModule,
         FileModule,

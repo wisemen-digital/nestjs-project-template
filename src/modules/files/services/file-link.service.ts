@@ -3,7 +3,7 @@ import { DataSource, In } from 'typeorm'
 import { type CreateFileLinkDto } from '../dtos/create-file-entity.dto.js'
 import { type FileLink } from '../entities/file-link.entity.js'
 import { FileLinkRepository } from '../repositories/file-link.repository.js'
-import { transaction } from '../../typeorm/utils/transaction.js'
+import { transaction } from '../../../utils/typeorm/transaction.js'
 
 @Injectable()
 export class FileLinkService {

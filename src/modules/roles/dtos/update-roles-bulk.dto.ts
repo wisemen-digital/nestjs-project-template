@@ -11,6 +11,8 @@ export class RoleValueDto {
 
   @ApiProperty({ type: PermissionObject, isArray: true })
   @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PermissionObject)
   permissions: PermissionObject[]
 }
 

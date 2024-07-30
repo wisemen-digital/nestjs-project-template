@@ -1,5 +1,5 @@
 import { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
-import { type Permission } from '../../permissions/permission.enum.js'
+import { type Permission } from '../../permissions/enums/permission.enum.js'
 import { TypesenseCollection } from './abstract-typesense.collection.js'
 
 export interface UserSearchSchema {

@@ -5,9 +5,9 @@ import { SearchQuery } from '../../search-query.dto.js'
 import { OffsetPaginationQuery } from './pagination-query.dto.js'
 
 export abstract class OffsetPaginatedSearchQuery extends SearchQuery {
-  @ApiProperty({ type: OffsetPaginationQuery, required: false })
+  @ApiProperty({ type: OffsetPaginationQuery, required: false, description: 'Pagination options' })
   @IsOptional()
   @Type(() => OffsetPaginationQuery)
   @ValidateNested()
-    pagination?: OffsetPaginationQuery
+  pagination?: OffsetPaginationQuery
 }

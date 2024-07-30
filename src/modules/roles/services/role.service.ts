@@ -6,12 +6,14 @@ import { type CreateRoleDto } from '../dtos/create-role.dto.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { KnownError } from '../../../utils/exceptions/errors.js'
 import { type UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
-import { transaction } from '../../typeorm/utils/transaction.js'
-import { CacheService } from '../../cache/cache.service.js'
+
 import { PermissionTransformer } from '../../permissions/transformers/permission.transformer.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import { type UpdateRoleTransformedType } from '../types/update-role-transformed.type.js'
 import { TypesenseCollectionService } from '../../typesense/services/typesense-collection.service.js'
+import { type UpdateRoleDto } from '../dtos/update-role.dto.js'
+import { CacheService } from '../../cache/services/cache.service.js'
+import { transaction } from '../../../utils/typeorm/transaction.js'
 
 @Injectable()
 export class RoleService {
@@ -46,7 +48,7 @@ export class RoleService {
     return role
   }
 
-  async update (uuid: string, dto: CreateRoleDto): Promise<Role> {
+  async update (uuid: string, dto: UpdateRoleDto): Promise<Role> {
     const exists = await this.findByName(dto.name)
     if (exists != null) throw new KnownError('already_exists').setDesc('Role already exists')
 

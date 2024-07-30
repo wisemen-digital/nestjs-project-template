@@ -3,10 +3,10 @@ import { HttpAdapterHost, NestFactory } from '@nestjs/core'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { AppModule } from '../app.module.js'
-import { initSentry } from '../helpers/sentry.js'
+import { initSentry } from '../utils/sentry.js'
 import { HttpExceptionFilter } from '../utils/exceptions/http-exception.filter.js'
 import { WSModule } from '../modules/websocket/ws.module.js'
-import { buildDocumentationConfig } from '../helpers/documentation.js'
+import { buildDocumentationConfig } from '../config/documentation.js'
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(
@@ -32,7 +32,12 @@ async function bootstrap (): Promise<void> {
   const config = buildDocumentationConfig()
   const document = SwaggerModule.createDocument(app, config)
 
-  SwaggerModule.setup('api/docs', app, document)
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha'
+    }
+  })
 
   const configWs = new DocumentBuilder()
     .setTitle('WS Documentation')

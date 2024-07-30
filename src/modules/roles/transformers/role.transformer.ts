@@ -1,6 +1,6 @@
 import { Transformer } from '@appwise/transformer'
 import { ApiProperty } from '@nestjs/swagger'
-import { Permission } from '../../permissions/permission.enum.js'
+import { Permission } from '../../permissions/enums/permission.enum.js'
 import { type Role } from '../entities/role.entity.js'
 
 export class RoleTransformerType {
@@ -21,7 +21,7 @@ export class RoleTransformerType {
 }
 
 export class RoleTransformer extends Transformer<Role, RoleTransformerType> {
-  transform (role: Role): RoleTransformerType {
+  protected transform (role: Role): RoleTransformerType {
     return {
       uuid: role.uuid,
       createdAt: role.createdAt,

@@ -1,23 +1,23 @@
 import { type ApiResponseOptions } from '@nestjs/swagger'
 import { CreateFileResponse } from '../transformers/file-created.transformer.js'
 
-export const createFileApiResponse: ApiResponseOptions = {
+export const CREATE_FILE_RESPONSE: ApiResponseOptions = {
   status: 201,
-  description: 'Successfully created file',
+  description: 'The file is successfully created.',
   type: CreateFileResponse
 }
 
-export const confirmFileUploadApiResponse: ApiResponseOptions = {
+export const CONFIRM_FILE_UPLOAD_RESPONSE: ApiResponseOptions = {
   status: 200,
-  description: 'Successfully confirmed file upload'
+  description: 'The file\'s upload is confirmed.'
 }
 
-export const downloadFileApiResponse: ApiResponseOptions = {
+export const DOWNLOAD_FILE_RESPONSE: ApiResponseOptions = {
   status: 302,
-  description: 'Successfully downloaded file'
+  description: 'The file is succesfully downloaded file.'
 }
 
-export const removeFileApiResponse: ApiResponseOptions = {
+export const REMOVE_FILE_RESPONSE: ApiResponseOptions = {
   status: 200,
-  description: 'Successfully removed file'
+  description: 'The file is succesfully removed.'
 }

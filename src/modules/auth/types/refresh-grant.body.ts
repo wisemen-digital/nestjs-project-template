@@ -4,12 +4,12 @@ export class RefreshGrantBody {
   @ApiProperty({ type: String, example: 'refresh' })
   grant_type: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   refresh_token: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   client_id: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   client_secret: string
 }

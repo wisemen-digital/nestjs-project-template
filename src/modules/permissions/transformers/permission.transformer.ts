@@ -1,12 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Permission } from '../permission.enum.js'
+import { IsArray, IsNotEmpty, IsString } from 'class-validator'
 import { KnownError } from '../../../utils/exceptions/errors.js'
+import { Permission } from '../enums/permission.enum.js'
 
 export class PermissionObject {
-  @ApiProperty()
+  @ApiProperty({ type: String })
+  @IsString()
+  @IsNotEmpty()
   id: string
 
-  @ApiProperty({ type: [String] })
+  @ApiProperty({ type: String, isArray: true })
+  @IsArray()
+  @IsString({ each: true })
+  @IsNotEmpty({ each: true })
   actions: string[]
 }
 

@@ -1,4 +1,4 @@
-import { randUuid } from '@ngneat/falso'
+import { randFirstName, randLastName, randUuid } from '@ngneat/falso'
 import { User } from '../../../entities/user.entity.js'
 import { type Role } from '../../../../roles/entities/role.entity.js'
 
@@ -17,8 +17,10 @@ export class UserEntityBuilder {
     this.user.updatedAt = new Date()
     this.user.email = 'test@mail.com'
     this.user.password = 'Password123'
-    this.user.firstName = 'John'
-    this.user.lastName = 'Doe'
+    this.user.firstName = randFirstName()
+    this.user.lastName = randLastName()
+    this.user.roleUuid = null
+    this.user.role = undefined
 
     return this
   }
@@ -49,6 +51,7 @@ export class UserEntityBuilder {
   }
 
   withRole (role: Role): this {
+    this.user.roleUuid = role.uuid
     this.user.role = role
     return this
   }

@@ -4,7 +4,7 @@ import {
   Injectable
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { IS_PUBLIC_KEY } from '../../permissions/permissions.decorator.js'
+import { IS_PUBLIC_KEY } from '../../permissions/decorators/permissions.decorator.js'
 import { type AccessTokenInterface } from '../entities/accesstoken.entity.js'
 import { AuthService } from '../services/auth.service.js'
 import { KnownError } from '../../../utils/exceptions/errors.js'

@@ -1,12 +1,21 @@
 import type * as OAuth2Server from '@appwise/oauth2-server'
 import { Transformer } from '@appwise/transformer'
+import { ApiProperty } from '@nestjs/swagger'
 
-export interface AuthTransformerType {
-  access_token: string
+export class AuthTransformerType {
+  @ApiProperty({ type: String, example: 'Bearer' })
   token_type: string
+
+  @ApiProperty({ type: String })
+  access_token: string
+
+  @ApiProperty({ type: Number, example: 3600, required: false })
   expires_in?: number
+
+  @ApiProperty({ type: String, required: false })
   refresh_token?: string
 }
+
 export class AuthTransformer extends Transformer<OAuth2Server.Token, AuthTransformerType> {
   transform (token: OAuth2Server.Token): AuthTransformerType {
     return {

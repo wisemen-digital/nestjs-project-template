@@ -1,6 +1,6 @@
 import { randUuid } from '@ngneat/falso'
 import { Role } from '../../../entities/role.entity.js'
-import { type Permission } from '../../../../permissions/permission.enum.js'
+import { type Permission } from '../../../../permissions/enums/permission.enum.js'
 
 export class RoleEntityBuilder {
   private roleEntity: Role

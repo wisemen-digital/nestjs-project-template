@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Column, OneToMany, type Relation } from 'typeorm'
-import { Permission } from '../../permissions/permission.enum.js'
+import { Permission } from '../../permissions/enums/permission.enum.js'
 import { User } from '../../users/entities/user.entity.js'
 
 @Entity()

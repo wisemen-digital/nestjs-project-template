@@ -1,16 +1,18 @@
 import { Controller, Get, Post, Req, Res } from '@nestjs/common'
 import { Response } from 'express'
-import { ApiBody, ApiExtraModels, ApiOAuth2, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { AuthService } from '../services/auth.service.js'
-import { Public } from '../../permissions/permissions.decorator.js'
+import { Permissions, Public } from '../../permissions/decorators/permissions.decorator.js'
 import { Request } from '../guards/auth.guard.js'
 import { AuthTransformer } from '../transformers/auth.transformer.js'
-import { UserTransformer, UserTransformerType } from '../../users/transformers/user.transformer.js'
-import { TokenResponse } from '../types/token.response.js'
+import { CREATE_TOKEN_RESPONSE, GET_USER_INFO_RESPONSE } from '../docs/auth-response.docs.js'
+import { type UserTransformerType, UserTransformer } from '../../users/transformers/user.transformer.js'
+import { ApiOneOfBody } from '../../../utils/decorators/api-one-of-body.util.js'
 import { PasswordGrantBody } from '../types/password-grant.body.js'
 import { RefreshGrantBody } from '../types/refresh-grant.body.js'
+import { Permission } from '../../permissions/enums/permission.enum.js'
 
-@ApiTags('Auth')
+@ApiTags('Authentication')
 @Controller({
   path: 'auth',
   version: ''
@@ -22,27 +24,14 @@ export class AuthController {
 
   @Post('/token')
   @Public()
-  @ApiResponse({
-    status: 200,
-    description: 'The token has been successfully created.',
-    type: TokenResponse
-  })
-  @ApiExtraModels(PasswordGrantBody, RefreshGrantBody)
-  @ApiBody({
-    schema: {
-      oneOf: [
-        { $ref: getSchemaPath(PasswordGrantBody) },
-        { $ref: getSchemaPath(RefreshGrantBody) }
-      ]
-    }
-  })
+  @ApiCreatedResponse(CREATE_TOKEN_RESPONSE)
+  @ApiOneOfBody(PasswordGrantBody, RefreshGrantBody)
   public async createToken (
     @Req() req: Request,
     @Res() res: Response
   ): Promise<void> {
     try {
       const token = await this.authService.signIn(req, res)
-
       res.json(new AuthTransformer().item(token))
     } catch (err) {
       res.status(err.code).json({
@@ -53,13 +42,12 @@ export class AuthController {
   }
 
   @Get('/userinfo')
-  @ApiOAuth2([])
-  @ApiResponse({
-    status: 200,
-    description: 'The user info has been successfully retrieved.',
-    type: UserTransformerType
-  })
-  public async getUserInfo (@Req() req: Request): Promise<UserTransformerType> {
+  @ApiBearerAuth()
+  @ApiOkResponse(GET_USER_INFO_RESPONSE)
+  @Permissions(Permission.USER_READ)
+  public async getUserInfo (
+    @Req() req: Request
+  ): Promise<UserTransformerType> {
     const user = await this.authService.getUserInfo(req)
     return new UserTransformer().item(user)
   }

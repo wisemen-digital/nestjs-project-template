@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { StatusController } from '../controllers/status.controller.js'
+import { StatusController } from './controllers/status.controller.js'
 
 @Module({
   imports: [],

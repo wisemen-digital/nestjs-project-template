@@ -1,23 +1,27 @@
-import { Body, Controller, Delete, HttpCode, Param, ParseUUIDPipe, Post, Req, Res } from '@nestjs/common'
-import { ApiOAuth2, ApiResponse, ApiTags } from '@nestjs/swagger'
+import { Controller, Post, Req, Body, HttpCode, Res, Delete } from '@nestjs/common'
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
 import { Request } from '../../auth/guards/auth.guard.js'
 import { CreateFileDto } from '../dtos/create-file.dto.js'
 import { type CreateFileResponse, CreateFileResponseTransformer } from '../transformers/file-created.transformer.js'
 import { FileFlowService } from '../services/file.flows.service.js'
-import { confirmFileUploadApiResponse, createFileApiResponse, downloadFileApiResponse, removeFileApiResponse } from '../docs/file-response.docs.js'
+import { CONFIRM_FILE_UPLOAD_RESPONSE, CREATE_FILE_RESPONSE, DOWNLOAD_FILE_RESPONSE, REMOVE_FILE_RESPONSE } from '../docs/file-response.docs.js'
+import { UuidParam } from '../../../utils/params/uuid-param.utiil.js'
+import { Permissions } from '../../permissions/decorators/permissions.decorator.js'
+import { Permission } from '../../permissions/enums/permission.enum.js'
 
-@ApiTags('File')
-@Controller('file')
-@ApiOAuth2([])
+@ApiTags('Files')
+@Controller('files')
+@ApiBearerAuth()
 export class FileController {
   constructor (
     private readonly fileFlowService: FileFlowService
   ) {}
 
-  @Post()
-  @ApiResponse(createFileApiResponse)
-  async createFile (
+  @Post('/')
+  @ApiCreatedResponse(CREATE_FILE_RESPONSE)
+  @Permissions(Permission.FILE_CREATE)
+  public async createFile (
     @Req() req: Request,
     @Body() createFileDto: CreateFileDto
   ): Promise<CreateFileResponse> {
@@ -26,20 +30,31 @@ export class FileController {
     return new CreateFileResponseTransformer().item(file, uploadUrl)
   }
 
-  @Post('/:file/confirm-upload')
-  @ApiResponse(confirmFileUploadApiResponse)
+  @Delete('/:fileUuid')
+  @ApiOkResponse(REMOVE_FILE_RESPONSE)
+  @Permissions(Permission.FILE_DELETE)
+  public async removeFile (
+    @UuidParam('fileUuid') fileUuid: string
+  ): Promise<void> {
+    await this.fileFlowService.remove(fileUuid)
+  }
+
+  @Post('/:fileUuid/confirm-upload')
+  @ApiCreatedResponse(CONFIRM_FILE_UPLOAD_RESPONSE)
   @HttpCode(200)
-  async confirmFileUpload (
-    @Param('file', ParseUUIDPipe) fileUuid: string
+  @Permissions(Permission.FILE_CREATE)
+  public async confirmFileUpload (
+    @UuidParam('fileUuid') fileUuid: string
   ): Promise<void> {
     await this.fileFlowService.confirmUploadOrFail(fileUuid)
   }
 
-  @Post('/:file/download')
-  @ApiResponse(downloadFileApiResponse)
+  @Post('/:fileUuid/download')
+  @ApiCreatedResponse(DOWNLOAD_FILE_RESPONSE)
   @HttpCode(302)
-  async downloadFile (
-    @Param('file', ParseUUIDPipe) fileUuid: string,
+  @Permissions(Permission.FILE_READ)
+  public async downloadFile (
+    @UuidParam('fileUuid') fileUuid: string,
     @Res() res: Response
   ): Promise<void> {
     const { file, temporaryUrl } = await this.fileFlowService.getTemporaryUrl(fileUuid)
@@ -48,13 +63,5 @@ export class FileController {
     res.setHeader('Content-Disposition', `attachment; filename=${file.name}`)
     res.setHeader('Content-Type', file.mimeType ?? 'application/octet-stream')
     res.redirect(temporaryUrl)
-  }
-
-  @Delete('/:file')
-  @ApiResponse(removeFileApiResponse)
-  async removeFile (
-    @Param('file', ParseUUIDPipe) fileUuid: string
-  ): Promise<void> {
-    await this.fileFlowService.remove(fileUuid)
   }
 }
