@@ -5,12 +5,12 @@ import { type SendMailOptions, type MailClient } from './mail.client.js'
 @Injectable()
 export class ScalewayMailClient implements MailClient {
   private readonly api: AxiosInstance
-  private readonly region: string = process.env.SCW_REGION ?? 'fr-par'
+  private readonly region: string = process.env.MAIL_REGION ?? 'fr-par'
 
   constructor () {
     this.api = axios.create({
       headers: {
-        'X-Auth-Token': process.env.SCW_API_KEY
+        'X-Auth-Token': process.env.MAIL_PASSWORD
       }
     })
   }
@@ -18,7 +18,9 @@ export class ScalewayMailClient implements MailClient {
   public async sendMail (options: SendMailOptions): Promise<void> {
     if (process.env.NODE_ENV === 'test') return
 
-    const from = { email: options.from ?? process.env.MAIL_FROM_NAME }
+    const fromMail = options.from ?? process.env.MAIL_FROM_ADDRESS?.replace(/["']/g, '')
+
+    const from = { email: fromMail }
     const to = options.to instanceof Array
       ? options.to.map(email => ({ email }))
       : [{ email: options.to }]
@@ -37,9 +39,9 @@ export class ScalewayMailClient implements MailClient {
       subject: options.subject,
       text: options.text,
       html: options.html,
-      project_id: process.env.SCW_PROJECT_ID
+      project_id: process.env.MAIL_USERNAME
     }
 
-    await this.api.post(`https://api.scaleway.com/transactional-email/v1alpha1/regions/${this.region}/emails`, body)
+    await this.api.post(`https://${process.env.MAIL_HOST}/transactional-email/v1alpha1/regions/${this.region}/emails`, body)
   }
 }
