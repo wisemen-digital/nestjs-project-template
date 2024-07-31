@@ -42,6 +42,6 @@ export class ScalewayMailClient implements MailClient {
       project_id: process.env.MAIL_USERNAME
     }
 
-    await this.api.post(`https://${process.env.MAIL_HOST}/transactional-email/v1alpha1/regions/${this.region}/emails`, body)
+    await this.api.post(`https://api.scaleway.com/transactional-email/v1alpha1/regions/${this.region}/emails`, body)
   }
 }
