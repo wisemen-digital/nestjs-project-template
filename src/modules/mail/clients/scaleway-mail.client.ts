@@ -18,9 +18,7 @@ export class ScalewayMailClient implements MailClient {
   public async sendMail (options: SendMailOptions): Promise<void> {
     if (process.env.NODE_ENV === 'test') return
 
-    const fromMail = options.from ?? process.env.MAIL_FROM_ADDRESS?.replace(/["']/g, '')
-
-    const from = { email: fromMail }
+    const from = { email: options.from ?? process.env.MAIL_FROM_ADDRESS }
     const to = options.to instanceof Array
       ? options.to.map(email => ({ email }))
       : [{ email: options.to }]
