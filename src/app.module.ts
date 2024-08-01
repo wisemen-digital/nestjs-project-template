@@ -19,7 +19,8 @@ import { envValidationSchema } from './config/env/env.validation.js'
 import { NatsModule } from './modules/nats/nats.module.js'
 import { CacheModule } from './modules/cache/cache.module.js'
 import { RedisModule } from './modules/redis/redis.module.js'
-import { typeormConfig } from './config/sql/sources/main.js'
+import { mainMigrations } from './config/sql/migrations/index.js'
+import { sslHelper } from './config/sql/utils/typeorm.js'
 
 @Module({})
 export class AppModule {
@@ -34,7 +35,17 @@ export class AppModule {
           load: [configuration],
           validationSchema: envValidationSchema
         }),
-        TypeOrmModule.forRoot(typeormConfig()),
+        TypeOrmModule.forRoot({
+          type: 'postgres',
+          url: process.env.DATABASE_URI,
+          ssl: sslHelper(process.env.DATABASE_SSL),
+          extra: { max: 50 },
+          logging: false,
+          synchronize: false,
+          migrations: mainMigrations,
+          migrationsRun: true,
+          autoLoadEntities: true
+        }),
 
         // Auth
         AuthModule,
