@@ -7,13 +7,15 @@ import { type User } from '../entities/user.entity.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { type UserQuery } from '../queries/user.query.js'
+import { CacheService } from '../../cache/cache.service.js'
 import { UserService } from './user.service.js'
 
 @Injectable()
 export class UserFlowService {
   constructor (
     private readonly userService: UserService,
-    private readonly typesenseService: TypesenseCollectionService
+    private readonly typesenseService: TypesenseCollectionService,
+    private readonly cacheService: CacheService
   ) {}
 
   async findPaginatedAndCount (query: UserQuery): Promise<[User[], number]> {
@@ -47,5 +49,17 @@ export class UserFlowService {
   async delete (userUuid: string): Promise<void> {
     await this.userService.delete(userUuid)
     await this.typesenseService.deleteFromTypesense(TypesenseCollectionName.USER, userUuid)
+  }
+
+  async updateRole (userUuid: string, roleUuid: string): Promise<User> {
+    const updatedUser = await this.userService.updateRole(userUuid, roleUuid)
+    await this.cacheService.clearUserRole(userUuid)
+
+    await this.typesenseService.importManuallyToTypesense(
+      TypesenseCollectionName.USER,
+      [updatedUser]
+    )
+
+    return updatedUser
   }
 }
