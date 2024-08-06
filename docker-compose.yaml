@@ -10,6 +10,28 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: test_db
 
+  typesense:
+    image: typesense/typesense:0.25.2
+    ports:
+      - '8108:8108'
+    volumes:
+      - ./.typesense:/data/typesense
+    environment:
+      TYPESENSE_DATA_DIR: /data
+      TYPESENSE_API_KEY: api_key
+
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+    volumes:
+      - ./.nats:/data/nats
+    command:
+      - "--debug"
+      - "--http_port=8222"
+      - "--js"
+      - "--sd=/nats/data"
+
   redis:
     image: redis
     ports:

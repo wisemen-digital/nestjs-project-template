@@ -23,17 +23,17 @@ export class UserTypesenseRepository {
       typesenseSearchParams
     )
 
-    const userUuids = typesenseSearchedValues[TypesenseCollectionName.USER]?.items.map(
+    const uuids = typesenseSearchedValues[TypesenseCollectionName.USER]?.items.map(
       item => item.uuid
     )
 
-    if ((userUuids != null && userUuids.length === 0) || userUuids == null) {
+    if (uuids == null || uuids.length === 0) {
       return emptyFindUuidsResponse
     }
 
     const count = typesenseSearchedValues[TypesenseCollectionName.USER]?.meta.total ?? 0
 
-    return [userUuids, count]
+    return [uuids, count]
   }
 
   createTypesenseSearchParams (query: UserQuery | null): SearchParams {

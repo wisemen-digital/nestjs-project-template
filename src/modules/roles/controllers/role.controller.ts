@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common'
-import { ApiResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOAuth2, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { RoleTransformer, RoleTransformerType } from '../transformers/role.transformer.js'
 import { CreateRoleDto } from '../dtos/create-role.dto.js'
 import { RoleCount } from '../transformers/role-count.type.js'
@@ -8,8 +8,9 @@ import { UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
 import { Permissions } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
 
-@ApiTags('roles')
+@ApiTags('Roles')
 @Controller('roles')
+@ApiOAuth2([])
 export class RoleController {
   constructor (
     private readonly roleService: RoleService

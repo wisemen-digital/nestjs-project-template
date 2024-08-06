@@ -9,6 +9,10 @@
       {
         "include": "**/*.mjml",
         "outDir": "dist/src"
+      },
+      {
+        "include": "modules/websocket/documentation.md",
+        "outDir": "dist/src"
       }
     ],
     "deleteOutDir": true
@@ -26,10 +30,16 @@
       "entryFile": "entrypoints/pgboss-worker",
       "sourceRoot": "src"
     },
-    "import-typesense-cronjob": {
+    "cronjob": {
       "type": "application",
       "root": "src",
-      "entryFile": "entrypoints/cronjobs/import-typesense.cronjob",
+      "entryFile": "entrypoints/cronjob",
+      "sourceRoot": "src"
+    },
+    "websocket-server": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/websocket-server",
       "sourceRoot": "src"
     }
   }
