@@ -36,4 +36,8 @@ export class RedisClient implements OnModuleInit, OnModuleDestroy {
   async deleteCachedValue (key: string): Promise<void> {
     await this.client.del(key)
   }
+
+  async ping (): Promise<string> {
+    return await this.client.ping()
+  }
 }
