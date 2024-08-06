@@ -48,3 +48,6 @@ yarn-error.log*
 
 # Certificates
 *.pem
+
+# Documentation
+.obsidian
