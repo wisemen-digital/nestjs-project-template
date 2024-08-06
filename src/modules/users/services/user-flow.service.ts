@@ -7,7 +7,7 @@ import { type User } from '../entities/user.entity.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { type UserQuery } from '../queries/user.query.js'
-import { RedisCacheService } from '../../../utils/cache/cache.js'
+import { CacheService } from '../../cache/cache.service.js'
 import { UserService } from './user.service.js'
 
 @Injectable()
@@ -15,7 +15,7 @@ export class UserFlowService {
   constructor (
     private readonly userService: UserService,
     private readonly typesenseService: TypesenseCollectionService,
-    private readonly redisCacheService: RedisCacheService
+    private readonly cacheService: CacheService
   ) {}
 
   async findPaginatedAndCount (query: UserQuery): Promise<[User[], number]> {
@@ -53,7 +53,7 @@ export class UserFlowService {
 
   async updateRole (userUuid: string, roleUuid: string): Promise<User> {
     const updatedUser = await this.userService.updateRole(userUuid, roleUuid)
-    await this.redisCacheService.clearUserRole(userUuid)
+    await this.cacheService.clearUserRole(userUuid)
 
     await this.typesenseService.importManuallyToTypesense(
       TypesenseCollectionName.USER,
