@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { DataSource } from 'typeorm'
 import { type CreateUserDto } from '../dtos/create-user.dto.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
@@ -9,12 +10,16 @@ import { UserTypesenseRepository } from '../repositories/user-typesense.reposito
 import { createHash, validatePassword } from '../../../utils/helpers/hash.helper.js'
 import { type UpdatePasswordDto } from '../dtos/update-password.dto.js'
 import { sortEntitiesByUuids } from '../../../utils/helpers/sort-entities-by-uuids.helper.js'
+import { RoleRepository } from '../../roles/repositories/role.repository.js'
 
 @Injectable()
 export class UserService {
   constructor (
+    private readonly dataSource: DataSource,
+
     private readonly userRepository: UserRepository,
-    private readonly userTypesenseRepository: UserTypesenseRepository
+    private readonly userTypesenseRepository: UserTypesenseRepository,
+    private readonly roleRepository: RoleRepository
   ) {}
 
   async findPaginated (
@@ -88,5 +93,17 @@ export class UserService {
     } catch (e) {
       return false
     }
+  }
+
+  async updateRole (userUuid: string, roleUuid: string): Promise<User> {
+    const user = await this.userRepository.findOneByOrFail({ uuid: userUuid })
+    const role = await this.roleRepository.findOneByOrFail({ uuid: roleUuid })
+
+    user.role = role
+    user.roleUuid = role.uuid
+
+    await this.userRepository.update(user.uuid, { roleUuid: role.uuid })
+
+    return user
   }
 }

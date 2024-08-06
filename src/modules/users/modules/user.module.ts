@@ -7,6 +7,7 @@ import { UserRepository } from '../repositories/user.repository.js'
 import { UserTypesenseRepository } from '../repositories/user-typesense.repository.js'
 import { TypesenseModule } from '../../typesense/modules/typesense.module.js'
 import { UserFlowService } from '../services/user-flow.service.js'
+import { RoleRepository } from '../../roles/repositories/role.repository.js'
 import { CacheModule } from '../../cache/cache.module.js'
 
 @Module({
@@ -17,10 +18,13 @@ import { CacheModule } from '../../cache/cache.module.js'
   ],
   controllers: [UserController],
   providers: [
+    UserFlowService,
     UserService,
+
     UserRepository,
     UserTypesenseRepository,
-    UserFlowService
+
+    RoleRepository
   ],
   exports: [UserService]
 })

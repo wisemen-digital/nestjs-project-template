@@ -10,7 +10,7 @@ import { Permission } from '../../permissions/permission.enum.js'
 import { UserSeeder } from '../../users/tests/seeders/user.seeder.js'
 import { UserEntityBuilder } from '../../users/tests/builders/entities/user-entity.builder.js'
 import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
-import { globalTestSetup } from '../../../../test/setup/setup.js'
+import { testSetup } from '../../../utils/test-setup/setup.js'
 import { ClientSeeder } from '../../auth/tests/seeders/client.seeder.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
 import { type SetupUser } from '../../users/tests/setup-user.type.js'
@@ -31,7 +31,7 @@ describe('Roles', async () => {
   let readonlyUser: SetupUser
 
   before(async () => {
-    ({ app, dataSource } = await globalTestSetup())
+    ({ app, dataSource } = await testSetup())
 
     context = new TestContext(dataSource.manager)
 
