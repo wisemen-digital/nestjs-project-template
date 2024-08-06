@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, HttpCode, Param, ParseUUIDPipe, Post, Req, Res } from '@nestjs/common'
+import { Body, Controller, Delete, HttpCode, Param, ParseUUIDPipe, Post, Res } from '@nestjs/common'
 import { ApiOAuth2, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { Response } from 'express'
-import { Request } from '../../auth/guards/auth.guard.js'
 import { CreateFileDto } from '../dtos/create-file.dto.js'
 import { type CreateFileResponse, CreateFileResponseTransformer } from '../transformers/file-created.transformer.js'
 import { FileFlowService } from '../services/file.flows.service.js'
 import { confirmFileUploadApiResponse, createFileApiResponse, downloadFileApiResponse, removeFileApiResponse } from '../docs/file-response.docs.js'
+import { getAuthOrFail } from '../../auth/middleware/auth.middleware.js'
 
 @ApiTags('File')
 @Controller('file')
@@ -18,10 +18,9 @@ export class FileController {
   @Post()
   @ApiResponse(createFileApiResponse)
   async createFile (
-    @Req() req: Request,
     @Body() createFileDto: CreateFileDto
   ): Promise<CreateFileResponse> {
-    const userUuid = req.auth.user.uuid
+    const userUuid = getAuthOrFail().uid
     const { file, uploadUrl } = await this.fileFlowService.create(createFileDto, userUuid)
     return new CreateFileResponseTransformer().item(file, uploadUrl)
   }

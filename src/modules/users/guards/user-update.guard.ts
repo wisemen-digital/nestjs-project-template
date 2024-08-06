@@ -2,6 +2,7 @@ import { Injectable, type CanActivate, type ExecutionContext } from '@nestjs/com
 import { Reflector } from '@nestjs/core'
 import { Permission } from '../../permissions/permission.enum.js'
 import { CacheService } from '../../cache/cache.service.js'
+import { getAuthOrFail } from '../../auth/middleware/auth.middleware.js'
 
 @Injectable()
 export class UpdateUserGuard implements CanActivate {
@@ -11,12 +12,14 @@ export class UpdateUserGuard implements CanActivate {
   ) {}
 
   async canActivate (context: ExecutionContext): Promise<boolean> {
-    const { auth, params } = context.switchToHttp().getRequest()
+    const userUuid = getAuthOrFail().uid
 
-    if (auth.user.uuid === params.user) {
+    const { params } = context.switchToHttp().getRequest()
+
+    if (userUuid === params.user) {
       return true
     } else {
-      const userPermissions = await this.cache.getUserPermissions(auth.user.uuid)
+      const userPermissions = await this.cache.getUserPermissions(userUuid)
       return userPermissions.includes(Permission.ADMIN)
     }
   }
