@@ -15,7 +15,9 @@
     "@typescript-eslint/strict-boolean-expressions": "error",
     "import/no-unresolved": "off"
   },
-  "ignorePatterns": [],
+  "ignorePatterns": [
+     "src/modules/localization/generated/i18n.generated.ts"
+  ],
   "overrides": [
     {
       "files": [
