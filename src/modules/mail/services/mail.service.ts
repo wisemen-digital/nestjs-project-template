@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common'
 import { type User } from '../../users/entities/user.entity.js'
 import { ScalewayMailClient } from '../clients/scaleway-mail.client.js'
-import { ForgotPasswordTranslation } from '../translations/forgot-password.translation.js'
 import { MjmlRenderer } from '../renderer/mjml.renderer.js'
 import { mergeObjects } from '../../../utils/helpers/merge-objects.js'
+import { LocalizationService } from '../../localization/services/localization.service.js'
+import { type ForgotPasswordMailContent } from '../content/forgot-password-mail.content.js'
+import { PASSWORD_TOKEN_HOURS_VALID } from '../constants/password-reset.constant.js'
 
 @Injectable()
 export class MailService {
   constructor (
     private readonly mailClient: ScalewayMailClient,
-    private readonly mjmlRenderer: MjmlRenderer
+    private readonly mjmlRenderer: MjmlRenderer,
+    private readonly localizationService: LocalizationService
   ) {}
 
   async sendForgotPasswordMail (
@@ -19,7 +22,21 @@ export class MailService {
   ): Promise<void> {
     const queryParams = new URLSearchParams({ token, secret })
     const deeplink = `${process.env.FRONTEND_URL}/reset-password?${queryParams.toString()}`
-    const html = await this.mjmlRenderer.render('forgot-password', mergeObjects(ForgotPasswordTranslation.nl, {
+
+    const duration = this.localizationService.translate('common.duration.hours', { args: { count: PASSWORD_TOKEN_HOURS_VALID } })
+    const content: ForgotPasswordMailContent = {
+      heading: this.localizationService.translate('mail.password-reset.heading'),
+      subject: this.localizationService.translate('mail.password-reset.subject'),
+      body: {
+        text: this.localizationService.translate('mail.password-reset.body.text'),
+        subText: this.localizationService.translate('mail.password-reset.body.subText', { args: { duration } })
+      },
+      button: {
+        text: this.localizationService.translate('mail.password-reset.button.text')
+      }
+    }
+
+    const html = await this.mjmlRenderer.render('forgot-password', mergeObjects(content, {
       button: {
         deeplink
       }
@@ -27,7 +44,7 @@ export class MailService {
 
     await this.mailClient.sendMail({
       to: user.email,
-      subject: ForgotPasswordTranslation.nl.subject,
+      subject: content.subject,
       html
     })
   }
