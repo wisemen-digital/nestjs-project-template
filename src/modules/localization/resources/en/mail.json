@@ -1,0 +1,13 @@
+{
+  "password-reset": {
+    "subject": "Reset password",
+    "heading": "Reset your password",
+    "body": {
+      "text": "A request has been made to reset your account password. You can reset your password using the button below.",
+      "subText": "This link is valid for {duration} and can only be used once."
+    },
+    "button": {
+      "text": "Reset password"
+    }
+  }
+}

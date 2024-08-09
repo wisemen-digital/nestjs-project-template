@@ -1,0 +1,8 @@
+{
+  "duration.hours": {
+    "hours": {
+      "one": "{count} hour",
+      "other": "{count} hours"
+    }
+  }
+}
