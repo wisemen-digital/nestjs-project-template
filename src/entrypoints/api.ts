@@ -55,6 +55,10 @@ async function bootstrap (): Promise<void> {
 
   app.enableShutdownHooks()
 
+  app.enableCors({
+    exposedHeaders: ['Content-Disposition']
+  })
+
   await app.listen(3000)
 }
 
