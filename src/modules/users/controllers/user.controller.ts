@@ -4,7 +4,7 @@ import { RequirePermissions } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { UserTransformerType, UserTransformer } from '../transformers/user.transformer.js'
 import { AllowSelfAndAdminsGuard } from '../guards/user-update.guard.js'
-import { UserQuery } from '../queries/user.query.js'
+import { ViewUsersQuery } from '../use-cases/view-users/view-users.query.js'
 import { generatePaginatedResponse, type OffsetPaginatedResult } from '../../../common/pagination/offset/paginated-result.interface.js'
 import { UserFlowService } from '../services/user-flow.service.js'
 
@@ -23,7 +23,7 @@ export class UserController {
   })
   @RequirePermissions(Permission.USER_READ)
   async getUsers (
-    @Query() query: UserQuery
+    @Query() query: ViewUsersQuery
   ): Promise<OffsetPaginatedResult<UserTransformerType>> {
     const [users, count] = await this.userFlowService.findPaginatedAndCount(query)
 

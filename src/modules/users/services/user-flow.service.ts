@@ -4,7 +4,7 @@ import { TypesenseCollectionService } from '../../typesense/services/typesense-c
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import { type User } from '../entities/user.entity.js'
 import { type UpdateUserDto } from '../dtos/update-user.dto.js'
-import { type UserQuery } from '../queries/user.query.js'
+import { type ViewUsersQuery } from '../use-cases/view-users/view-users.query.js'
 import { UserService } from './user.service.js'
 
 @Injectable()
@@ -14,7 +14,7 @@ export class UserFlowService {
     private readonly typesenseService: TypesenseCollectionService
   ) {}
 
-  async findPaginatedAndCount (query: UserQuery): Promise<[User[], number]> {
+  async findPaginatedAndCount (query: ViewUsersQuery): Promise<[User[], number]> {
     return await this.userService.findPaginated(query)
   }
 

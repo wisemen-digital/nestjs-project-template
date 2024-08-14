@@ -15,7 +15,7 @@ export class UserRepository extends TypeOrmRepository<User> {
   }
 
   async findWithUuids (
-    userUuids: string[]
+    userUuids: UserUuid[]
   ): Promise<User[]> {
     if (userUuids.length === 0) return []
     const usersQuery = this.createQueryBuilder('user')

@@ -3,9 +3,9 @@ import { type UpdateUserDto } from '../dtos/update-user.dto.js'
 import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { KnownError } from '../../../common/exceptions/errors.js'
-import { type UserQuery } from '../queries/user.query.js'
+import { type ViewUsersQuery } from '../use-cases/view-users/view-users.query.js'
 import { UserTypesenseRepository } from '../repositories/user-typesense.repository.js'
-import { sortEntitiesByUuids } from '../../../common/helpers/sort-entities-by-uuids.helper.js'
+import { matchUuidsToEntities } from '../../../common/helpers/sort-entities-by-uuids.helper.js'
 import { verifyPassword } from '../../../common/auth/verify-password.js'
 
 @Injectable()
@@ -16,12 +16,12 @@ export class UserService {
   ) {}
 
   async findPaginated (
-    query: UserQuery
+    query: ViewUsersQuery
   ): Promise<[items: User[], count: number]> {
     const [uuids, count] = await this.userTypesenseRepository.findPaginatedUuids(query)
     const users = await this.userRepository.findWithUuids(uuids)
 
-    const sortedUsers = sortEntitiesByUuids(uuids, users)
+    const sortedUsers = matchUuidsToEntities(uuids, users)
 
     return [sortedUsers, count]
   }

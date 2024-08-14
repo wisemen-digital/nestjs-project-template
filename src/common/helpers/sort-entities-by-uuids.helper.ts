@@ -1,6 +1,6 @@
 import { type UUID } from '../uuid/uuid.js'
 
-export function sortEntitiesByUuids<T extends { uuid: string | UUID }> (
+export function matchUuidsToEntities<T extends { uuid: string | UUID }> (
   uuids: string[],
   entities: T[]
 ): T[] {

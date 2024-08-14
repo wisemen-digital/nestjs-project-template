@@ -19,15 +19,15 @@ export class ChangePasswordUseCase {
     changePasswordRequest: ChangePasswordRequest
   ): Promise<User> {
     const user = await this.userRepository.findByUuidOrFail(forUserUuid)
-    await this.verifyPassword(user.password, changePasswordRequest.oldPassword)
+    await this.verifyPassword(changePasswordRequest.oldPassword, user.password)
     const newPassword = await createHash(changePasswordRequest.newPassword)
     await this.userRepository.update({ uuid: forUserUuid.toString() }, { password: newPassword })
     return user
   }
 
-  private async verifyPassword (oldPassword: string, newPassword: string): Promise<void> {
+  private async verifyPassword (password: string, hashedPassword: string): Promise<void> {
     try {
-      await verifyPassword(newPassword, oldPassword)
+      await verifyPassword(password, hashedPassword)
     } catch (error) {
       if (error instanceof KnownError) {
         throw new InvalidOldPasswordError()
