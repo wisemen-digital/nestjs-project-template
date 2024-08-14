@@ -4,12 +4,10 @@ import { TypesenseModule } from '../typesense/modules/typesense.module.js'
 import { RoleRepository } from '../roles/repositories/role.repository.js'
 import { CacheModule } from '../cache/cache.module.js'
 import { RoleModule } from '../roles/role.module.js'
-import { UserController } from './controllers/user.controller.js'
 import { UserService } from './services/user.service.js'
 import { User } from './entities/user.entity.js'
 import { UserRepository } from './repositories/user.repository.js'
 import { UserTypesenseRepository } from './repositories/user-typesense.repository.js'
-import { UserFlowService } from './services/user-flow.service.js'
 import {
   ChangeUserNameController
 } from './use-cases/change-user-name/change-user-name.controller.js'
@@ -28,6 +26,8 @@ import {
   ChangeUserRoleController
 } from './use-cases/change-user-role/change-user-role.controller.js'
 import { ChangeUserRoleUseCase } from './use-cases/change-user-role/change-user-role.use-case.js'
+import { DeleteUserController } from './use-cases/delete-user/delete-user.controller.js'
+import { DeleteUserUseCase } from './use-cases/delete-user/delete-user.use-case.js'
 
 @Module({
   imports: [
@@ -37,16 +37,15 @@ import { ChangeUserRoleUseCase } from './use-cases/change-user-role/change-user-
     RoleModule
   ],
   controllers: [
-    UserController,
     ChangeUserNameController,
     ChangePasswordController,
     ChangeUserRoleController,
+    DeleteUserController,
     ViewUserController,
     ViewUsersController,
     RegisterUserController
   ],
   providers: [
-    UserFlowService,
     UserService,
     UserRepository,
     UserTypesenseRepository,
@@ -54,6 +53,7 @@ import { ChangeUserRoleUseCase } from './use-cases/change-user-role/change-user-
     ChangeUserNameUseCase,
     ChangePasswordUseCase,
     ChangeUserRoleUseCase,
+    DeleteUserUseCase,
     ViewUserUseCase,
     ViewUsersUseCase,
     RegisterUserUseCase

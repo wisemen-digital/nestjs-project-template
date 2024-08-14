@@ -27,11 +27,6 @@ export class UserService {
     })
   }
 
-  async delete (userUuid: string): Promise<User> {
-    const user = await this.findOneOrFail(userUuid)
-    return await this.userRepository.remove(user)
-  }
-
   async verify (email: string, password: string): Promise<User | false> {
     try {
       const user = await this.findOneByEmail(email)
