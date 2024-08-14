@@ -17,7 +17,10 @@ export class ChangePasswordController {
   @Post()
   @UseGuards(UpdateUserGuard)
   @Permissions(Permission.USER_UPDATE)
-  @ApiOkResponse({ description: 'The user\'s password has been successfully changed.' })
+  @ApiOkResponse({
+    description: 'The user\'s password has been successfully changed.',
+    type: PasswordChangedResponse
+  })
   async updateUserPassword (
     @Param('user', ParseUUIDPipe) userUuid: string,
     @Body() changePasswordCommand: ChangePasswordCommand

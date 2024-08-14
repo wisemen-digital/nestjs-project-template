@@ -13,8 +13,8 @@ export class RegisterUserController {
   ) {}
 
   @Post()
-  @ApiCreatedResponse({ type: UserRegisteredResponse })
   @Public()
+  @ApiCreatedResponse({ type: UserRegisteredResponse })
   async createUser (
     @Body() registerUserCommand: RegisterUserCommand
   ): Promise<UserRegisteredResponse> {

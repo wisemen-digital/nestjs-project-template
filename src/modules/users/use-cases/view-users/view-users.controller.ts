@@ -4,7 +4,7 @@ import { Permission } from '../../../permissions/permission.enum.js'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
 import { ViewUsersQuery } from './view-users.query.js'
 import { ViewUsersUseCase } from './view-users.use-case.js'
-import { type ViewUsersResponse } from './view-users.response.js'
+import { ViewUsersResponse } from './view-users.response.js'
 
 @ApiTags('User')
 @Controller('users')
@@ -15,7 +15,10 @@ export class ViewUsersController {
 
   @Get()
   @Permissions(Permission.USER_READ)
-  @ApiOkResponse({ description: 'Users retrieved' })
+  @ApiOkResponse({
+    description: 'Users retrieved',
+    type: ViewUsersResponse
+  })
   async viewUser (
     @Query() query: ViewUsersQuery
   ): Promise<ViewUsersResponse> {

@@ -17,7 +17,10 @@ export class ChangeUserNameController {
   @Post()
   @UseGuards(UpdateUserGuard)
   @Permissions(Permission.USER_UPDATE)
-  @ApiOkResponse({ description: 'The user name has been successfully changed.' })
+  @ApiOkResponse({
+    description: 'The user name has been successfully changed.',
+    type: UserNameChangedResponse
+  })
   async updateUser (
     @Param('user', ParseUUIDPipe) userUuid: string,
     @Body() dto: ChangeUserNameCommand

@@ -42,16 +42,4 @@ export class UserService {
       return false
     }
   }
-
-  async updateRole (userUuid: string, roleUuid: string): Promise<User> {
-    const user = await this.userRepository.findOneByOrFail({ uuid: userUuid })
-    const role = await this.roleRepository.findOneByOrFail({ uuid: roleUuid })
-
-    user.role = role
-    user.roleUuid = role.uuid
-
-    await this.userRepository.update(user.uuid, { roleUuid: role.uuid })
-
-    return user
-  }
 }

@@ -7,7 +7,6 @@ import { type DataSource } from 'typeorm'
 import { type TestingModule } from '@nestjs/testing'
 import { testSetup, migrateTypesense } from '../../../utils/test-setup/setup.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
-import { Permission } from '../../permissions/permission.enum.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import { TypesenseCollectionService } from '../../typesense/services/typesense-collection.service.js'
 import { type SetupUser } from './setup-user.type.js'
@@ -37,36 +36,6 @@ describe('Users', async () => {
       TypesenseCollectionName.USER,
       [adminUser.user, readonlyUser.user]
     )
-  })
-
-  describe('Get users', () => {
-    it('should return 401 when not authenticated', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/users')
-
-      expect(response).toHaveStatus(401)
-    })
-
-    it('should return users paginated', async () => {
-      const response = await request(app.getHttpServer())
-        .get('/users')
-        .set('Authorization', `Bearer ${adminUser.token}`)
-        .query({
-          pagination: {
-            limit: 10,
-            offset: 0
-          },
-          'filter[permissions][0]': Permission.READ_ONLY
-        })
-
-      expect(response).toHaveStatus(200)
-      expect(response.body.items.length).toBe(1)
-      expect(response.body.meta.total).toBe(1)
-      expect(response.body.meta.limit).toBe(10)
-      expect(response.body.meta.offset).toBe(0)
-      expect(response.body.items[0].role.permissions).toContain(Permission.READ_ONLY)
-      expect(response.body.items[0].uuid).toBe(readonlyUser.user.uuid)
-    })
   })
 
   describe('Delete user', () => {

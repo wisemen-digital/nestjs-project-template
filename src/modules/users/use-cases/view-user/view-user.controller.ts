@@ -16,7 +16,10 @@ export class ViewUserController {
   @Get()
   @UseGuards(UpdateUserGuard)
   @Permissions(Permission.USER_READ)
-  @ApiOkResponse({ description: 'User details retrieved' })
+  @ApiOkResponse({
+    description: 'User details retrieved',
+    type: ViewUserResponse
+  })
   async viewUser (
     @Param('user', ParseUUIDPipe) userUuid: string
   ): Promise<ViewUserResponse> {
