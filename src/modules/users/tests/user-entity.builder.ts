@@ -1,6 +1,6 @@
 import { randUuid } from '@ngneat/falso'
-import { User } from '../../../entities/user.entity.js'
-import { type Role } from '../../../../roles/entities/role.entity.js'
+import { User } from '../entities/user.entity.js'
+import { type Role } from '../../roles/entities/role.entity.js'
 
 export class UserEntityBuilder {
   private user: User

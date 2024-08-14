@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto'
 import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { type DataSource, type EntityManager } from 'typeorm'
+import { type DataSource } from 'typeorm'
 import { testSetup } from '../../../../utils/test-setup/setup.js'
 import type { User } from '../../entities/user.entity.js'
 import { type SetupUser } from '../../tests/setup-user.type.js'
@@ -12,14 +12,12 @@ import { TestContext } from '../../../../../test/utils/test-context.js'
 describe('Register user e2e test', async () => {
   let app: INestApplication
   let dataSource: DataSource
-  let entityManager: EntityManager
   let adminUser: SetupUser
   let readonlyUser: SetupUser
   let context: TestContext
 
   before(async () => {
     ({ app, dataSource } = await testSetup())
-    entityManager = dataSource.manager
     context = new TestContext(dataSource.manager)
 
     adminUser = await context.getAdminUser()
