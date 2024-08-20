@@ -21,6 +21,7 @@ import { CacheModule } from './modules/cache/cache.module.js'
 import { RedisModule } from './modules/redis/redis.module.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
+import { LocalizationModule } from './modules/localization/modules/localization.module.js'
 
 @Module({})
 export class AppModule {
@@ -64,6 +65,7 @@ export class AppModule {
         FileModule,
         StatusModule,
         NatsModule.forRoot(),
+        LocalizationModule,
         CacheModule,
 
         ...modules
