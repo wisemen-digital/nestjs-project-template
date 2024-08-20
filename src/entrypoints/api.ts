@@ -27,7 +27,9 @@ async function bootstrap (): Promise<void> {
     type: VersioningType.URI,
     defaultVersion: '1'
   })
-  app.enableCors()
+  app.enableCors({
+    exposedHeaders: ['Content-Disposition']
+  })
 
   const config = buildDocumentationConfig()
   const document = SwaggerModule.createDocument(app, config)
