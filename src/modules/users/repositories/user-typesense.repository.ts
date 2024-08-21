@@ -43,11 +43,11 @@ export class UserTypesenseRepository {
   private createTypesenseSearchParams (query: ViewUsersQuery): SearchParams {
     const searchParamBuilder =
       new TypesenseSearchParamsBuilder(new UserTypesenseCollection())
-        .withQuery(query?.search)
-        .withOffset(query?.pagination?.offset)
-        .withLimit(query?.pagination?.limit)
+        .withQuery(query.search)
+        .withOffset(query.pagination?.offset)
+        .withLimit(query.pagination?.limit)
         .addSearchOn(['firstName', 'lastName'])
-        .addFilterOn('permissions', query?.filter?.permissions)
+        .addFilterOn('permissions', query.filter?.permissions)
 
     return searchParamBuilder.build()
   }
