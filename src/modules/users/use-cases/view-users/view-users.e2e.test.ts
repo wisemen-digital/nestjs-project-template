@@ -6,7 +6,7 @@ import { type DataSource } from 'typeorm'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { type SetupUser } from '../../tests/setup-user.type.js'
-import { migrateTypesense, testSetup } from '../../../../utils/test-setup/setup.js'
+import { testSetup } from '../../../../utils/test-setup/setup.js'
 import {
   TypesenseCollectionService
 } from '../../../typesense/services/typesense-collection.service.js'
@@ -34,7 +34,6 @@ describe('View user e2e test', async () => {
     readonlyUser = await context.getReadonlyUser()
     adminUser = await context.getAdminUser()
 
-    await migrateTypesense(moduleRef)
     const typesenseCollectionService = moduleRef.get(TypesenseCollectionService)
     await typesenseCollectionService.importManuallyToTypesense(
       TypesenseCollectionName.USER,
