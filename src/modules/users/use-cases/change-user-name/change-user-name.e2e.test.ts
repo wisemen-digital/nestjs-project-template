@@ -39,24 +39,28 @@ describe('Change password e2e test', async () => {
   })
 
   it('returns 401 when not authenticated', async () => {
+    const command = new ChangeUserNameCommandBuilder().build()
+
     const response = await request(app.getHttpServer())
       .post(getChangeUserNameRoute(authorizedUser.user))
-      .send(new ChangeUserNameCommandBuilder().build())
+      .send(command)
 
     expect(response).toHaveStatus(401)
   })
 
   it('returns 404 when the user does not exist', async () => {
+    const command = new ChangeUserNameCommandBuilder().build()
+
     const response = await request(app.getHttpServer())
       .post(getChangeUserNameRoute())
       .set('Authorization', `Bearer ${adminUser.token}`)
-      .send(new ChangeUserNameCommandBuilder().build())
+      .send(command)
 
     expect(response).toHaveStatus(404)
   })
 
   it('allows a user to change their own name', async () => {
-    const dto = new ChangeUserNameCommandBuilder()
+    const command = new ChangeUserNameCommandBuilder()
       .withFirstName('Kobe')
       .withLastName('Kwanten')
       .build()
@@ -64,27 +68,31 @@ describe('Change password e2e test', async () => {
     const response = await request(app.getHttpServer())
       .post(getChangeUserNameRoute(authorizedUser.user))
       .set('Authorization', `Bearer ${authorizedUser.token}`)
-      .send(dto)
+      .send(command)
 
     expect(response).toHaveStatus(201)
-    expect(response.body.firstName).toBe(dto.firstName)
-    expect(response.body.lastName).toBe(dto.lastName)
+    expect(response.body.firstName).toBe(command.firstName)
+    expect(response.body.lastName).toBe(command.lastName)
   })
 
   it('prohibits a user from changing the name of another user', async () => {
+    const command = new ChangeUserNameCommandBuilder().build()
+
     const response = await request(app.getHttpServer())
       .post(getChangeUserNameRoute(adminUser.user))
       .set('Authorization', `Bearer ${authorizedUser.token}`)
-      .send(new ChangeUserNameCommandBuilder().build())
+      .send(command)
 
     expect(response).toHaveStatus(403)
   })
 
   it('allows an admin to update any user\'s name', async () => {
+    const command = new ChangeUserNameCommandBuilder().build()
+
     const response = await request(app.getHttpServer())
       .post(getChangeUserNameRoute(authorizedUser.user))
       .set('Authorization', `Bearer ${adminUser.token}`)
-      .send(new ChangeUserNameCommandBuilder().build())
+      .send(command)
 
     expect(response).toHaveStatus(201)
   })
