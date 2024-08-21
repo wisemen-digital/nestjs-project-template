@@ -1,14 +1,14 @@
-import { CreateUserDto } from '../../../dtos/create-user.dto.js'
+import { RegisterUserCommand } from './register-user.command.js'
 
-export class CreateUserDtoBuilder {
-  private dto: CreateUserDto
+export class RegisterUserCommandBuilder {
+  private dto: RegisterUserCommand
 
   constructor () {
     this.reset()
   }
 
   reset (): this {
-    this.dto = new CreateUserDto()
+    this.dto = new RegisterUserCommand()
 
     this.dto.email = 'test@mail.com'
     this.dto.password = 'Password123'
@@ -38,7 +38,7 @@ export class CreateUserDtoBuilder {
     return this
   }
 
-  build (): CreateUserDto {
+  build (): RegisterUserCommand {
     const result = this.dto
 
     this.reset()

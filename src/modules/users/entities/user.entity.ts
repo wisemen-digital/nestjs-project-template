@@ -8,7 +8,7 @@ import {
   type Relation,
   UpdateDateColumn,
   JoinColumn,
-  ManyToOne
+  ManyToOne, DeleteDateColumn
 } from 'typeorm'
 import { Client } from '../../auth/entities/client.entity.js'
 import { RefreshToken } from '../../auth/entities/refreshtoken.entity.js'
@@ -24,6 +24,9 @@ export class User {
 
   @UpdateDateColumn({ precision: 3 })
   updatedAt: Date
+
+  @DeleteDateColumn({ precision: 3 })
+  deletedAt: Date
 
   @Column({ type: 'varchar', unique: true })
   @Index({ unique: true })

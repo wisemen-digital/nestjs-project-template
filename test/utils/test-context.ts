@@ -1,13 +1,16 @@
+import { randomUUID } from 'crypto'
 import { type EntityManager } from 'typeorm'
 import { randEmail } from '@ngneat/falso'
+import { type Permission } from 'src/modules/permissions/permission.enum.js'
 import { TokenSeeder } from '../../src/modules/auth/tests/seeders/token.seeder.js'
 import { ClientSeeder } from '../../src/modules/auth/tests/seeders/client.seeder.js'
-import { UserSeeder } from '../../src/modules/users/tests/seeders/user.seeder.js'
+import { UserSeeder } from '../../src/modules/users/tests/user.seeder.js'
 import { type Client } from '../../src/modules/auth/entities/client.entity.js'
 import { RoleSeeder } from '../../src/modules/roles/tests/seeders/role.seeder.js'
 import { type Role } from '../../src/modules/roles/entities/role.entity.js'
-import { UserEntityBuilder } from '../../src/modules/users/tests/builders/entities/user-entity.builder.js'
+import { UserEntityBuilder } from '../../src/modules/users/tests/user-entity.builder.js'
 import { type SetupUser } from '../../src/modules/users/tests/setup-user.type.js'
+import { RoleEntityBuilder } from '../../src/modules/roles/tests/builders/entities/role-entity.builder.js'
 
 export class TestContext {
   private readonly tokenSeeder: TokenSeeder
@@ -50,6 +53,28 @@ export class TestContext {
     }
 
     return this.readonlyRole
+  }
+
+  public async getRole (withPermissions: Permission[]): Promise<Role> {
+    return await this.roleSeeder.seedOne(
+      new RoleEntityBuilder()
+        .withName(randomUUID())
+        .withPermissions(withPermissions)
+        .build()
+    )
+  }
+
+  public async getUser (permissions: Permission[]): Promise<SetupUser> {
+    const client = await this.getClient()
+    const role = await this.getRole(permissions)
+    const user = await this.userSeeder.seedOne(
+      new UserEntityBuilder()
+        .withEmail(randEmail())
+        .withRole(role)
+        .build()
+    )
+    const token = await this.tokenSeeder.seedOne(user, client)
+    return { user, client, token }
   }
 
   public async getAdminUser (): Promise<SetupUser> {

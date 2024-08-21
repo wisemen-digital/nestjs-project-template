@@ -8,8 +8,8 @@ import {
   MinLength
 } from 'class-validator'
 
-export class CreateUserDto {
-  @ApiProperty({ type: String, format: 'email' })
+export class RegisterUserCommand {
+  @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
   email: string
@@ -19,12 +19,12 @@ export class CreateUserDto {
   @MinLength(6)
   password: string
 
-  @ApiProperty({ type: String, nullable: true, example: 'John' })
+  @ApiProperty({ type: String, nullable: true })
   @Optional()
   @IsString()
   firstName: string | null
 
-  @ApiProperty({ type: String, nullable: true, example: 'Doe' })
+  @ApiProperty({ type: String, nullable: true })
   @IsOptional()
   @IsString()
   lastName: string | null

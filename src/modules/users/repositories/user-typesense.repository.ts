@@ -4,17 +4,21 @@ import { TypesenseQueryService } from '../../typesense/services/typesense-query.
 import { TypesenseSearchParamsBuilder } from '../../typesense/builder/search-params.builder.js'
 import { UserTypesenseCollection } from '../../typesense/collections/user.collections.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
-import { type UserQuery } from '../queries/user.query.js'
 import { emptyFindUuidsResponse } from '../../typesense/types/empty-find-uuids.response.js'
+import {
+  TypesenseCollectionService
+} from '../../typesense/services/typesense-collection.service.js'
+import { type ViewUsersQuery } from '../use-cases/view-users/view-users.query.js'
 
 @Injectable()
 export class UserTypesenseRepository {
   constructor (
-    private readonly typesenseService: TypesenseQueryService
+    private readonly typesenseService: TypesenseQueryService,
+    private readonly typesenseCollectionService: TypesenseCollectionService
   ) {}
 
   async findPaginatedUuids (
-    query: UserQuery
+    query: ViewUsersQuery
   ): Promise<[items: string[], count: number] > {
     const typesenseSearchParams = this.createTypesenseSearchParams(query)
 
@@ -36,14 +40,14 @@ export class UserTypesenseRepository {
     return [uuids, count]
   }
 
-  createTypesenseSearchParams (query: UserQuery | null): SearchParams {
+  private createTypesenseSearchParams (query: ViewUsersQuery): SearchParams {
     const searchParamBuilder =
       new TypesenseSearchParamsBuilder(new UserTypesenseCollection())
-        .withQuery(query?.search)
-        .withOffset(query?.pagination?.offset)
-        .withLimit(query?.pagination?.limit)
+        .withQuery(query.search)
+        .withOffset(query.pagination?.offset)
+        .withLimit(query.pagination?.limit)
         .addSearchOn(['firstName', 'lastName'])
-        .addFilterOn('permissions', query?.filter?.permissions)
+        .addFilterOn('permissions', query.filter?.permissions)
 
     return searchParamBuilder.build()
   }
