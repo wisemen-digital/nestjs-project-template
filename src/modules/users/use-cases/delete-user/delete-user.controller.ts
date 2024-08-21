@@ -13,7 +13,7 @@ export class DeleteUserController {
   @Delete()
   @UseGuards(UpdateUserGuard)
   @ApiOkResponse()
-  async createUser (
+  async deleteUser (
     @Param('user', ParseUUIDPipe) userUuid: string
   ): Promise<void> {
     await this.useCase.delete(userUuid)
