@@ -7,7 +7,6 @@ import { type DataSource, type EntityManager } from 'typeorm'
 import { UserSeeder } from '../../tests/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/user-entity.builder.js'
 import { TokenSeeder } from '../../../auth/tests/seeders/token.seeder.js'
-import { type User } from '../../entities/user.entity.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { type Client } from '../../../auth/entities/client.entity.js'
 import { Permission } from '../../../permissions/permission.enum.js'
@@ -24,14 +23,6 @@ describe('Change password e2e test', async () => {
   let updateUserRole: Role
   let adminUser: SetupUser
   let authorizedUser: SetupUser
-
-  function getChangePasswordRoute (forUser?: User): string {
-    if (forUser === undefined) {
-      return `/users/${randomUUID()}/password`
-    } else {
-      return `/users/${forUser.uuid.toString()}/password`
-    }
-  }
 
   before(async () => {
     ({ app, dataSource } = await testSetup())
@@ -56,7 +47,7 @@ describe('Change password e2e test', async () => {
         .build()
     )
     const response = await request(app.getHttpServer())
-      .post(getChangePasswordRoute(user))
+      .post(`/users/${user.uuid}/password`)
       .send(new ChangePasswordCommandBuilder().build())
 
     expect(response).toHaveStatus(401)
@@ -64,7 +55,7 @@ describe('Change password e2e test', async () => {
 
   it('responds with 404 when user not found', async () => {
     const response = await request(app.getHttpServer())
-      .post(getChangePasswordRoute())
+      .post(`/users/${randomUUID()}/password`)
       .set('Authorization', `Bearer ${adminUser.token}`)
       .send(new ChangePasswordCommandBuilder().build())
 
@@ -78,7 +69,7 @@ describe('Change password e2e test', async () => {
         .build()
     )
     const response = await request(app.getHttpServer())
-      .post(getChangePasswordRoute(user))
+      .post(`/users/${user.uuid}/password`)
       .set('Authorization', `Bearer ${adminUser.token}`)
       .send({})
 
@@ -92,7 +83,7 @@ describe('Change password e2e test', async () => {
         .build()
     )
     const response = await request(app.getHttpServer())
-      .post(getChangePasswordRoute(user))
+      .post(`/users/${user.uuid}/password`)
       .set('Authorization', `Bearer ${authorizedUser.token}`)
       .send(new ChangePasswordCommandBuilder().build())
 
@@ -115,7 +106,7 @@ describe('Change password e2e test', async () => {
       .build()
 
     const response = await request(app.getHttpServer())
-      .post(getChangePasswordRoute(user))
+      .post(`/users/${user.uuid}/password`)
       .set('Authorization', `Bearer ${token}`)
       .send(dto)
 
@@ -135,7 +126,7 @@ describe('Change password e2e test', async () => {
       .build()
 
     const response = await request(app.getHttpServer())
-      .post(getChangePasswordRoute(user))
+      .post(`/users/${user.uuid}/password`)
       .set('Authorization', `Bearer ${adminUser.token}`)
       .send(dto)
 
@@ -155,7 +146,7 @@ describe('Change password e2e test', async () => {
       .build()
 
     const response = await request(app.getHttpServer())
-      .post(getChangePasswordRoute(user))
+      .post(`/users/${user.uuid}/password`)
       .set('Authorization', `Bearer ${adminUser.token}`)
       .send(dto)
 

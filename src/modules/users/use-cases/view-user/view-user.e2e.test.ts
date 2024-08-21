@@ -4,7 +4,6 @@ import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
 import { type DataSource } from 'typeorm'
-import { type User } from '../../entities/user.entity.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { type SetupUser } from '../../tests/setup-user.type.js'
@@ -15,14 +14,6 @@ describe('View user e2e test', async () => {
   let dataSource: DataSource
   let adminUser: SetupUser
   let authorizedUser: SetupUser
-
-  function getViewUserRoute (forUser?: User): string {
-    if (forUser === undefined) {
-      return `/users/${randomUUID()}`
-    } else {
-      return `/users/${forUser.uuid.toString()}`
-    }
-  }
 
   before(async () => {
     ({ app, dataSource } = await testSetup())
@@ -44,14 +35,14 @@ describe('View user e2e test', async () => {
 
   it('returns 401 when not authenticated', async () => {
     const response = await request(app.getHttpServer())
-      .get(getViewUserRoute(authorizedUser.user))
+      .get(`/users/${authorizedUser.user.uuid}`)
 
     expect(response).toHaveStatus(401)
   })
 
   it('returns 404 when the user does not exist', async () => {
     const response = await request(app.getHttpServer())
-      .get(getViewUserRoute())
+      .get(`/users/${randomUUID()}`)
       .set('Authorization', `Bearer ${adminUser.token}`)
 
     expect(response).toHaveStatus(404)
@@ -59,7 +50,7 @@ describe('View user e2e test', async () => {
 
   it('returns the user when the user views themselves', async () => {
     const response = await request(app.getHttpServer())
-      .get(getViewUserRoute(authorizedUser.user))
+      .get(`/users/${authorizedUser.user.uuid}`)
       .set('Authorization', `Bearer ${authorizedUser.token}`)
 
     expect(response).toHaveStatus(200)
@@ -67,7 +58,7 @@ describe('View user e2e test', async () => {
 
   it('returns 403 (unauthorized) when a user attempts to view another user', async () => {
     const response = await request(app.getHttpServer())
-      .get(getViewUserRoute(adminUser.user))
+      .get(`/users/${adminUser.user.uuid}`)
       .set('Authorization', `Bearer ${authorizedUser.token}`)
 
     expect(response).toHaveStatus(403)
@@ -75,7 +66,7 @@ describe('View user e2e test', async () => {
 
   it('an admin can view any user', async () => {
     const response = await request(app.getHttpServer())
-      .get(getViewUserRoute(authorizedUser.user))
+      .get(`/users/${authorizedUser.user.uuid}`)
       .set('Authorization', `Bearer ${adminUser.token}`)
 
     expect(response).toHaveStatus(200)

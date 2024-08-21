@@ -10,7 +10,6 @@ import { testSetup } from '../../../../utils/test-setup/setup.js'
 import { RegisterUserCommandBuilder } from './register-user-command.builder.js'
 
 describe('Register user e2e test', async () => {
-  const REGISTER_USER_ROUTE = '/users'
   let app: INestApplication
   let dataSource: DataSource
   let entityManager: EntityManager
@@ -26,7 +25,7 @@ describe('Register user e2e test', async () => {
 
   it('responds with a validation error when sending an empty body', async () => {
     const response = await request(app.getHttpServer())
-      .post(REGISTER_USER_ROUTE)
+      .post('/users')
       .send({})
 
     expect(response).toHaveStatus(400)
@@ -34,7 +33,7 @@ describe('Register user e2e test', async () => {
 
   it('responds with a validation error when omitting the password', async () => {
     const response = await request(app.getHttpServer())
-      .post(REGISTER_USER_ROUTE)
+      .post('/users')
       .send({ email: randEmail() })
 
     expect(response).toHaveStatus(400)
@@ -42,7 +41,7 @@ describe('Register user e2e test', async () => {
 
   it('responds with a validation error when omitting the email', async () => {
     const response = await request(app.getHttpServer())
-      .post(REGISTER_USER_ROUTE)
+      .post('/users')
       .send({ password: randPassword() })
 
     expect(response).toHaveStatus(400)
@@ -61,7 +60,7 @@ describe('Register user e2e test', async () => {
       .build()
 
     const response = await request(app.getHttpServer())
-      .post(REGISTER_USER_ROUTE)
+      .post('/users')
       .send(dto)
 
     expect(response).toHaveStatus(409)
@@ -74,7 +73,7 @@ describe('Register user e2e test', async () => {
       .build()
 
     const response = await request(app.getHttpServer())
-      .post(REGISTER_USER_ROUTE)
+      .post('/users')
       .send(dto)
 
     expect(response).toHaveStatus(201)

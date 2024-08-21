@@ -5,7 +5,6 @@ import request from 'supertest'
 import { expect } from 'expect'
 import { type DataSource } from 'typeorm'
 import { testSetup } from '../../../../utils/test-setup/setup.js'
-import type { User } from '../../entities/user.entity.js'
 import { type SetupUser } from '../../tests/setup-user.type.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 
@@ -28,24 +27,16 @@ describe('Register user e2e test', async () => {
     await app.close()
   })
 
-  function getDeleteUserRoute (forUser?: User): string {
-    if (forUser === undefined) {
-      return `/users/${randomUUID()}`
-    } else {
-      return `/users/${forUser.uuid.toString()}`
-    }
-  }
-
   it('responds with 401 when not authenticated', async () => {
     const response = await request(app.getHttpServer())
-      .delete(getDeleteUserRoute())
+      .delete(`/users/${randomUUID()}`)
 
     expect(response).toHaveStatus(401)
   })
 
   it('responds with 404 when the user does not exist', async () => {
     const response = await request(app.getHttpServer())
-      .delete(getDeleteUserRoute())
+      .delete(`/users/${randomUUID()}`)
       .set('Authorization', `Bearer ${adminUser.token}`)
 
     expect(response).toHaveStatus(404)
@@ -53,7 +44,7 @@ describe('Register user e2e test', async () => {
 
   it('responds with 403 when user is not an admin and tries to delete another user', async () => {
     const response = await request(app.getHttpServer())
-      .delete(getDeleteUserRoute(adminUser.user))
+      .delete(`/users/${adminUser.user.uuid}`)
       .set('Authorization', `Bearer ${readonlyUser.token}`)
 
     expect(response).toHaveStatus(403)
@@ -63,7 +54,7 @@ describe('Register user e2e test', async () => {
     const randomUser = await context.getRandomUser()
 
     const response = await request(app.getHttpServer())
-      .delete(getDeleteUserRoute(randomUser.user))
+      .delete(`/users/${randomUser.user.uuid}`)
       .set('Authorization', `Bearer ${adminUser.token}`)
 
     expect(response).toHaveStatus(200)
@@ -73,7 +64,7 @@ describe('Register user e2e test', async () => {
     const randomUser = await context.getRandomUser()
 
     const response = await request(app.getHttpServer())
-      .delete(getDeleteUserRoute(randomUser.user))
+      .delete(`/users/${randomUser.user.uuid}`)
       .set('Authorization', `Bearer ${randomUser.token}`)
 
     expect(response).toHaveStatus(200)

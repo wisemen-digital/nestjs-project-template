@@ -20,10 +20,6 @@ describe('View user e2e test', async () => {
   let adminUser: SetupUser
   let readonlyUser: SetupUser
 
-  function getViewUsersRoute (): string {
-    return '/users'
-  }
-
   before(async () => {
     const setup = await testSetup()
     dataSource = setup.dataSource
@@ -47,14 +43,14 @@ describe('View user e2e test', async () => {
 
   it('returns 401 when not authenticated', async () => {
     const response = await request(app.getHttpServer())
-      .get(getViewUsersRoute())
+      .get('/users')
 
     expect(response).toHaveStatus(401)
   })
 
   it('returns users in a paginated format', async () => {
     const response = await request(app.getHttpServer())
-      .get(getViewUsersRoute())
+      .get('/users')
       .set('Authorization', `Bearer ${adminUser.token}`)
       .query({
         pagination: {

@@ -4,7 +4,6 @@ import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
 import { type DataSource } from 'typeorm'
-import { type User } from '../../entities/user.entity.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { type SetupUser } from '../../tests/setup-user.type.js'
@@ -16,14 +15,6 @@ describe('Change password e2e test', async () => {
   let dataSource: DataSource
   let adminUser: SetupUser
   let authorizedUser: SetupUser
-
-  function getChangeUserNameRoute (forUser?: User): string {
-    if (forUser === undefined) {
-      return `/users/${randomUUID()}/name`
-    } else {
-      return `/users/${forUser.uuid.toString()}/name`
-    }
-  }
 
   before(async () => {
     ({ app, dataSource } = await testSetup())
@@ -42,7 +33,7 @@ describe('Change password e2e test', async () => {
     const command = new ChangeUserNameCommandBuilder().build()
 
     const response = await request(app.getHttpServer())
-      .post(getChangeUserNameRoute(authorizedUser.user))
+      .post(`/users/${authorizedUser.user.uuid}/name`)
       .send(command)
 
     expect(response).toHaveStatus(401)
@@ -52,7 +43,7 @@ describe('Change password e2e test', async () => {
     const command = new ChangeUserNameCommandBuilder().build()
 
     const response = await request(app.getHttpServer())
-      .post(getChangeUserNameRoute())
+      .post(`/users/${randomUUID()}/name`)
       .set('Authorization', `Bearer ${adminUser.token}`)
       .send(command)
 
@@ -66,7 +57,7 @@ describe('Change password e2e test', async () => {
       .build()
 
     const response = await request(app.getHttpServer())
-      .post(getChangeUserNameRoute(authorizedUser.user))
+      .post(`/users/${authorizedUser.user.uuid}/name`)
       .set('Authorization', `Bearer ${authorizedUser.token}`)
       .send(command)
 
@@ -79,7 +70,7 @@ describe('Change password e2e test', async () => {
     const command = new ChangeUserNameCommandBuilder().build()
 
     const response = await request(app.getHttpServer())
-      .post(getChangeUserNameRoute(adminUser.user))
+      .post(`/users/${adminUser.user.uuid}/name`)
       .set('Authorization', `Bearer ${authorizedUser.token}`)
       .send(command)
 
@@ -90,7 +81,7 @@ describe('Change password e2e test', async () => {
     const command = new ChangeUserNameCommandBuilder().build()
 
     const response = await request(app.getHttpServer())
-      .post(getChangeUserNameRoute(authorizedUser.user))
+      .post(`/users/${authorizedUser.user.uuid}/name`)
       .set('Authorization', `Bearer ${adminUser.token}`)
       .send(command)
 
