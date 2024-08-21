@@ -26,7 +26,7 @@ class UserIndexView {
 }
 
 export class ViewUsersResponse extends PaginatedOffsetResponse<UserIndexView> {
-  @ApiProperty({ type: UserIndexView })
+  @ApiProperty({ type: UserIndexView, isArray: true })
   declare items: UserIndexView[]
 
   constructor (users: User[], total: number, limit: number, offset: number) {
