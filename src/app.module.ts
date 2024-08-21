@@ -1,4 +1,4 @@
-import { type DynamicModule, Module } from '@nestjs/common'
+import { type DynamicModule, type MiddlewareConsumer, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
@@ -19,6 +19,7 @@ import { envValidationSchema } from './config/env/env.validation.js'
 import { NatsModule } from './modules/nats/nats.module.js'
 import { CacheModule } from './modules/cache/cache.module.js'
 import { RedisModule } from './modules/redis/redis.module.js'
+import { AuthMiddleware } from './modules/auth/middleware/auth.middleware.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
 import { LocalizationModule } from './modules/localization/modules/localization.module.js'
@@ -86,5 +87,12 @@ export class AppModule {
         }
       ]
     }
+  }
+
+  configure (consumer: MiddlewareConsumer): void {
+    consumer
+      .apply(AuthMiddleware)
+      .exclude('auth/token')
+      .forRoutes('*')
   }
 }

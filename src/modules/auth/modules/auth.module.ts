@@ -17,6 +17,7 @@ import { PkceRepository } from '../repositories/pkce.repository.js'
 import { ClientRepository } from '../repositories/client.repository.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { getPrivateKey, getPublicKey } from '../../../utils/auth/keys.js'
+import { AuthMiddleware } from '../middleware/auth.middleware.js'
 
 @Module({
   imports: [
@@ -41,7 +42,8 @@ import { getPrivateKey, getPublicKey } from '../../../utils/auth/keys.js'
     UserRepository,
     RefreshTokenRepository,
     ClientRepository,
-    PkceRepository
+    PkceRepository,
+    AuthMiddleware
   ],
   exports: [
     JwtModule,

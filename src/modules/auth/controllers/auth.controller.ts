@@ -1,9 +1,8 @@
 import { Controller, Get, Post, Req, Res } from '@nestjs/common'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { ApiBody, ApiExtraModels, ApiOAuth2, ApiResponse, ApiTags, getSchemaPath } from '@nestjs/swagger'
 import { AuthService } from '../services/auth.service.js'
 import { Public } from '../../permissions/permissions.decorator.js'
-import { Request } from '../guards/auth.guard.js'
 import { AuthTransformer } from '../transformers/auth.transformer.js'
 import { UserTransformer, UserTransformerType } from '../../users/transformers/user.transformer.js'
 import { TokenResponse } from '../types/token.response.js'
@@ -59,8 +58,8 @@ export class AuthController {
     description: 'The user info has been successfully retrieved.',
     type: UserTransformerType
   })
-  public async getUserInfo (@Req() req: Request): Promise<UserTransformerType> {
-    const user = await this.authService.getUserInfo(req)
+  public async getUserInfo (): Promise<UserTransformerType> {
+    const user = await this.authService.getUserInfo()
     return new UserTransformer().item(user)
   }
 }

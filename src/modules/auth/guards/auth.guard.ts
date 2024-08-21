@@ -5,18 +5,11 @@ import {
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { IS_PUBLIC_KEY } from '../../permissions/permissions.decorator.js'
-import { type AccessTokenInterface } from '../entities/accesstoken.entity.js'
-import { AuthService } from '../services/auth.service.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
-
-export interface Request {
-  auth: AccessTokenInterface
-}
+import { getAuthOrFail } from '../middleware/auth.middleware.js'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor (
-    private readonly authService: AuthService,
     private readonly reflector: Reflector
   ) {}
 
@@ -30,16 +23,8 @@ export class AuthGuard implements CanActivate {
       return true
     }
 
-    const request = context.switchToHttp().getRequest()
-    const response = context.switchToHttp().getResponse()
+    getAuthOrFail()
 
-    try {
-      const authentication = await this.authService.authenticate(request, response)
-      request.auth = authentication
-
-      return true
-    } catch (error) {
-      throw new KnownError('unauthorized')
-    }
+    return true
   }
 }
