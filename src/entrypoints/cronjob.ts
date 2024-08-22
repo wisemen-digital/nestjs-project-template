@@ -1,5 +1,5 @@
 import yargs from 'yargs'
-import { initSentry } from '../helpers/sentry.js'
+import { initSentry } from '../utils/sentry/sentry.js'
 import { CronjobFactory, CronJobType } from './cronjobs/factories/cronjob.factory.js'
 
 async function bootstrap (): Promise<void> {
