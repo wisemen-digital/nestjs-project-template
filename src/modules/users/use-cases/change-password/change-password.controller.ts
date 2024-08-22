@@ -1,6 +1,6 @@
 import { Body, Controller, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { UpdateUserGuard } from '../../guards/user-update.guard.js'
+import { UserSelfOrAdminGuard } from '../../guards/user-update.guard.js'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { ChangePasswordUseCase } from './change-password.use-case.js'
@@ -15,7 +15,7 @@ export class ChangePasswordController {
   ) {}
 
   @Post()
-  @UseGuards(UpdateUserGuard)
+  @UseGuards(UserSelfOrAdminGuard)
   @Permissions(Permission.USER_UPDATE)
   @ApiOkResponse({
     description: 'The user\'s password has been successfully changed.',

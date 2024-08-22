@@ -2,7 +2,7 @@ import { Body, Controller, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
-import { UpdateUserGuard } from '../../guards/user-update.guard.js'
+import { UserSelfOrAdminGuard } from '../../guards/user-update.guard.js'
 import { ChangeUserNameCommand } from './change-user-name.command.js'
 import { ChangeUserNameUseCase } from './change-user-name.use-case.js'
 import { UserNameChangedResponse } from './user-name-changed.response.js'
@@ -15,7 +15,7 @@ export class ChangeUserNameController {
   ) {}
 
   @Post()
-  @UseGuards(UpdateUserGuard)
+  @UseGuards(UserSelfOrAdminGuard)
   @Permissions(Permission.USER_UPDATE)
   @ApiOkResponse({
     description: 'The user name has been successfully changed.',
