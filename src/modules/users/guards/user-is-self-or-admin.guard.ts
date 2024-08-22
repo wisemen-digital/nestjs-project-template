@@ -4,7 +4,7 @@ import { CacheService } from '../../cache/cache.service.js'
 import { getAuthOrFail } from '../../auth/middleware/auth.middleware.js'
 
 @Injectable()
-export class UserSelfOrAdminGuard implements CanActivate {
+export class UserIsSelfOrAdminGuard implements CanActivate {
   constructor (
     private readonly cache: CacheService
   ) {}
