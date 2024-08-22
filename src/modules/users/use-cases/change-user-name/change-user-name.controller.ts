@@ -2,7 +2,7 @@ import { Body, Controller, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
-import { UserSelfOrAdminGuard } from '../../guards/user-update.guard.js'
+import { UserSelfOrAdminGuard } from '../../guards/user-self-or-admin.guard.js'
 import { ChangeUserNameCommand } from './change-user-name.command.js'
 import { ChangeUserNameUseCase } from './change-user-name.use-case.js'
 import { UserNameChangedResponse } from './user-name-changed.response.js'
