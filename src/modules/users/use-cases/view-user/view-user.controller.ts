@@ -1,8 +1,8 @@
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Controller, Get, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common'
 import { Permission } from '../../../permissions/permission.enum.js'
-import { UpdateUserGuard } from '../../guards/user-update.guard.js'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
+import { UserIsSelfOrAdminGuard } from '../../guards/user-is-self-or-admin.guard.js'
 import { ViewUserUseCase } from './view-user.use-case.js'
 import { ViewUserResponse } from './view-user.response.js'
 
@@ -14,7 +14,7 @@ export class ViewUserController {
   ) {}
 
   @Get()
-  @UseGuards(UpdateUserGuard)
+  @UseGuards(UserIsSelfOrAdminGuard)
   @Permissions(Permission.USER_READ)
   @ApiOkResponse({
     description: 'User details retrieved',
