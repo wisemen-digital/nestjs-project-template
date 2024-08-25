@@ -1,6 +1,7 @@
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { Controller, Delete, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common'
+import { Controller, Delete, UseGuards } from '@nestjs/common'
 import { UserIsSelfOrAdminGuard } from '../../guards/user-is-self-or-admin.guard.js'
+import { UuidParam } from '../../../../utils/nest/decorators/uuid-param.js'
 import { DeleteUserUseCase } from './delete-user.use-case.js'
 
 @ApiTags('User')
@@ -14,7 +15,7 @@ export class DeleteUserController {
   @UseGuards(UserIsSelfOrAdminGuard)
   @ApiOkResponse()
   async deleteUser (
-    @Param('user', ParseUUIDPipe) userUuid: string
+    @UuidParam('user') userUuid: string
   ): Promise<void> {
     await this.useCase.delete(userUuid)
   }
