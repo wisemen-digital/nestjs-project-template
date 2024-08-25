@@ -2,7 +2,7 @@ import { after, before, describe, it } from 'node:test'
 import { type INestApplication } from '@nestjs/common'
 import { validate } from 'class-validator'
 import { expect } from 'expect'
-import { testSetup } from '../../test-setup/setup.js'
+import { setupTest } from '../../test-setup/setup.js'
 import { IsValidTimeString } from '../is-valid-time.js'
 
 class TestClass {
@@ -14,7 +14,7 @@ describe('IsValidTimeString decorator', async () => {
   let app: INestApplication
 
   before(async () => {
-    ({ app } = await testSetup())
+    ({ app } = await setupTest())
   })
 
   after(async () => {

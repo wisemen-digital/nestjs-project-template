@@ -3,7 +3,7 @@ import { type INestApplication } from '@nestjs/common'
 import dayjs from 'dayjs'
 import { validate } from 'class-validator'
 import { expect } from 'expect'
-import { testSetup } from '../../test-setup/setup.js'
+import { setupTest } from '../../test-setup/setup.js'
 import { IsBeforeTodayString } from '../is-before-today.js'
 
 class TestClass {
@@ -15,7 +15,7 @@ describe('IsBeforeTodayString decorator', async () => {
   let app: INestApplication
 
   before(async () => {
-    ({ app } = await testSetup())
+    ({ app } = await setupTest())
   })
 
   after(async () => {

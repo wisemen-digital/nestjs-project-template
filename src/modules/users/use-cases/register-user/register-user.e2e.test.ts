@@ -6,7 +6,7 @@ import { randEmail, randPassword } from '@ngneat/falso'
 import { type DataSource, type EntityManager } from 'typeorm'
 import { UserSeeder } from '../../tests/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/user-entity.builder.js'
-import { testSetup } from '../../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../../utils/test-setup/setup.js'
 import { RegisterUserCommandBuilder } from './register-user-command.builder.js'
 
 describe('Register user e2e test', async () => {
@@ -15,7 +15,7 @@ describe('Register user e2e test', async () => {
   let entityManager: EntityManager
 
   before(async () => {
-    ({ app, dataSource } = await testSetup())
+    ({ app, dataSource } = await setupTest())
     entityManager = dataSource.manager
   })
 

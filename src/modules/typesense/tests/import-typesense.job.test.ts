@@ -3,7 +3,7 @@ import { type TestingModule } from '@nestjs/testing'
 import { type INestApplication } from '@nestjs/common'
 import { expect } from 'expect'
 import { ImportTypesenseJob } from '../jobs/import-typesense.job.js'
-import { testSetup } from '../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../utils/test-setup/setup.js'
 import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
 
 describe('Test import typesense job', () => {
@@ -12,7 +12,7 @@ describe('Test import typesense job', () => {
   let moduleRef: TestingModule
 
   before(async () => {
-    ({ app, moduleRef } = await testSetup())
+    ({ app, moduleRef } = await setupTest())
   })
 
   after(async () => {
