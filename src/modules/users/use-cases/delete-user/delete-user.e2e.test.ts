@@ -4,7 +4,7 @@ import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
 import { type DataSource } from 'typeorm'
-import { testSetup } from '../../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../../utils/test-setup/setup.js'
 import { type SetupUser } from '../../tests/setup-user.type.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 
@@ -16,7 +16,7 @@ describe('Register user e2e test', async () => {
   let context: TestContext
 
   before(async () => {
-    ({ app, dataSource } = await testSetup())
+    ({ app, dataSource } = await setupTest())
     context = new TestContext(dataSource.manager)
 
     adminUser = await context.getAdminUser()

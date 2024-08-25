@@ -7,7 +7,7 @@ import { type DataSource } from 'typeorm'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { type SetupUser } from '../../tests/setup-user.type.js'
-import { testSetup } from '../../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../../utils/test-setup/setup.js'
 import { ChangeUserNameCommandBuilder } from './change-user-name-command.builder.js'
 
 describe('Change password e2e test', async () => {
@@ -17,7 +17,7 @@ describe('Change password e2e test', async () => {
   let authorizedUser: SetupUser
 
   before(async () => {
-    ({ app, dataSource } = await testSetup())
+    ({ app, dataSource } = await setupTest())
 
     const context = new TestContext(dataSource.manager)
 

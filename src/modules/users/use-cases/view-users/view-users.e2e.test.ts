@@ -6,7 +6,7 @@ import { type DataSource } from 'typeorm'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { type SetupUser } from '../../tests/setup-user.type.js'
-import { testSetup } from '../../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../../utils/test-setup/setup.js'
 import {
   TypesenseCollectionService
 } from '../../../typesense/services/typesense-collection.service.js'
@@ -21,7 +21,7 @@ describe('View user e2e test', async () => {
   let readonlyUser: SetupUser
 
   before(async () => {
-    const setup = await testSetup()
+    const setup = await setupTest()
     dataSource = setup.dataSource
     app = setup.app
     const moduleRef = setup.moduleRef

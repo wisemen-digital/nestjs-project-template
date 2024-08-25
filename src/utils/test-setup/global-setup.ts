@@ -1,10 +1,10 @@
 import { DataSource } from 'typeorm'
 import { TypesenseInitializationService } from '../../modules/typesense/services/typesense-initialization.service.js'
 import { TypesenseCollectionName } from '../../modules/typesense/enums/typesense-collection-index.enum.js'
-import { testingModule } from './setup.js'
+import { compileTestModule } from './compile-test-module.js'
 
 async function globalTestSetup (): Promise<void> {
-  const moduleRef = await testingModule()
+  const moduleRef = await compileTestModule()
 
   const typesenseInitService = moduleRef.get(TypesenseInitializationService)
   await typesenseInitService.migrate(true, Object.values(TypesenseCollectionName))
