@@ -1,5 +1,5 @@
 import { mock } from 'node:test'
-import { type DataSource } from 'typeorm'
+import { DataSource } from 'typeorm'
 import { type INestApplication, ValidationPipe } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
 import { type TestingModule } from '@nestjs/testing'
@@ -11,7 +11,6 @@ import { toHaveStatus } from '../../../test/expect/expectStatus.js'
 import { isEnumValue } from '../../../test/expect/expectEnum.js'
 import { S3Service } from '../../modules/files/services/s3.service.js'
 import { compileTestModule } from './compile-test-module.js'
-import { setupTestDataSource } from './test-data-source.js'
 
 export interface TestSetup {
   app: INestApplication
@@ -34,6 +33,20 @@ export async function setupTest (): Promise<TestSetup> {
   extendExpect()
 
   return { app, moduleRef, dataSource }
+}
+
+async function setupTestDataSource (moduleRef: TestingModule): Promise<DataSource> {
+  const dataSource = moduleRef.get(DataSource)
+
+  const qr = dataSource.createQueryRunner()
+  await qr.connect()
+  await qr.startTransaction()
+
+  Object.defineProperty(dataSource.manager, 'queryRunner', {
+    configurable: true,
+    value: qr
+  })
+  return dataSource
 }
 
 function mockS3 (): void {
