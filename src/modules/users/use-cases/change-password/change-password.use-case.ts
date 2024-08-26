@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { UserRepository } from '../../repositories/user.repository.js'
 import { type User } from '../../entities/user.entity.js'
-import { createHash, validatePassword } from '../../../../utils/helpers/hash.helper.js'
+import { createHash, verifyPassword } from '../../../../utils/helpers/hash.helper.js'
 import { type ChangePasswordCommand } from './change-password.command.js'
 
 @Injectable()
@@ -15,7 +15,7 @@ export class ChangePasswordUseCase {
     changePasswordRequest: ChangePasswordCommand
   ): Promise<User> {
     const user = await this.userRepository.findOneByOrFail({ uuid: forUserUuid })
-    await validatePassword(changePasswordRequest.oldPassword, user.password)
+    await verifyPassword(changePasswordRequest.oldPassword, user.password)
     const newPassword = await createHash(changePasswordRequest.newPassword)
     await this.userRepository.update({ uuid: forUserUuid.toString() }, { password: newPassword })
     return user

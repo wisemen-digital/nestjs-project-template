@@ -3,7 +3,7 @@ import { type User } from '../entities/user.entity.js'
 import { UserRepository } from '../repositories/user.repository.js'
 import { UserTypesenseRepository } from '../repositories/user-typesense.repository.js'
 import { RoleRepository } from '../../roles/repositories/role.repository.js'
-import { validatePassword } from '../../../utils/helpers/hash.helper.js'
+import { verifyPassword } from '../../../utils/helpers/hash.helper.js'
 
 @Injectable()
 export class UserService {
@@ -30,7 +30,7 @@ export class UserService {
   async verify (email: string, password: string): Promise<User | false> {
     try {
       const user = await this.findOneByEmail(email)
-      await validatePassword(password, user.password)
+      await verifyPassword(password, user.password)
 
       return user
     } catch (e) {
