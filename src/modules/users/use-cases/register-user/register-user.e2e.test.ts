@@ -8,6 +8,7 @@ import { UserSeeder } from '../../tests/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/user-entity.builder.js'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
 import { RegisterUserCommandBuilder } from './register-user-command.builder.js'
+import { EmailAlreadyInUseError } from './email-already-in-use.error.js'
 
 describe('Register user e2e test', async () => {
   let app: INestApplication
@@ -64,7 +65,7 @@ describe('Register user e2e test', async () => {
       .send(dto)
 
     expect(response).toHaveStatus(409)
-    expect(response).toHaveErrorCode('email_exists')
+    expect(response).toHaveApiError(new EmailAlreadyInUseError(email))
   })
 
   it('should return 201', async () => {

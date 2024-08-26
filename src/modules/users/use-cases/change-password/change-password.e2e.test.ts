@@ -14,6 +14,7 @@ import { type Role } from '../../../roles/entities/role.entity.js'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
 import { type SetupUser } from '../../tests/setup-user.type.js'
 import { ChangePasswordCommandBuilder } from './change-password-command.builder.js'
+import { InvalidOldPasswordError } from './invalid-old-password.error.js'
 
 describe('Change password e2e test', async () => {
   let app: INestApplication
@@ -150,7 +151,7 @@ describe('Change password e2e test', async () => {
       .set('Authorization', `Bearer ${adminUser.token}`)
       .send(dto)
 
-    expect(response).toHaveStatus(401)
-    expect(response).toHaveErrorCode('invalid_credentials')
+    expect(response).toHaveStatus(400)
+    expect(response).toHaveApiError(new InvalidOldPasswordError())
   })
 })

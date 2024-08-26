@@ -10,6 +10,7 @@ import { toHaveErrorCode } from '../../../test/expect/expectErrorCode.js'
 import { toHaveStatus } from '../../../test/expect/expectStatus.js'
 import { isEnumValue } from '../../../test/expect/expectEnum.js'
 import { S3Service } from '../../modules/files/services/s3.service.js'
+import { toHaveApiError } from '../../../test/expect/expect-api-error.js'
 import { compileTestModule } from './compile-test-module.js'
 
 export interface TestSetup {
@@ -90,6 +91,7 @@ function extendExpect (): void {
     uuid,
     toHaveErrorCode,
     toHaveStatus,
-    isEnumValue
+    isEnumValue,
+    toHaveApiError
   })
 }

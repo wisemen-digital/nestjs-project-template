@@ -2,7 +2,6 @@ import { randomUUID } from 'crypto'
 import { Injectable } from '@nestjs/common'
 import type { User } from '../../entities/user.entity.js'
 import { UserRepository } from '../../repositories/user.repository.js'
-import { KnownError } from '../../../../utils/exceptions/errors.js'
 import { createHash } from '../../../../utils/helpers/hash.helper.js'
 import {
   TypesenseCollectionName
@@ -11,6 +10,7 @@ import {
   TypesenseCollectionService
 } from '../../../typesense/services/typesense-collection.service.js'
 import type { RegisterUserCommand } from './register-user.command.js'
+import { EmailAlreadyInUseError } from './email-already-in-use.error.js'
 
 @Injectable()
 export class RegisterUserUseCase {
@@ -23,7 +23,7 @@ export class RegisterUserUseCase {
     this.sanitizeDto(dto)
 
     if (await this.emailAlreadyUsed(dto.email)) {
-      throw new KnownError('email_exists')
+      throw new EmailAlreadyInUseError(dto.email)
     }
 
     const user = await this.mapDtoToUser(dto)
