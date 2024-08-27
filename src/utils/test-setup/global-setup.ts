@@ -14,7 +14,7 @@ async function globalTestSetup (): Promise<void> {
 
   // eslint-disable-next-line no-console
   console.log('Global setup completed')
-  process.exit(0)
+  await testingModule.close()
 }
 
 async function migrateTypesense (moduleRef: TestingModule): Promise<void> {
