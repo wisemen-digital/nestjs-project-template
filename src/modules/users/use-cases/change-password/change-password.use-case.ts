@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { UserRepository } from '../../repositories/user.repository.js'
 import { type User } from '../../entities/user.entity.js'
-import { createHash, validatePassword } from '../../../../utils/helpers/hash.helper.js'
+import { createHash, verifyPassword } from '../../../../utils/helpers/hash.helper.js'
 import { type ChangePasswordCommand } from './change-password.command.js'
 import { InvalidOldPasswordError } from './invalid-old-password.error.js'
 
@@ -24,9 +24,13 @@ export class ChangePasswordUseCase {
 
   private async verifyPassword (oldPassword: string, user: User): Promise<void> {
     try {
-      await validatePassword(oldPassword, user.password)
+      await verifyPassword(oldPassword, user.password)
     } catch (e) {
-      throw new InvalidOldPasswordError()
+      if (e instanceof InvalidOldPasswordError) {
+        throw new InvalidOldPasswordError()
+      } else {
+        throw e
+      }
     }
   }
 }
