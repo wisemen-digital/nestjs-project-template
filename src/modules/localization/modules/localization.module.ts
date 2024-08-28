@@ -1,7 +1,7 @@
 import { join } from 'path'
-import { Global, Module } from '@nestjs/common'
-import { AcceptLanguageResolver, I18nModule } from 'nestjs-i18n'
-import { LocalizationService } from '../services/localization.service.js'
+import { Global, Module, type OnModuleInit } from '@nestjs/common'
+import { AcceptLanguageResolver, I18nModule, I18nService } from 'nestjs-i18n'
+import { ModuleRef } from '@nestjs/core'
 import { DEFAULT_LANGUAGE } from '../constants/defaults.constant.js'
 import { isLocalEnv } from '../../../utils/envs/env-checks.js'
 
@@ -21,12 +21,20 @@ import { isLocalEnv } from '../../../utils/envs/env-checks.js'
         AcceptLanguageResolver
       ]
     })
-  ],
-  providers: [
-    LocalizationService
-  ],
-  exports: [
-    LocalizationService
   ]
 })
-export class LocalizationModule { }
+export class LocalizationModule implements OnModuleInit {
+  private static i18nService: I18nService | undefined
+
+  static default (): I18nService | undefined {
+    return LocalizationModule.i18nService
+  }
+
+  constructor (
+    private readonly moduleRef: ModuleRef
+  ) { }
+
+  onModuleInit (): void {
+    LocalizationModule.i18nService = this.moduleRef.get(I18nService, { strict: false })
+  }
+}
