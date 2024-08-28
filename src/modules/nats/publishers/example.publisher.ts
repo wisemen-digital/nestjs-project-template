@@ -9,7 +9,7 @@ export class ExamplePublisher {
     private readonly natsClient: NatsClient
   ) {}
 
-  public async publish (userUuid: string, notification: string): Promise<void> {
+  public publish (userUuid: string, notification: string): void {
     const sc = StringCodec()
 
     this.natsClient.publish(

@@ -8,6 +8,7 @@ export async function createHash (value: string): Promise<string> {
 
 export async function verifyPassword (password: string, hashedPassword: string): Promise<void> {
   const match = await bcrypt.compare(password, hashedPassword)
+
   if (!match) {
     throw new InvalidPasswordError()
   }

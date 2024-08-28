@@ -29,15 +29,20 @@ export function isSameOrAfterDateString (
 ): boolean {
   if (typeof dateString !== 'string') return false
 
-  if (args.constraints[0](args.object) == null) return true
+  const mapFn = args.constraints[0] as (argObject: object) => string | undefined
+
+  if (mapFn(args.object) == null) return true
 
   const dateToCheck = dayjs(dateString, 'YYYY-MM-DD')
+
   if (!dateToCheck.isValid()) return false
 
-  const comparisonDateString = args.constraints[0](args.object)
+  const comparisonDateString = mapFn(args.object)
+
   if (comparisonDateString === null) return true
 
   const comparisonDate = dayjs(comparisonDateString, 'YYYY-MM-DD')
+
   if (!comparisonDate.isValid()) return false
 
   return dateToCheck.isSame(comparisonDate, 'day') || dateToCheck.isAfter(comparisonDate, 'day')
@@ -50,7 +55,10 @@ class IsSameOrAfterDateStringValidator implements ValidatorConstraintInterface {
   }
 
   defaultMessage (args: ValidationArguments): string {
-    const afterString: string = args.constraints[0](args.object)
+    const mapFn = args.constraints[0] as (argObject: object) => string | undefined
+
+    const afterString: string = mapFn(args.object) as string
+
     return `${args.property} must be a date after or the same as ${afterString}`
   }
 }

@@ -11,9 +11,9 @@ export class TypesenseCollectorFactory {
 
   public create (collection: TypesenseCollectionName): TypesenseCollector {
     switch (collection) {
-    case TypesenseCollectionName.USER:
-      return this.userTypeSenseCollector
-    default: exhaustiveCheck(collection)
+      case TypesenseCollectionName.USER:
+        return this.userTypeSenseCollector
+      default: exhaustiveCheck(collection)
     }
   }
 }

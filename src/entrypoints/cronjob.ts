@@ -4,6 +4,7 @@ import { CronjobFactory, CronJobType } from './cronjobs/factories/cronjob.factor
 
 async function bootstrap (): Promise<void> {
   initSentry()
+
   const args = await yargs(process.argv)
     .option('job', {
       alias: 'j',
@@ -16,6 +17,7 @@ async function bootstrap (): Promise<void> {
     .argv
 
   const jobName = args.job
+
   if (!Object.values(CronJobType).includes(jobName as CronJobType)) {
     throw new Error(`Job ${jobName} not found`)
   }

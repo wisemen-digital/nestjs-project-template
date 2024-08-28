@@ -31,6 +31,7 @@ export class ViewUsersResponse extends PaginatedOffsetResponse<UserIndexView> {
 
   constructor (users: User[], total: number, limit: number, offset: number) {
     const userViews = users.map(user => new UserIndexView(user))
+
     super(userViews, total, limit, offset)
   }
 }

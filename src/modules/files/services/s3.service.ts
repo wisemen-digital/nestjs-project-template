@@ -1,4 +1,4 @@
-import { type Readable } from 'stream'
+import type { Readable } from 'stream'
 import {
   DeleteObjectCommand,
   GetObjectCommand,
@@ -11,8 +11,8 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { Upload } from '@aws-sdk/lib-storage'
-import { type MimeType } from '../enums/mime-type.enum.js'
-import { type File } from '../entities/file.entity.js'
+import type { MimeType } from '../enums/mime-type.enum.js'
+import type { File } from '../entities/file.entity.js'
 
 @Injectable()
 export class S3Service {
@@ -21,7 +21,7 @@ export class S3Service {
   constructor (
     private readonly configService: ConfigService
   ) {
-    const region = this.configService.get('S3_REGION', 'nl-ams')
+    const region: string = this.configService.get('S3_REGION', 'nl-ams')
 
     this.s3 = new S3Client({
       forcePathStyle: false,
@@ -48,6 +48,7 @@ export class S3Service {
     })
 
     const expiresIn = expiresInSeconds ?? 1800
+
     return await getSignedUrl(this.s3, command, { expiresIn })
   }
 
@@ -67,6 +68,7 @@ export class S3Service {
     })
 
     const expiresIn = expiresInSeconds ?? 180
+
     return await getSignedUrl(this.s3, command, { expiresIn })
   }
 
@@ -112,6 +114,7 @@ export class S3Service {
     })
 
     const result = await this.s3.send(command)
+
     return result.Contents
   }
 
@@ -133,7 +136,8 @@ export class S3Service {
   private createKey (
     fileUuid: string
   ): string {
-    const env = this.configService.get('NODE_ENV', 'local')
+    const env: string = this.configService.get('NODE_ENV', 'local')
+
     return `${env}/${fileUuid}`
   }
 }

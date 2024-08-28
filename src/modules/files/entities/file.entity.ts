@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, Column, OneToMany, type Relation } from 'typeorm'
-import { type MimeType } from '../enums/mime-type.enum.js'
+import type { MimeType } from '../enums/mime-type.enum.js'
 import { FileLink } from './file-link.entity.js'
 
 @Entity()

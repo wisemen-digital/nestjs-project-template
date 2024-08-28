@@ -2,8 +2,9 @@ import { mock } from 'node:test'
 import { DataSource } from 'typeorm'
 import { type INestApplication, ValidationPipe } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
-import { type TestingModule } from '@nestjs/testing'
+import type { TestingModule } from '@nestjs/testing'
 import { expect } from 'expect'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { HttpExceptionFilter } from '../exceptions/http-exception.filter.js'
 import { uuid } from '../../../test/expect/expectUuid.js'
 import { toHaveErrorCode } from '../../../test/expect/expectErrorCode.js'
@@ -14,7 +15,7 @@ import { toHaveApiError } from '../../../test/expect/expect-api-error.js'
 import { compileTestModule } from './compile-test-module.js'
 
 export interface TestSetup {
-  app: INestApplication
+  app: NestExpressApplication
   moduleRef: TestingModule
   dataSource: DataSource
 }
@@ -40,6 +41,7 @@ async function setupTestDataSource (moduleRef: TestingModule): Promise<DataSourc
   const dataSource = moduleRef.get(DataSource)
 
   const qr = dataSource.createQueryRunner()
+
   await qr.connect()
   await qr.startTransaction()
 
@@ -47,24 +49,34 @@ async function setupTestDataSource (moduleRef: TestingModule): Promise<DataSourc
     configurable: true,
     value: qr
   })
+
   return dataSource
 }
 
 function mockS3 (): void {
   mock.method(S3Service.prototype, 'createTemporaryDownloadUrl', () => 'http://localhost:3000')
   mock.method(S3Service.prototype, 'createTemporaryUploadUrl', () => 'http://localhost:3000')
-  mock.method(S3Service.prototype, 'upload', async () => { await Promise.resolve() })
-  mock.method(S3Service.prototype, 'uploadStream', async () => { await Promise.resolve() })
-  mock.method(S3Service.prototype, 'delete', async () => { await Promise.resolve() })
-  mock.method(S3Service.prototype, 'list', async () => { await Promise.resolve([]) })
+  mock.method(S3Service.prototype, 'upload', async () => {
+    await Promise.resolve()
+  })
+  mock.method(S3Service.prototype, 'uploadStream', async () => {
+    await Promise.resolve()
+  })
+  mock.method(S3Service.prototype, 'delete', async () => {
+    await Promise.resolve()
+  })
+  mock.method(S3Service.prototype, 'list', async () => {
+    await Promise.resolve([])
+  })
 }
 
-async function setupTestApp (moduleRef: TestingModule): Promise<INestApplication<unknown>> {
-  const app = moduleRef.createNestApplication()
+async function setupTestApp (moduleRef: TestingModule): Promise<NestExpressApplication> {
+  const app = moduleRef.createNestApplication<NestExpressApplication>()
 
   configureValidationPipeline(app)
   configureExceptionFilter(app)
   await app.init()
+
   return app
 }
 
@@ -83,6 +95,7 @@ function configureValidationPipeline (app: INestApplication<unknown>): void {
 
 function configureExceptionFilter (app: INestApplication<unknown>): void {
   const httpAdapterHost = app.get(HttpAdapterHost)
+
   app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
 }
 

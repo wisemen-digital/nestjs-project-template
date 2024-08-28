@@ -8,7 +8,7 @@ import {
 import {
   TypesenseCollectionName
 } from '../../../typesense/enums/typesense-collection-index.enum.js'
-import { type ChangeUserNameCommand } from './change-user-name.command.js'
+import type { ChangeUserNameCommand } from './change-user-name.command.js'
 
 @Injectable()
 export class ChangeUserNameUseCase {
@@ -19,6 +19,7 @@ export class ChangeUserNameUseCase {
 
   async changeName (userUuid: string, dto: ChangeUserNameCommand): Promise<User> {
     const user = await this.userRepository.findOneByOrFail({ uuid: userUuid })
+
     user.firstName = dto.firstName ?? null
     user.lastName = dto.lastName ?? null
 

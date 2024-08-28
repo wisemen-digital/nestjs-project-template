@@ -3,16 +3,16 @@ import { type EntityManager, type DataSource, Repository, type ObjectLiteral, ty
 
 const transactionStorage = new AsyncLocalStorage<EntityManager | null>()
 
-export class TypeOrmRepository <T extends ObjectLiteral> extends Repository <T> {
+export class TypeOrmRepository<T extends ObjectLiteral> extends Repository <T> {
   constructor (entity: EntityTarget<T>, manager: EntityManager) {
     const em = new Proxy(manager, {
       get (target, prop) {
         const manager = transactionStorage.getStore()
 
         if (manager != null) {
-          return manager[prop]
+          return manager[prop] as unknown
         } else {
-          return target[prop]
+          return target[prop] as unknown
         }
       }
     })
@@ -21,7 +21,7 @@ export class TypeOrmRepository <T extends ObjectLiteral> extends Repository <T> 
   }
 }
 
-export async function transaction <T> (
+export async function transaction<T> (
   dataSource: DataSource,
   runInTransaction: (entityManager: EntityManager) => Promise<T>
 ): Promise<T> {

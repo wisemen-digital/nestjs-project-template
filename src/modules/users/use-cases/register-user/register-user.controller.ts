@@ -24,6 +24,7 @@ export class RegisterUserController {
     @Body() registerUserCommand: RegisterUserCommand
   ): Promise<UserRegisteredResponse> {
     const user = await this.useCase.register(registerUserCommand)
+
     return new UserRegisteredResponse(user)
   }
 }

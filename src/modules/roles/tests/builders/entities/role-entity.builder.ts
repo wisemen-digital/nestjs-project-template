@@ -1,6 +1,6 @@
-import { randUuid } from '@ngneat/falso'
+import { randomUUID } from 'node:crypto'
 import { Role } from '../../../entities/role.entity.js'
-import { type Permission } from '../../../../permissions/permission.enum.js'
+import type { Permission } from '../../../../permissions/permission.enum.js'
 
 export class RoleEntityBuilder {
   private roleEntity: Role
@@ -12,7 +12,7 @@ export class RoleEntityBuilder {
   reset (): this {
     this.roleEntity = new Role()
 
-    this.roleEntity.uuid = randUuid()
+    this.roleEntity.uuid = randomUUID()
     this.roleEntity.name = 'test-role'
     this.roleEntity.permissions = []
 
@@ -21,16 +21,19 @@ export class RoleEntityBuilder {
 
   withUuid (uuid: string): this {
     this.roleEntity.uuid = uuid
+
     return this
   }
 
   withName (name: string): this {
     this.roleEntity.name = name
+
     return this
   }
 
   withPermissions (permissions: Permission[]): this {
     this.roleEntity.permissions = permissions
+
     return this
   }
 

@@ -1,4 +1,4 @@
-import { type OffsetPaginationQuery } from './pagination/offset/pagination-query.dto.js'
+import type { OffsetPaginationQuery } from './pagination/offset/pagination-query.dto.js'
 
 export interface TypeORMPaginationType {
   skip: number

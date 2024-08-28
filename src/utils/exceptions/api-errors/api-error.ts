@@ -7,8 +7,7 @@ export abstract class ApiError extends Error {
 
   @ApiProperty({
     required: false,
-    description: 'a human-readable explanation specific to this ' +
-      'occurrence of the problem'
+    description: 'a human-readable explanation specific to this occurrence of the problem'
   })
   readonly detail?: string
 

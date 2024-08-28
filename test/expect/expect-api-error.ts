@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
-import { type ExpectationResult, type MatcherFunction } from 'expect'
+import type { ExpectationResult, MatcherFunction } from 'expect'
 import { isArray } from 'class-validator'
-import { type ApiError } from '../../src/utils/exceptions/api-errors/api-error.js'
+import type { ApiError } from '../../src/utils/exceptions/api-errors/api-error.js'
 
-export const toHaveApiError: MatcherFunction<[ApiError]> =
-  function (received: { body?: { errors?: unknown } }, error: ApiError): ExpectationResult {
+export const toHaveApiError: MatcherFunction<[ApiError]>
+  = function (received: { body?: { errors?: unknown } }, error: ApiError): ExpectationResult {
     const expectedError = {
       code: error.code,
       status: error.status,
@@ -18,6 +17,7 @@ export const toHaveApiError: MatcherFunction<[ApiError]> =
     if (errorExists) {
       const stringifiedActual = this.utils.printReceived(errors)
       const stringifiedExpected = this.utils.printReceived({ errors: [expectedError] })
+
       return {
         pass: true,
         message: () => `expected ${stringifiedActual} not to be ${stringifiedExpected}`

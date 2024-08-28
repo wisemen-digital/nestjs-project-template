@@ -1,4 +1,4 @@
-import { type HttpStatusCode } from 'axios'
+import type { HttpStatusCode } from 'axios'
 import { ApiProperty } from '@nestjs/swagger'
 
 export function ApiErrorStatus (status: HttpStatusCode): PropertyDecorator {

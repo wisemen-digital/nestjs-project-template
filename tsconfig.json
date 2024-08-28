@@ -18,5 +18,14 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "moduleResolution": "NodeNext",
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "dist",
+  ],
+  "include": [
+    "eslint.config.js",
+    "src/**/*",
+    "test/**/*"
+  ]
 }
