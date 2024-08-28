@@ -2,7 +2,7 @@ import { Injectable, type CanActivate, type ExecutionContext } from '@nestjs/com
 import { Reflector } from '@nestjs/core'
 import { CacheService } from '../cache/cache.service.js'
 import { getAuthOrFail } from '../auth/middleware/auth.middleware.js'
-import { type Permission } from './permission.enum.js'
+import type { Permission } from './permission.enum.js'
 import { PERMISSIONS_KEY } from './permissions.decorator.js'
 
 @Injectable()

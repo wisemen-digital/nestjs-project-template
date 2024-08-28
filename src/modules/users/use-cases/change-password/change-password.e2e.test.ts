@@ -3,19 +3,19 @@ import { randomUUID } from 'crypto'
 import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { type DataSource, type EntityManager } from 'typeorm'
+import type { DataSource, EntityManager } from 'typeorm'
 import { UserSeeder } from '../../tests/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/user-entity.builder.js'
 import { TokenSeeder } from '../../../auth/tests/seeders/token.seeder.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
-import { type Client } from '../../../auth/entities/client.entity.js'
+import type { Client } from '../../../auth/entities/client.entity.js'
 import { Permission } from '../../../permissions/permission.enum.js'
-import { type Role } from '../../../roles/entities/role.entity.js'
+import type { Role } from '../../../roles/entities/role.entity.js'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
-import { type SetupUser } from '../../tests/setup-user.type.js'
+import type { SetupUser } from '../../tests/setup-user.type.js'
 import { ChangePasswordCommandBuilder } from './change-password-command.builder.js'
 
-describe('Change password e2e test', async () => {
+describe('Change password e2e test', () => {
   let app: INestApplication
   let dataSource: DataSource
   let entityManager: EntityManager
@@ -133,8 +133,8 @@ describe('Change password e2e test', async () => {
     expect(response).toHaveStatus(201)
   })
 
-  it('responds with an invalid password error when the old password ' +
-    'does not match the user\'s password', async () => {
+  it('responds with an invalid password error when the old password '
+  + 'does not match the user\'s password', async () => {
     const user = await new UserSeeder(entityManager).seedOne(
       new UserEntityBuilder()
         .withEmail('test7@email.com')

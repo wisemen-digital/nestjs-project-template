@@ -16,12 +16,12 @@ export class NatsClient implements OnModuleInit, OnModuleDestroy {
   constructor (
     private readonly configService: ConfigService
   ) {
-    this.queueName = 'nest-template-' + this.configService.get('NODE_ENV')
+    this.queueName = 'nest-template-' + this.configService.get<string>('NODE_ENV')
   }
 
   async onModuleInit (): Promise<void> {
-    const host = this.configService.get('NATS_HOST')
-    const port = this.configService.get('NATS_PORT')
+    const host = this.configService.get<string>('NATS_HOST')
+    const port = this.configService.get<string>('NATS_PORT')
 
     if (host == null || port == null) {
       throw new Error('NATS config variables are not set')
@@ -46,10 +46,12 @@ export class NatsClient implements OnModuleInit, OnModuleDestroy {
     if (isTestEnv() || isLocalEnv()) {
       return undefined
     } else {
-      const nkey = this.configService.get('NATS_NKEY')
+      const nkey = this.configService.get<string>('NATS_NKEY')
+
       if (nkey == null) {
         throw new Error('NATS nkey is not set')
       }
+
       return credsAuthenticator(new TextEncoder().encode(
         Buffer.from(nkey, 'base64').toString()
       ))
@@ -58,6 +60,7 @@ export class NatsClient implements OnModuleInit, OnModuleDestroy {
 
   subscribe (subject: string, options?: SubscribeOptions): Subscription {
     const opts: SubscriptionOptions = {}
+
     if (options?.loadBalance != null) {
       opts.queue = this.queueName
     }

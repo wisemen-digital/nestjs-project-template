@@ -9,5 +9,5 @@ export abstract class OffsetPaginatedSearchQuery extends SearchQuery {
   @IsOptional()
   @Type(() => OffsetPaginationQuery)
   @ValidateNested()
-    pagination?: OffsetPaginationQuery
+  pagination?: OffsetPaginationQuery
 }

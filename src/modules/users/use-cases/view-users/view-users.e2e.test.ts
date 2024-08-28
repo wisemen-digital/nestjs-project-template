@@ -2,10 +2,10 @@ import { after, before, describe, it } from 'node:test'
 import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { type DataSource } from 'typeorm'
+import type { DataSource } from 'typeorm'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
-import { type SetupUser } from '../../tests/setup-user.type.js'
+import type { SetupUser } from '../../tests/setup-user.type.js'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
 import {
   TypesenseCollectionService
@@ -14,7 +14,7 @@ import {
   TypesenseCollectionName
 } from '../../../typesense/enums/typesense-collection-index.enum.js'
 
-describe('View user e2e test', async () => {
+describe('View user e2e test', () => {
   let app: INestApplication
   let dataSource: DataSource
   let adminUser: SetupUser
@@ -22,15 +22,19 @@ describe('View user e2e test', async () => {
 
   before(async () => {
     const setup = await setupTest()
+
     dataSource = setup.dataSource
     app = setup.app
+
     const moduleRef = setup.moduleRef
 
     const context = new TestContext(dataSource.manager)
+
     readonlyUser = await context.getReadonlyUser()
     adminUser = await context.getAdminUser()
 
     const typesenseCollectionService = moduleRef.get(TypesenseCollectionService)
+
     await typesenseCollectionService.importManuallyToTypesense(
       TypesenseCollectionName.USER,
       [adminUser.user, readonlyUser.user]
@@ -53,7 +57,7 @@ describe('View user e2e test', async () => {
       .get('/users')
       .set('Authorization', `Bearer ${adminUser.token}`)
       .query({
-        pagination: {
+        'pagination': {
           limit: 10,
           offset: 0
         },

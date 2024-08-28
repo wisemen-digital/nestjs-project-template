@@ -1,15 +1,14 @@
 import { randomUUID } from 'crypto'
-import { type EntityManager } from 'typeorm'
-import { randEmail } from '@ngneat/falso'
-import { type Permission } from 'src/modules/permissions/permission.enum.js'
+import type { EntityManager } from 'typeorm'
+import type { Permission } from 'src/modules/permissions/permission.enum.js'
 import { TokenSeeder } from '../../src/modules/auth/tests/seeders/token.seeder.js'
 import { ClientSeeder } from '../../src/modules/auth/tests/seeders/client.seeder.js'
 import { UserSeeder } from '../../src/modules/users/tests/user.seeder.js'
-import { type Client } from '../../src/modules/auth/entities/client.entity.js'
+import type { Client } from '../../src/modules/auth/entities/client.entity.js'
 import { RoleSeeder } from '../../src/modules/roles/tests/seeders/role.seeder.js'
-import { type Role } from '../../src/modules/roles/entities/role.entity.js'
+import type { Role } from '../../src/modules/roles/entities/role.entity.js'
 import { UserEntityBuilder } from '../../src/modules/users/tests/user-entity.builder.js'
-import { type SetupUser } from '../../src/modules/users/tests/setup-user.type.js'
+import type { SetupUser } from '../../src/modules/users/tests/setup-user.type.js'
 import { RoleEntityBuilder } from '../../src/modules/roles/tests/builders/entities/role-entity.builder.js'
 
 export class TestContext {
@@ -69,11 +68,12 @@ export class TestContext {
     const role = await this.getRole(permissions)
     const user = await this.userSeeder.seedOne(
       new UserEntityBuilder()
-        .withEmail(randEmail())
+        .withEmail(randomUUID() + '@mail.com')
         .withRole(role)
         .build()
     )
     const token = await this.tokenSeeder.seedOne(user, client)
+
     return { user, client, token }
   }
 
@@ -82,7 +82,7 @@ export class TestContext {
     const adminRole = await this.getAdminRole()
     const adminUser = await this.userSeeder.seedOne(
       new UserEntityBuilder()
-        .withEmail(randEmail())
+        .withEmail(randomUUID() + '@mail.com')
         .withRole(adminRole)
         .build()
     )
@@ -96,7 +96,7 @@ export class TestContext {
     const readonlyRole = await this.getReadonlyRole()
     const readonlyUser = await this.userSeeder.seedOne(
       new UserEntityBuilder()
-        .withEmail(randEmail())
+        .withEmail(randomUUID() + '@mail.com')
         .withRole(readonlyRole)
         .build()
     )
@@ -110,7 +110,7 @@ export class TestContext {
 
     const randomUser = await this.userSeeder.seedOne(
       new UserEntityBuilder()
-        .withEmail(randEmail())
+        .withEmail(randomUUID() + '@mail.com')
         .build()
     )
 

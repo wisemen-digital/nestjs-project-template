@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { DataSource, In } from 'typeorm'
-import { type CreateFileLinkDto } from '../dtos/create-file-entity.dto.js'
-import { type FileLink } from '../entities/file-link.entity.js'
+import type { CreateFileLinkDto } from '../dtos/create-file-entity.dto.js'
+import type { FileLink } from '../entities/file-link.entity.js'
 import { FileLinkRepository } from '../repositories/file-link.repository.js'
 import { transaction } from '../../typeorm/utils/transaction.js'
 
@@ -53,12 +53,12 @@ export class FileLinkService {
       }
     })
 
-    const removedFileLinks = previousFileLinks.filter(existing => {
+    const removedFileLinks = previousFileLinks.filter((existing) => {
       return !dtos.some(dto => dto.fileUuid === existing.fileUuid)
     })
 
-    const upsertFileLinks = dtos.map(dto => {
-      const existing = previousFileLinks.find(link => {
+    const upsertFileLinks = dtos.map((dto) => {
+      const existing = previousFileLinks.find((link) => {
         return link.fileUuid === dto.fileUuid
       })
 
@@ -70,7 +70,7 @@ export class FileLinkService {
 
     await transaction(this.dataSource, async () => {
       await this.fileLinkRepository.delete({
-        uuid: In(removedFileLinks.map((link) => link.uuid))
+        uuid: In(removedFileLinks.map(link => link.uuid))
       })
 
       await this.fileLinkRepository.upsert(

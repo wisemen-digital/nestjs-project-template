@@ -1,5 +1,5 @@
-import { type FieldType, type CollectionFieldSchema } from 'typesense/lib/Typesense/Collection.js'
-import { type CollectionCreateSchema } from 'typesense/lib/Typesense/Collections.js'
+import type { FieldType, CollectionFieldSchema } from 'typesense/lib/Typesense/Collection.js'
+import type { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections.js'
 
 export type SearchField<T extends TypesenseCollection > = T['searchableFields'][number]['name']
 export type FilterField<T extends TypesenseCollection> = T['filterableFields'][number]['name'] | SearchField<T>
@@ -35,6 +35,7 @@ export abstract class TypesenseCollection {
         facet: true
       })
     )
+
     return {
       name: this.name,
       fields: [...searchFields, ...filterFields]

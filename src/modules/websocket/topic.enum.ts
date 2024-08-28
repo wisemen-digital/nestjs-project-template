@@ -1,3 +1,3 @@
 export enum NatsTopics {
-  EXAMPLE = 'example',
+  EXAMPLE = 'example'
 }

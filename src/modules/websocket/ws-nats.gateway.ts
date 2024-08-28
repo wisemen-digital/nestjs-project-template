@@ -1,8 +1,8 @@
-import { type IncomingMessage } from 'http'
+import type { IncomingMessage } from 'http'
 import { WebSocketGateway, SubscribeMessage, type OnGatewayConnection, type OnGatewayDisconnect, WebSocketServer, WsException, BaseWsExceptionFilter } from '@nestjs/websockets'
 // import { AuthGuard } from './auth.guard'
 import { WebSocket, WebSocketServer as WSS } from 'ws'
-import { type Subscription } from 'nats'
+import type { Subscription } from 'nats'
 import { type ArgumentsHost, Catch, UsePipes, ValidationPipe, UseFilters, UnauthorizedException } from '@nestjs/common'
 import { v4 as uuidv4 } from 'uuid'
 import { captureException } from '@sentry/node'
@@ -21,9 +21,16 @@ declare module 'ws' {
 @Catch()
 export class WsExceptionFilter extends BaseWsExceptionFilter {
   catch (exception: WsException, host: ArgumentsHost): void {
-    (host.getArgByIndex(0)).send(JSON.stringify({
-      error: exception instanceof UnauthorizedException ? exception.message : exception.getError(),
-      data: host.getArgByIndex(1)
+    const client = host.switchToWs().getClient<WebSocket>()
+    const data = host.switchToWs().getData<unknown>()
+
+    const error = exception instanceof UnauthorizedException
+      ? exception.message
+      : exception.getError()
+
+    client.send(JSON.stringify({
+      error,
+      data
     }))
   }
 }
@@ -53,7 +60,7 @@ export class WSNatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   handleDisconnect (client: WebSocket): void {
     const clientSubscriptions = this.subscriptions.get(client.uuid)
 
-    clientSubscriptions?.forEach(clientSubscription => {
+    clientSubscriptions?.forEach((clientSubscription) => {
       clientSubscription.unsubscribe()
     })
 

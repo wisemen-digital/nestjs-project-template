@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { type File } from '../entities/file.entity.js'
+import type { File } from '../entities/file.entity.js'
 import { FileRepository } from '../repositories/file.repository.js'
-import { type CreateFileDto } from '../dtos/create-file.dto.js'
+import type { CreateFileDto } from '../dtos/create-file.dto.js'
 
 @Injectable()
 export class FileService {
@@ -23,6 +23,7 @@ export class FileService {
     })
 
     await this.fileRepository.insert(file)
+
     return file
   }
 
@@ -37,6 +38,7 @@ export class FileService {
 
   async remove (uuid: string): Promise<void> {
     const file = await this.fileRepository.findOneByOrFail({ uuid })
+
     await this.fileRepository.remove(file)
   }
 }

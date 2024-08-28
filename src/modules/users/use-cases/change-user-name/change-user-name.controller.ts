@@ -27,6 +27,7 @@ export class ChangeUserNameController {
     @Body() dto: ChangeUserNameCommand
   ): Promise<UserNameChangedResponse> {
     const user = await this.useCase.changeName(userUuid, dto)
+
     return new UserNameChangedResponse(user)
   }
 }

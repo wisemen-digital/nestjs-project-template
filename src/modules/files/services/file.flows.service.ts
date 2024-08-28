@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { type File } from '../entities/file.entity.js'
-import { type CreateFileDto } from '../dtos/create-file.dto.js'
+import type { File } from '../entities/file.entity.js'
+import type { CreateFileDto } from '../dtos/create-file.dto.js'
 import { S3Service } from './s3.service.js'
 import { FileService } from './file.service.js'
 

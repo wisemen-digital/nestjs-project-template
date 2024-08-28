@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { UserRepository } from '../../repositories/user.repository.js'
 import { UserTypesenseRepository } from '../../repositories/user-typesense.repository.js'
 import { sortEntitiesByUuids } from '../../../../utils/helpers/sort-entities-by-uuids.helper.js'
-import { type ViewUsersQuery } from './view-users.query.js'
+import type { ViewUsersQuery } from './view-users.query.js'
 import { ViewUsersResponse } from './view-users.response.js'
 
 @Injectable()

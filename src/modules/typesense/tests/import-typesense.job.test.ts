@@ -1,6 +1,6 @@
 import { after, before, describe, it, mock } from 'node:test'
-import { type TestingModule } from '@nestjs/testing'
-import { type INestApplication } from '@nestjs/common'
+import type { TestingModule } from '@nestjs/testing'
+import type { INestApplication } from '@nestjs/common'
 import { expect } from 'expect'
 import { ImportTypesenseJob } from '../jobs/import-typesense.job.js'
 import { setupTest } from '../../../utils/test-setup/setup.js'

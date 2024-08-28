@@ -1,6 +1,6 @@
 import { Transformer } from '@appwise/transformer'
 import { ApiProperty } from '@nestjs/swagger'
-import { type File } from '../entities/file.entity.js'
+import type { File } from '../entities/file.entity.js'
 import { MimeType } from '../enums/mime-type.enum.js'
 
 export class CreateFileResponse {

@@ -23,6 +23,7 @@ export class FileController {
   ): Promise<CreateFileResponse> {
     const userUuid = getAuthOrFail().uid
     const { file, uploadUrl } = await this.fileFlowService.create(createFileDto, userUuid)
+
     return new CreateFileResponseTransformer().item(file, uploadUrl)
   }
 

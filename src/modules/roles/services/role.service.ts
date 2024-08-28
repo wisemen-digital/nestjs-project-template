@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { DataSource, In } from 'typeorm'
 import { RoleRepository } from '../repositories/role.repository.js'
-import { type Role } from '../entities/role.entity.js'
-import { type CreateRoleDto } from '../dtos/create-role.dto.js'
+import type { Role } from '../entities/role.entity.js'
+import type { CreateRoleDto } from '../dtos/create-role.dto.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { KnownError } from '../../../utils/exceptions/errors.js'
-import { type UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
+import type { UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
 import { transaction } from '../../typeorm/utils/transaction.js'
 import { CacheService } from '../../cache/cache.service.js'
 import { PermissionTransformer } from '../../permissions/transformers/permission.transformer.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
-import { type UpdateRoleTransformedType } from '../types/update-role-transformed.type.js'
+import type { UpdateRoleTransformedType } from '../types/update-role-transformed.type.js'
 import { TypesenseCollectionService } from '../../typesense/services/typesense-collection.service.js'
 
 @Injectable()
@@ -35,6 +35,7 @@ export class RoleService {
 
   async create (dto: CreateRoleDto): Promise<Role> {
     let role = await this.findByName(dto.name)
+
     if (role != null) throw new KnownError('already_exists').setDesc('Role already exists')
 
     await this.roleRepository.insert(dto)
@@ -48,6 +49,7 @@ export class RoleService {
 
   async update (uuid: string, dto: CreateRoleDto): Promise<Role> {
     const exists = await this.findByName(dto.name)
+
     if (exists != null) throw new KnownError('already_exists').setDesc('Role already exists')
 
     await this.roleRepository.update(uuid, dto)
@@ -97,7 +99,7 @@ export class RoleService {
         roleUuid: readOnlyRole.uuid
       })
 
-      users.forEach(user => {
+      users.forEach((user) => {
         user.roleUuid = readOnlyRole.uuid
       })
 

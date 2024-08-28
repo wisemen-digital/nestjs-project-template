@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { type User } from '../../users/entities/user.entity.js'
+import type { User } from '../../users/entities/user.entity.js'
 import { ScalewayMailClient } from '../clients/scaleway-mail.client.js'
 import { MjmlRenderer } from '../renderer/mjml.renderer.js'
-import { mergeObjects } from '../../../utils/helpers/merge-objects.js'
 import { LocalizationService } from '../../localization/services/localization.service.js'
-import { type ForgotPasswordMailContent } from '../content/forgot-password-mail.content.js'
+import type { ForgotPasswordMailContent } from '../content/forgot-password-mail.content.js'
 import { PASSWORD_TOKEN_HOURS_VALID } from '../constants/password-reset.constant.js'
 
 @Injectable()
@@ -32,15 +31,12 @@ export class MailService {
         subText: this.localizationService.translate('mail.password-reset.body.subText', { args: { duration } })
       },
       button: {
-        text: this.localizationService.translate('mail.password-reset.button.text')
+        text: this.localizationService.translate('mail.password-reset.button.text'),
+        deeplink
       }
     }
 
-    const html = await this.mjmlRenderer.render('forgot-password', mergeObjects(content, {
-      button: {
-        deeplink
-      }
-    }))
+    const html = await this.mjmlRenderer.render('forgot-password', content)
 
     await this.mailClient.sendMail({
       to: user.email,

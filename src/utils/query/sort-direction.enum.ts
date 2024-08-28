@@ -5,8 +5,8 @@ export enum SortDirection {
 
 export function mapSortDirectionToTypeormOrder (direction: SortDirection): 'ASC' | 'DESC' {
   switch (direction) {
-  case SortDirection.ASC: return 'ASC'
-  case SortDirection.DESC: return 'DESC'
+    case SortDirection.ASC: return 'ASC'
+    case SortDirection.DESC: return 'DESC'
   }
 }
 

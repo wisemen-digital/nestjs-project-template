@@ -19,6 +19,7 @@ export function IsValidTimeString (validationOptions?: ValidationOptions): Prope
 export class IsValidTimeStringValidator implements ValidatorConstraintInterface {
   validate (timeString: unknown, _args: ValidationArguments): boolean {
     if (typeof timeString !== 'string') return false
+
     return Time.isValidTimeString(`${timeString}:00`)
   }
 

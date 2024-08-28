@@ -7,5 +7,6 @@ export interface ForgotPasswordMailContent {
   }
   button: {
     text: string
+    deeplink: string
   }
 }

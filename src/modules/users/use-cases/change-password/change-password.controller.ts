@@ -27,6 +27,7 @@ export class ChangePasswordController {
     @Body() changePasswordCommand: ChangePasswordCommand
   ): Promise<PasswordChangedResponse> {
     const user = await this.useCase.changePassword(userUuid, changePasswordCommand)
+
     return new PasswordChangedResponse(user)
   }
 }
