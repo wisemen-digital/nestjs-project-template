@@ -7,7 +7,6 @@ import { UuidParam } from '../../../../utils/nest/decorators/uuid-param.js'
 import {
   ApiBadRequestErrorResponse
 } from '../../../../utils/exceptions/api-errors/api-error-response.js'
-import { InvalidPasswordError } from '../../../../utils/helpers/hash.helper.js'
 import { ChangePasswordUseCase } from './change-password.use-case.js'
 import { ChangePasswordCommand } from './change-password.command.js'
 import { PasswordChangedResponse } from './password-changed.response.js'
@@ -27,7 +26,7 @@ export class ChangePasswordController {
     description: 'The user\'s password has been successfully changed.',
     type: PasswordChangedResponse
   })
-  @ApiBadRequestErrorResponse(InvalidOldPasswordError, InvalidPasswordError)
+  @ApiBadRequestErrorResponse(InvalidOldPasswordError)
   async updateUserPassword (
     @UuidParam('user') userUuid: string,
     @Body() changePasswordCommand: ChangePasswordCommand
