@@ -4,6 +4,7 @@ import { type INestApplication, ValidationPipe } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
 import type { TestingModule } from '@nestjs/testing'
 import { expect } from 'expect'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { HttpExceptionFilter } from '../exceptions/http-exception.filter.js'
 import { uuid } from '../../../test/expect/expectUuid.js'
 import { toHaveErrorCode } from '../../../test/expect/expectErrorCode.js'
@@ -13,7 +14,7 @@ import { S3Service } from '../../modules/files/services/s3.service.js'
 import { compileTestModule } from './compile-test-module.js'
 
 export interface TestSetup {
-  app: INestApplication
+  app: NestExpressApplication
   moduleRef: TestingModule
   dataSource: DataSource
 }
@@ -68,8 +69,8 @@ function mockS3 (): void {
   })
 }
 
-async function setupTestApp (moduleRef: TestingModule): Promise<INestApplication<unknown>> {
-  const app = moduleRef.createNestApplication()
+async function setupTestApp (moduleRef: TestingModule): Promise<NestExpressApplication> {
+  const app = moduleRef.createNestApplication<NestExpressApplication>()
 
   configureValidationPipeline(app)
   configureExceptionFilter(app)
