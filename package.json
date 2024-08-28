@@ -83,6 +83,7 @@
     "@types/ws": "^8.5.12",
     "@types/yargs": "^17.0.33",
     "@wisemen/eslint-config-nestjs": "^0.1.6",
+    "dotenv": "^16.4.5",
     "eslint": "^9.9.1",
     "expect": "^29.7.0",
     "source-map-support": "^0.5.21",
