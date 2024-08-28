@@ -67,7 +67,7 @@ export class AuthenticatedWsAdapter extends WsAdapter {
       throw new UnauthorizedException()
     }
 
-    const isAuthorized = this.tokenService.getAccessToken(token)
+    const isAuthorized = await this.tokenService.getAccessToken(token)
 
     if (isAuthorized === false) {
       throw new UnauthorizedException()

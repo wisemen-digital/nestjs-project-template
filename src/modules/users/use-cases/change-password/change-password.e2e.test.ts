@@ -100,7 +100,7 @@ describe('Change password e2e test', () => {
         .build()
     )
 
-    const token = new TokenSeeder(entityManager).seedOne(user, client)
+    const token = await new TokenSeeder(entityManager).seedOne(user, client)
     const dto = new ChangePasswordCommandBuilder()
       .withOldPassword(oldPassword)
       .build()

@@ -29,7 +29,8 @@ export class TokenService {
     return this.parseLifetime(process.env.REFRESH_TOKEN_LIFETIME)
   }
 
-  getAccessToken (token: string): AccessTokenInterface | false {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async getAccessToken (token: string): Promise<AccessTokenInterface | false> {
     try {
       const decoded = this.jwtService.verify<AccessTokenPayload>(token)
 
@@ -54,9 +55,10 @@ export class TokenService {
     }
   }
 
-  generateAccessToken (
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async generateAccessToken (
     client: Client, user: User, scope: string[]
-  ): string {
+  ): Promise<string> {
     const payload: Omit<AccessTokenPayload, 'exp'> = {
       uid: user.uuid,
       cid: client.uuid,
@@ -97,9 +99,10 @@ export class TokenService {
     }
   }
 
-  generateRefreshToken (
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async generateRefreshToken (
     client: Client, user: User, scope: string[]
-  ): string {
+  ): Promise<string> {
     if (typeof scope === 'string') scope = (scope as string).split(' ')
 
     const payload: Omit<RefreshTokenPayload, 'exp'> = {

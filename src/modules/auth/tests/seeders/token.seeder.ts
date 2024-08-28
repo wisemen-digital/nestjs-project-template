@@ -19,7 +19,7 @@ export class TokenSeeder {
     )
   }
 
-  public seedOne (user: User, client: Client): string {
-    return this.tokenService.generateAccessToken(client, user, ['read', 'write'])
+  public async seedOne (user: User, client: Client): Promise<string> {
+    return await this.tokenService.generateAccessToken(client, user, ['read', 'write'])
   }
 }

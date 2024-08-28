@@ -72,7 +72,7 @@ export class TestContext {
         .withRole(role)
         .build()
     )
-    const token = this.tokenSeeder.seedOne(user, client)
+    const token = await this.tokenSeeder.seedOne(user, client)
 
     return { user, client, token }
   }
@@ -86,7 +86,7 @@ export class TestContext {
         .withRole(adminRole)
         .build()
     )
-    const token = this.tokenSeeder.seedOne(adminUser, client)
+    const token = await this.tokenSeeder.seedOne(adminUser, client)
 
     return { user: adminUser, client, token }
   }
@@ -100,7 +100,7 @@ export class TestContext {
         .withRole(readonlyRole)
         .build()
     )
-    const token = this.tokenSeeder.seedOne(readonlyUser, client)
+    const token = await this.tokenSeeder.seedOne(readonlyUser, client)
 
     return { user: readonlyUser, client, token }
   }
@@ -114,7 +114,7 @@ export class TestContext {
         .build()
     )
 
-    const token = this.tokenSeeder.seedOne(randomUser, client)
+    const token = await this.tokenSeeder.seedOne(randomUser, client)
 
     return { user: randomUser, client, token }
   }

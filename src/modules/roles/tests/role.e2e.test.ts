@@ -83,7 +83,7 @@ describe('Roles', () => {
           .build()
       )
       const client = await new ClientSeeder(dataSource.manager).getTestClient()
-      const token = new TokenSeeder(dataSource.manager).seedOne(user, client)
+      const token = await new TokenSeeder(dataSource.manager).seedOne(user, client)
 
       const response = await request(app.getHttpServer())
         .get('/roles')
