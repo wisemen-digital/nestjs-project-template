@@ -25,6 +25,7 @@ export class ViewUserController {
     @UuidParam('user') userUuid: string
   ): Promise<ViewUserResponse> {
     const user = await this.useCase.viewUser(userUuid)
+
     return new ViewUserResponse(user)
   }
 }

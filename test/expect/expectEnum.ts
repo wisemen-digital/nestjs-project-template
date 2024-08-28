@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import type { ExpectationResult, MatcherFunction } from 'expect'
 
-export const isEnumValue: MatcherFunction<[object]> =
-function (received: unknown, type: object): ExpectationResult {
+export const isEnumValue: MatcherFunction<[object]> = function (
+  received: unknown,
+  type: object
+): ExpectationResult {
   if (Object.values(type).includes(received)) {
     return {
       pass: true,

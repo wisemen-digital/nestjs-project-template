@@ -1,10 +1,10 @@
 import { before, describe, it, after } from 'node:test'
-import { type INestApplication } from '@nestjs/common'
+import { randomUUID } from 'node:crypto'
+import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { randEmail } from '@ngneat/falso'
 import { type DataSource, In } from 'typeorm'
-import { type Role } from '../entities/role.entity.js'
+import type { Role } from '../entities/role.entity.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { UserSeeder } from '../../users/tests/user.seeder.js'
@@ -13,12 +13,12 @@ import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
 import { setupTest } from '../../../utils/test-setup/setup.js'
 import { ClientSeeder } from '../../auth/tests/seeders/client.seeder.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
-import { type SetupUser } from '../../users/tests/setup-user.type.js'
+import type { SetupUser } from '../../users/tests/setup-user.type.js'
 import { RoleSeeder } from './seeders/role.seeder.js'
 import { RoleEntityBuilder } from './builders/entities/role-entity.builder.js'
 import { CreateRoleDtoBuilder } from './builders/dtos/create-role-dto.builder.js'
 
-describe('Roles', async () => {
+describe('Roles', () => {
   let app: INestApplication
   let dataSource: DataSource
 
@@ -83,7 +83,7 @@ describe('Roles', async () => {
           .build()
       )
       const client = await new ClientSeeder(dataSource.manager).getTestClient()
-      const token = await new TokenSeeder(dataSource.manager).seedOne(user, client)
+      const token = new TokenSeeder(dataSource.manager).seedOne(user, client)
 
       const response = await request(app.getHttpServer())
         .get('/roles')
@@ -259,19 +259,19 @@ describe('Roles', async () => {
       const userSeeder = new UserSeeder(dataSource.manager)
       const user1 = await userSeeder.seedOne(
         new UserEntityBuilder()
-          .withEmail(randEmail())
+          .withEmail(randomUUID() + '@mail.com')
           .withRole(role)
           .build()
       )
       const user2 = await userSeeder.seedOne(
         new UserEntityBuilder()
-          .withEmail(randEmail())
+          .withEmail(randomUUID() + '@mail.com')
           .withRole(role)
           .build()
       )
       const user3 = await userSeeder.seedOne(
         new UserEntityBuilder()
-          .withEmail(randEmail())
+          .withEmail(randomUUID() + '@mail.com')
           .withRole(role)
           .build()
       )
@@ -290,7 +290,7 @@ describe('Roles', async () => {
         relations: { role: true }
       })
 
-      usersAfter.forEach(user => {
+      usersAfter.forEach((user) => {
         expect(user.role?.name).toBe('readonly')
       })
     })

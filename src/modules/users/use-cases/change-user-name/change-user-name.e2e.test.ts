@@ -3,14 +3,14 @@ import { randomUUID } from 'crypto'
 import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { type DataSource } from 'typeorm'
+import type { DataSource } from 'typeorm'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
-import { type SetupUser } from '../../tests/setup-user.type.js'
+import type { SetupUser } from '../../tests/setup-user.type.js'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
 import { ChangeUserNameCommandBuilder } from './change-user-name-command.builder.js'
 
-describe('Change password e2e test', async () => {
+describe('Change password e2e test', () => {
   let app: INestApplication
   let dataSource: DataSource
   let adminUser: SetupUser

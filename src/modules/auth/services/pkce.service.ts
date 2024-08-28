@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { type Pkce } from '../entities/pkce.entity.js'
+import type { Pkce } from '../entities/pkce.entity.js'
 import { PkceRepository } from '../repositories/pkce.repository.js'
 
 @Injectable()

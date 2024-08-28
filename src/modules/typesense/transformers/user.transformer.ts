@@ -1,6 +1,6 @@
 import { Transformer } from '@appwise/transformer'
-import { type User } from '../../users/entities/user.entity.js'
-import { type Permission } from '../../permissions/permission.enum.js'
+import type { User } from '../../users/entities/user.entity.js'
+import type { Permission } from '../../permissions/permission.enum.js'
 
 export class UserSearchTransformerType {
   id: string

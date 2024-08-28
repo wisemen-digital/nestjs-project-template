@@ -1,4 +1,4 @@
-export interface KeysetPaginatedResult <T> {
+export interface KeysetPaginatedResult<T> {
   meta?: {
     next?: string
   }

@@ -5,7 +5,7 @@ import {
   type CallHandler,
   HttpException
 } from '@nestjs/common'
-import { type Observable } from 'rxjs'
+import type { Observable } from 'rxjs'
 import { catchError } from 'rxjs/operators'
 import { EntityNotFoundError } from 'typeorm'
 
@@ -13,11 +13,11 @@ import { EntityNotFoundError } from 'typeorm'
 
 @Injectable()
 export class ErrorsInterceptor implements NestInterceptor {
-  intercept (context: ExecutionContext, next: CallHandler): Observable<unknown> {
+  intercept (_context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next
       .handle()
       .pipe(
-        catchError(err => {
+        catchError((err) => {
           if (err instanceof EntityNotFoundError) {
             throw new HttpException('not_found', 404)
           }

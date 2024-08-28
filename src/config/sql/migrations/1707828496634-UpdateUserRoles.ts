@@ -1,4 +1,4 @@
-import { type MigrationInterface, type QueryRunner } from 'typeorm'
+import type { MigrationInterface, QueryRunner } from 'typeorm'
 
 export class UpdateUserRoles1707828496634 implements MigrationInterface {
   name = 'UpdateUserRoles1707828496634'

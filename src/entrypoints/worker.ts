@@ -21,6 +21,7 @@ async function bootstrap (): Promise<void> {
     .argv
 
   const queueName = args.queue
+
   if (!Object.values(QueueName).includes(queueName as QueueName)) {
     throw new Error(`Queue ${queueName} not found`)
   }

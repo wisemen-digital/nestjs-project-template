@@ -17,6 +17,7 @@ export class CreateRoleDtoBuilder {
 
   withName (name: string): this {
     this.createRoleDto.name = name
+
     return this
   }
 

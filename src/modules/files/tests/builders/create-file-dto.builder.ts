@@ -19,11 +19,13 @@ export class CreateFileDtoBuilder {
 
   withFileName (name: string): this {
     this.dto.name = name
+
     return this
   }
 
   withMimeType (mimeType: MimeType): this {
     this.dto.mimeType = mimeType
+
     return this
   }
 

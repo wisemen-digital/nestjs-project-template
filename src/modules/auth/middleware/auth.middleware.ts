@@ -1,7 +1,7 @@
 import { AsyncLocalStorage } from 'async_hooks'
 import { Injectable, type NestMiddleware } from '@nestjs/common'
-import { type Request, type Response, type NextFunction } from 'express'
-import { type AccessTokenInterface } from '../entities/accesstoken.entity.js'
+import type { Request, Response, NextFunction } from 'express'
+import type { AccessTokenInterface } from '../entities/accesstoken.entity.js'
 import { AuthService } from '../services/auth.service.js'
 import { KnownError } from '../../../utils/exceptions/errors.js'
 
@@ -16,6 +16,7 @@ export class AuthMiddleware implements NestMiddleware {
   public async use (req: Request, res: Response, next: NextFunction): Promise<void> {
     if (req.headers.authorization == null) {
       next()
+
       return
     }
 
@@ -25,7 +26,7 @@ export class AuthMiddleware implements NestMiddleware {
       authStorage.run(authentication, () => {
         next()
       })
-    } catch (error) {
+    } catch (_error) {
       next()
     }
   }

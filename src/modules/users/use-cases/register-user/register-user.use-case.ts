@@ -27,7 +27,9 @@ export class RegisterUserUseCase {
     }
 
     const user = await this.mapDtoToUser(dto)
+
     await this.persistUser(user)
+
     return user
   }
 

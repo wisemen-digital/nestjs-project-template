@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable n/no-callback-literal */
-import { type IncomingMessage } from 'http'
+import type { IncomingMessage } from 'http'
 import { Injectable, UnauthorizedException, type INestApplicationContext } from '@nestjs/common'
 import { WsAdapter } from '@nestjs/platform-ws'
+import { WebSocketServer } from 'ws'
 import { TokenService } from '../auth/services/token.service.js'
 import { UserService } from '../users/services/user.service.js'
 
@@ -32,12 +32,12 @@ export class AuthenticatedWsAdapter extends WsAdapter {
       path?: string
     }
   ): any {
-    const wss = super.create(port, options)
+    const wss = super.create(port, options) as WebSocketServer
 
-    wss.options.verifyClient = async (
+    wss.options.verifyClient = (
       info: { req: IncomingMessage },
       cb: (res: boolean, code?: number, message?: string, headers?: Record<string, string>) => void
-    ) => {
+    ): void => {
       const authHeaderParam = info.req.headers.authorization
       const authQueryParam = new URLSearchParams(info.req.url?.split('?')[1]).get('authorization')
       const authToken = authHeaderParam ?? authQueryParam
@@ -45,13 +45,15 @@ export class AuthenticatedWsAdapter extends WsAdapter {
       if (authToken == null) {
         cb(false)
       } else {
-        try {
-          const userUuid = await this.verifyAuthorization(authToken)
-          info.req.userUuid = userUuid
-          cb(true)
-        } catch (error) {
-          cb(false)
-        }
+        this.verifyAuthorization(authToken)
+          .then((userUuid) => {
+            info.req.userUuid = userUuid
+
+            cb(true)
+          })
+          .catch(() => {
+            cb(false)
+          })
       }
     }
 
@@ -65,12 +67,14 @@ export class AuthenticatedWsAdapter extends WsAdapter {
       throw new UnauthorizedException()
     }
 
-    const isAuthorized = await this.tokenService.getAccessToken(token)
+    const isAuthorized = this.tokenService.getAccessToken(token)
+
     if (isAuthorized === false) {
       throw new UnauthorizedException()
     }
 
     const user = await this.userService.findOne(isAuthorized.uid)
+
     if (user == null) {
       throw new UnauthorizedException()
     }

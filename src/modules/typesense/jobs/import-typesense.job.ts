@@ -1,5 +1,5 @@
-import { type ModuleRef } from '@nestjs/core'
-import { type TestingModule } from '@nestjs/testing'
+import type { ModuleRef } from '@nestjs/core'
+import type { TestingModule } from '@nestjs/testing'
 import { QueueName } from '../../pgboss/types/queue-name.enum.js'
 import { PgBossJob } from '../../pgboss/jobs/pgboss.job.js'
 import { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'

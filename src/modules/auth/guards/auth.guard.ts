@@ -13,7 +13,7 @@ export class AuthGuard implements CanActivate {
     private readonly reflector: Reflector
   ) {}
 
-  async canActivate (context: ExecutionContext): Promise<boolean> {
+  canActivate (context: ExecutionContext): boolean {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass()

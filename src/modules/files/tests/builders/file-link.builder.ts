@@ -19,11 +19,13 @@ export class FileBuilder {
 
   withFileName (name: string): this {
     this.file.name = name
+
     return this
   }
 
   withMimeType (mimeType: MimeType): this {
     this.file.mimeType = mimeType
+
     return this
   }
 
