@@ -7,6 +7,7 @@ export class UserSearchTransformerType {
   uuid: string
   firstName: string
   lastName: string
+  email: string
   permissions: Permission[]
 }
 
@@ -18,6 +19,7 @@ export class UserSearchTransformer
       uuid: user.uuid,
       firstName: user.firstName ?? '',
       lastName: user.lastName ?? '',
+      email: user.email ?? '',
       permissions: user.role?.permissions ?? []
     }
   }
