@@ -1,9 +1,9 @@
 import { before, describe, it, after } from 'node:test'
 import { randomUUID } from 'node:crypto'
-import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
 import { type DataSource, In } from 'typeorm'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import type { Role } from '../entities/role.entity.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { Permission } from '../../permissions/permission.enum.js'
@@ -19,7 +19,7 @@ import { RoleEntityBuilder } from './builders/entities/role-entity.builder.js'
 import { CreateRoleDtoBuilder } from './builders/dtos/create-role-dto.builder.js'
 
 describe('Roles', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
   let dataSource: DataSource
 
   let context: TestContext

@@ -1,9 +1,9 @@
 import { after, before, describe, it } from 'node:test'
 import { randomUUID } from 'crypto'
-import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
 import type { DataSource, EntityManager } from 'typeorm'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { UserSeeder } from '../../tests/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/user-entity.builder.js'
 import { TokenSeeder } from '../../../auth/tests/seeders/token.seeder.js'
@@ -16,7 +16,7 @@ import type { SetupUser } from '../../tests/setup-user.type.js'
 import { ChangePasswordCommandBuilder } from './change-password-command.builder.js'
 
 describe('Change password e2e test', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
   let dataSource: DataSource
   let entityManager: EntityManager
   let client: Client

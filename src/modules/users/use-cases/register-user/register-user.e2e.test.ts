@@ -1,16 +1,16 @@
 import { after, before, describe, it } from 'node:test'
 import { randomUUID } from 'crypto'
-import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
 import type { DataSource, EntityManager } from 'typeorm'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { UserSeeder } from '../../tests/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/user-entity.builder.js'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
 import { RegisterUserCommandBuilder } from './register-user-command.builder.js'
 
 describe('Register user e2e test', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
   let dataSource: DataSource
   let entityManager: EntityManager
 
