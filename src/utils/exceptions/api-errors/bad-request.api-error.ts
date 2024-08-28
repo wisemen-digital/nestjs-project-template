@@ -4,5 +4,10 @@ import { ApiErrorStatus } from './api-error-status.decorator.js'
 
 export abstract class BadRequestApiError extends ApiError {
   @ApiErrorStatus(HttpStatusCode.BadRequest)
-  status = '400'
+  declare status: '400'
+
+  constructor (detail: string) {
+    super(detail)
+    this.status = '400'
+  }
 }

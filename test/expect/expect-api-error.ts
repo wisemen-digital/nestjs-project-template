@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { type ExpectationResult, type MatcherFunction } from 'expect'
+import { isArray } from 'class-validator'
 import { type ApiError } from '../../src/utils/exceptions/api-errors/api-error.js'
 
 export const toHaveApiError: MatcherFunction<[ApiError]> =
-  function (received: { body?: unknown }, error: ApiError): ExpectationResult {
+  function (received: { body?: { errors?: unknown } }, error: ApiError): ExpectationResult {
     const expectedError = {
       code: error.code,
       status: error.status,
@@ -11,20 +12,26 @@ export const toHaveApiError: MatcherFunction<[ApiError]> =
       meta: error.meta
     }
 
-    const actualError = received.body
+    const errors = received.body?.errors ?? []
+    const errorExists = isArray(errors) && errors.some(error => this.equals(expectedError, error))
 
-    if (this.equals(actualError, expectedError)) {
-      const stringifiedExpected = this.utils.printReceived(actualError)
-      const stringifiedActual = this.utils.printReceived(expectedError)
+    if (errorExists) {
+      const stringifiedActual = this.utils.printReceived(errors)
+      const stringifiedExpected = this.utils.printReceived({ errors: [expectedError] })
       return {
         pass: true,
-        message: () => `expected ${stringifiedExpected} not to be ${stringifiedActual}`
+        message: () => `expected ${stringifiedActual} not to be ${stringifiedExpected}`
       }
     } else {
       return {
         pass: false,
-        message: () => '\n' +
-          this.utils.printDiffOrStringify(expectedError, actualError, 'Expected', 'Received', false)
+        message: () => '\n' + this.utils.printDiffOrStringify(
+          { errors: [expectedError] },
+          errors,
+          'Expected',
+          'Received',
+          false
+        )
       }
     }
   }

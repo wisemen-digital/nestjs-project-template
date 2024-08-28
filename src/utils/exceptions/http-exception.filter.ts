@@ -28,10 +28,12 @@ export class HttpExceptionFilter implements ExceptionFilter {
       return {
         status: Number(exception.status),
         response: {
-          code: exception.code,
-          detail: exception.detail,
-          status: exception.status,
-          meta: exception.meta
+          errors: [{
+            code: exception.code,
+            detail: exception.detail,
+            status: exception.status,
+            meta: exception.meta
+          }]
         }
       }
     } else if (exception instanceof HttpException) {

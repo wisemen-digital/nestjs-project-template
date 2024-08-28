@@ -1,9 +1,13 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common'
-import { ApiBadRequestResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { UserIsSelfOrAdminGuard } from '../../guards/user-is-self-or-admin.guard.js'
 import { UuidParam } from '../../../../utils/nest/decorators/uuid-param.js'
+import {
+  ApiBadRequestErrorResponse
+} from '../../../../utils/exceptions/api-errors/api-error-response.js'
+import { InvalidPasswordError } from '../../../../utils/helpers/hash.helper.js'
 import { ChangePasswordUseCase } from './change-password.use-case.js'
 import { ChangePasswordCommand } from './change-password.command.js'
 import { PasswordChangedResponse } from './password-changed.response.js'
@@ -23,7 +27,7 @@ export class ChangePasswordController {
     description: 'The user\'s password has been successfully changed.',
     type: PasswordChangedResponse
   })
-  @ApiBadRequestResponse({ type: InvalidOldPasswordError })
+  @ApiBadRequestErrorResponse(InvalidOldPasswordError, InvalidPasswordError)
   async updateUserPassword (
     @UuidParam('user') userUuid: string,
     @Body() changePasswordCommand: ChangePasswordCommand
