@@ -5,14 +5,14 @@ import request from 'supertest'
 import { expect } from 'expect'
 import { type DataSource } from 'typeorm'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
-import { type SetupUser } from '../../tests/setup-user.type.js'
+import { type TestUser } from '../../tests/setup-user.type.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 
 describe('Register user e2e test', async () => {
   let app: INestApplication
   let dataSource: DataSource
-  let adminUser: SetupUser
-  let readonlyUser: SetupUser
+  let adminUser: TestUser
+  let readonlyUser: TestUser
   let context: TestContext
 
   before(async () => {

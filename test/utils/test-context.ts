@@ -9,7 +9,7 @@ import { type Client } from '../../src/modules/auth/entities/client.entity.js'
 import { RoleSeeder } from '../../src/modules/roles/tests/seeders/role.seeder.js'
 import { type Role } from '../../src/modules/roles/entities/role.entity.js'
 import { UserEntityBuilder } from '../../src/modules/users/tests/user-entity.builder.js'
-import { type SetupUser } from '../../src/modules/users/tests/setup-user.type.js'
+import { type TestUser } from '../../src/modules/users/tests/setup-user.type.js'
 import { RoleEntityBuilder } from '../../src/modules/roles/tests/builders/entities/role-entity.builder.js'
 
 export class TestContext {
@@ -64,7 +64,7 @@ export class TestContext {
     )
   }
 
-  public async getUser (permissions: Permission[]): Promise<SetupUser> {
+  public async getUser (permissions: Permission[]): Promise<TestUser> {
     const client = await this.getClient()
     const role = await this.getRole(permissions)
     const user = await this.userSeeder.seedOne(
@@ -77,7 +77,7 @@ export class TestContext {
     return { user, client, token }
   }
 
-  public async getAdminUser (): Promise<SetupUser> {
+  public async getAdminUser (): Promise<TestUser> {
     const client = await this.getClient()
     const adminRole = await this.getAdminRole()
     const adminUser = await this.userSeeder.seedOne(
@@ -91,7 +91,7 @@ export class TestContext {
     return { user: adminUser, client, token }
   }
 
-  public async getReadonlyUser (): Promise<SetupUser> {
+  public async getReadonlyUser (): Promise<TestUser> {
     const client = await this.getClient()
     const readonlyRole = await this.getReadonlyRole()
     const readonlyUser = await this.userSeeder.seedOne(
@@ -105,7 +105,7 @@ export class TestContext {
     return { user: readonlyUser, client, token }
   }
 
-  public async getRandomUser (): Promise<SetupUser> {
+  public async getRandomUser (): Promise<TestUser> {
     const client = await this.getClient()
 
     const randomUser = await this.userSeeder.seedOne(
