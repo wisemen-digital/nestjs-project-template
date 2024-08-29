@@ -1,7 +1,7 @@
-import type { HttpStatusCode } from 'axios'
+import { HttpStatus } from '@nestjs/common'
 import { ApiProperty } from '@nestjs/swagger'
 
-export function ApiErrorStatus (status: HttpStatusCode): PropertyDecorator {
+export function ApiErrorStatus (status: HttpStatus): PropertyDecorator {
   return ApiProperty({
     required: true,
     type: String,
