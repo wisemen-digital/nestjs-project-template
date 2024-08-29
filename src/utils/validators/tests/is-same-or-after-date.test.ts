@@ -1,8 +1,8 @@
 import { after, before, describe, it } from 'node:test'
-import type { INestApplication } from '@nestjs/common'
 import dayjs from 'dayjs'
 import { validate } from 'class-validator'
 import { expect } from 'expect'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { setupTest } from '../../test-setup/setup.js'
 import { IsSameOrAfterDateString } from '../is-same-or-after-date.js'
 
@@ -14,7 +14,7 @@ class TestClass {
 }
 
 describe('IsSameOrAfterDateString decorator', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
 
   before(async () => {
     ({ app } = await setupTest())

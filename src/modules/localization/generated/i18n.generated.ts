@@ -25,5 +25,5 @@ export type I18nTranslations = {
         };
     };
 };
-/* prettier-ignore */
+
 export type I18nPath = Path<I18nTranslations>;

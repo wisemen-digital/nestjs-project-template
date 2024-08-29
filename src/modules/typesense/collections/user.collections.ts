@@ -5,6 +5,7 @@ import { TypesenseCollection } from './abstract-typesense.collection.js'
 export interface UserSearchSchema {
   id: string
   uuid: string
+  email: string
   firstName: string
   lastName: string
   permissions: Permission[]

@@ -1,23 +1,23 @@
 import { after, before, describe, it } from 'node:test'
-import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
 import type { DataSource } from 'typeorm'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import type { File } from '../entities/file.entity.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
-import type { SetupUser } from '../../users/tests/setup-user.type.js'
+import type { TestUser } from '../../users/tests/setup-user.type.js'
 import { setupTest } from '../../../utils/test-setup/setup.js'
 import { CreateFileDtoBuilder } from './builders/create-file-dto.builder.js'
 import { FileSeeder } from './seeders/file.seeder.js'
 import { FileBuilder } from './builders/file-link.builder.js'
 
 describe('File', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
   let dataSource: DataSource
 
   let context: TestContext
 
-  let adminUser: SetupUser
+  let adminUser: TestUser
 
   before(async () => {
     ({ app, dataSource } = await setupTest())
