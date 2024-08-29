@@ -6,7 +6,7 @@ import type { DataSource, EntityManager } from 'typeorm'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { UserSeeder } from '../../tests/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/user-entity.builder.js'
-import { setupTest } from '../../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../../../test/setup/test-setup.js'
 import { RegisterUserCommandBuilder } from './register-user-command.builder.js'
 
 describe('Register user e2e test', () => {

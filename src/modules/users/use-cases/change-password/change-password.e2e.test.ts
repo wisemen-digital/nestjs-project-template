@@ -11,7 +11,7 @@ import { TestContext } from '../../../../../test/utils/test-context.js'
 import type { Client } from '../../../auth/entities/client.entity.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import type { Role } from '../../../roles/entities/role.entity.js'
-import { setupTest } from '../../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../../../test/setup/test-setup.js'
 import type { TestUser } from '../../tests/setup-user.type.js'
 import { ChangePasswordCommandBuilder } from './change-password-command.builder.js'
 

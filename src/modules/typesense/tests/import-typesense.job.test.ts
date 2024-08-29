@@ -3,7 +3,7 @@ import type { TestingModule } from '@nestjs/testing'
 import { expect } from 'expect'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { ImportTypesenseJob } from '../jobs/import-typesense.job.js'
-import { setupTest } from '../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../../test/setup/test-setup.js'
 import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
 
 describe('Test import typesense job', () => {

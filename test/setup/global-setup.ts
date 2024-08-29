@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm'
 import type { TestingModule } from '@nestjs/testing'
-import { TypesenseInitializationService } from '../../modules/typesense/services/typesense-initialization.service.js'
-import { TypesenseCollectionName } from '../../modules/typesense/enums/typesense-collection-index.enum.js'
+import { TypesenseInitializationService } from '../../src/modules/typesense/services/typesense-initialization.service.js'
+import { TypesenseCollectionName } from '../../src/modules/typesense/enums/typesense-collection-index.enum.js'
 import { compileTestModule } from './compile-test-module.js'
 
 async function globalTestSetup (): Promise<void> {

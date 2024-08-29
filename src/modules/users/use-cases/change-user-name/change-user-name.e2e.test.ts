@@ -7,7 +7,7 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import type { TestUser } from '../../tests/setup-user.type.js'
-import { setupTest } from '../../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../../../test/setup/test-setup.js'
 import { ChangeUserNameCommandBuilder } from './change-user-name-command.builder.js'
 
 describe('Change password e2e test', () => {
