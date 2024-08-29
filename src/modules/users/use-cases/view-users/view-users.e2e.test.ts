@@ -14,7 +14,7 @@ import {
   TypesenseCollectionName
 } from '../../../typesense/enums/typesense-collection-index.enum.js'
 
-describe('View user e2e test', () => {
+describe('View users e2e test', () => {
   let app: NestExpressApplication
   let dataSource: DataSource
   let adminUser: TestUser

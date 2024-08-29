@@ -18,7 +18,7 @@
     "lint": "eslint",
     "test": "node --test --env-file=.env.test --test-reporter=spec",
     "test:pipeline": "pnpm test:setup && pnpm test",
-    "test:setup": "pnpm build && node --env-file=.env.test dist/src/utils/test-setup/global-setup.js",
+    "test:setup": "pnpm build && node --env-file=.env.test dist/test/setup/global-setup.js",
     "typeorm": "pnpm clean && pnpm build && node --env-file=.env ./node_modules/typeorm/cli -d ./dist/src/config/sql/sources/main.js"
   },
   "dependencies": {
