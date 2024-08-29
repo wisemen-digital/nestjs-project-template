@@ -9,7 +9,7 @@ import { GetRoleResponse, RoleResponse } from './get-role.response.js'
 @ApiTags('Roles')
 @Controller('roles/:role')
 @ApiOAuth2([])
-export class RoleController {
+export class GetRoleController {
   constructor (
     private readonly useCase: GetRoleUseCase
   ) {}
