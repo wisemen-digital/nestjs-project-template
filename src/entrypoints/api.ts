@@ -3,7 +3,7 @@ import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { AppModule } from '../app.module.js'
 import { initSentry } from '../utils/sentry/sentry.js'
 import { HttpExceptionFilter } from '../utils/exceptions/http-exception.filter.js'
-import { addApiDocumentation, addWebSocketDocumention } from '../modules/swagger/swagger.js'
+import { addApiDocumentation, addWebSocketDocumentation } from '../modules/swagger/swagger.js'
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(AppModule.forRoot())
@@ -27,7 +27,7 @@ async function bootstrap (): Promise<void> {
   })
 
   addApiDocumentation(app, 'api/docs')
-  addWebSocketDocumention(app, 'api/docs/websockets')
+  addWebSocketDocumentation(app, 'api/docs/websockets')
 
   const httpAdapterHost = app.get(HttpAdapterHost)
 

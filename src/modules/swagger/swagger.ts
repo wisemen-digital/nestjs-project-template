@@ -11,7 +11,7 @@ export function addApiDocumentation (toApp: INestApplication, onRoute: string): 
   SwaggerModule.setup(onRoute, toApp, document)
 }
 
-export function addWebSocketDocumention (toApp: INestApplication, onRoute: string): void {
+export function addWebSocketDocumentation (toApp: INestApplication, onRoute: string): void {
   const documentation = buildWebSocketDocumentation()
   const document = SwaggerModule.createDocument(toApp, documentation, { include: [WSModule] })
 
