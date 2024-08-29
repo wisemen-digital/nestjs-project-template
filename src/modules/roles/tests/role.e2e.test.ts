@@ -13,7 +13,7 @@ import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
 import { setupTest } from '../../../utils/test-setup/setup.js'
 import { ClientSeeder } from '../../auth/tests/seeders/client.seeder.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
-import type { SetupUser } from '../../users/tests/setup-user.type.js'
+import type { TestUser } from '../../users/tests/setup-user.type.js'
 import { RoleSeeder } from './seeders/role.seeder.js'
 import { RoleEntityBuilder } from './builders/entities/role-entity.builder.js'
 import { CreateRoleDtoBuilder } from './builders/dtos/create-role-dto.builder.js'
@@ -27,8 +27,8 @@ describe('Roles', () => {
   let adminRole: Role
   let readonlyRole: Role
 
-  let adminUser: SetupUser
-  let readonlyUser: SetupUser
+  let adminUser: TestUser
+  let readonlyUser: TestUser
 
   before(async () => {
     ({ app, dataSource } = await setupTest())
