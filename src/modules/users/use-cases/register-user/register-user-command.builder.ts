@@ -20,21 +20,25 @@ export class RegisterUserCommandBuilder {
 
   withEmail (email: string): this {
     this.dto.email = email
+
     return this
   }
 
   withPassword (password: string): this {
     this.dto.password = password
+
     return this
   }
 
   withFirstName (firstName: string): this {
     this.dto.firstName = firstName
+
     return this
   }
 
   withLastName (lastName: string): this {
     this.dto.lastName = lastName
+
     return this
   }
 

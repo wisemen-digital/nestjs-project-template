@@ -1,4 +1,4 @@
-import { type ObjectLiteral, type Repository } from 'typeorm'
+import type { ObjectLiteral, Repository } from 'typeorm'
 
 export abstract class AbstractSeeder<T extends ObjectLiteral> {
   protected requiredRelations: string[] = []

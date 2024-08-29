@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { type User } from '../../entities/user.entity.js'
+import type { User } from '../../entities/user.entity.js'
 
 export class ViewUserResponse {
   @ApiProperty({ type: String, format: 'uuid' })

@@ -1,16 +1,16 @@
 import { after, before, describe, it } from 'node:test'
-import type { INestApplication } from '@nestjs/common'
+import { randomUUID } from 'crypto'
 import request from 'supertest'
 import { expect } from 'expect'
-import { randEmail, randPassword } from '@ngneat/falso'
-import { type DataSource, type EntityManager } from 'typeorm'
+import type { DataSource, EntityManager } from 'typeorm'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { UserSeeder } from '../../tests/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/user-entity.builder.js'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
 import { RegisterUserCommandBuilder } from './register-user-command.builder.js'
 
-describe('Register user e2e test', async () => {
-  let app: INestApplication
+describe('Register user e2e test', () => {
+  let app: NestExpressApplication
   let dataSource: DataSource
   let entityManager: EntityManager
 
@@ -34,7 +34,7 @@ describe('Register user e2e test', async () => {
   it('responds with a validation error when omitting the password', async () => {
     const response = await request(app.getHttpServer())
       .post('/users')
-      .send({ email: randEmail() })
+      .send({ email: randomUUID() + '@mail.com' })
 
     expect(response).toHaveStatus(400)
   })
@@ -42,13 +42,14 @@ describe('Register user e2e test', async () => {
   it('responds with a validation error when omitting the email', async () => {
     const response = await request(app.getHttpServer())
       .post('/users')
-      .send({ password: randPassword() })
+      .send({ password: 'somerandompassword' })
 
     expect(response).toHaveStatus(400)
   })
 
   it('responds with email already in use error when the email is already in use', async () => {
     const email = 'kobe.kwanten@wisemen.digital'
+
     await new UserSeeder(entityManager).seedOne(
       new UserEntityBuilder()
         .withEmail(email)

@@ -11,22 +11,27 @@ export class ChangePasswordCommandBuilder {
     this.request = new ChangePasswordCommand()
     this.request.oldPassword = 'Password123'
     this.request.newPassword = 'Password1234'
+
     return this
   }
 
   withOldPassword (password: string): this {
     this.request.oldPassword = password
+
     return this
   }
 
   withNewPassword (password: string): this {
     this.request.newPassword = password
+
     return this
   }
 
   build (): ChangePasswordCommand {
     const result = this.request
+
     this.reset()
+
     return result
   }
 }

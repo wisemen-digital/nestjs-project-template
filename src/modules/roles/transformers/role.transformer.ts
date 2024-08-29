@@ -1,7 +1,7 @@
 import { Transformer } from '@appwise/transformer'
 import { ApiProperty } from '@nestjs/swagger'
 import { Permission } from '../../permissions/permission.enum.js'
-import { type Role } from '../entities/role.entity.js'
+import type { Role } from '../entities/role.entity.js'
 
 export class RoleTransformerType {
   @ApiProperty({ type: String, format: 'uuid' })

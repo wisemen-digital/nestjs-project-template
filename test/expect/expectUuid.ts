@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import { isUUID } from 'class-validator'
 import type { ExpectationResult, MatcherFunction } from 'expect'
 

@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common'
-import { type CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
+import type { CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
 import { ApiOAuth2, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { MigrateTypesenseQueryDto } from '../dtos/migrate-typesense-query.dto.js'
 import { ImportTypesenseQueryDto } from '../dtos/import-typesense-query.dto.js'

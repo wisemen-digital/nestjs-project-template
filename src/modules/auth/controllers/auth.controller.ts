@@ -44,10 +44,14 @@ export class AuthController {
 
       res.json(new AuthTransformer().item(token))
     } catch (err) {
-      res.status(err.code).json({
-        error: err.name,
-        error_description: err.message
-      })
+      if (err instanceof Error && 'code' in err && typeof err.code === 'number') {
+        res.status(err.code).json({
+          error: err.name,
+          error_description: err.message
+        })
+      } else {
+        throw err
+      }
     }
   }
 
@@ -60,6 +64,7 @@ export class AuthController {
   })
   public async getUserInfo (): Promise<UserTransformerType> {
     const user = await this.authService.getUserInfo()
+
     return new UserTransformer().item(user)
   }
 }

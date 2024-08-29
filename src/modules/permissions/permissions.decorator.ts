@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import { SetMetadata } from '@nestjs/common'
-import { type Permission } from './permission.enum.js'
+import type { Permission } from './permission.enum.js'
 
 export const PERMISSIONS_KEY = 'permissions'
 export function Permissions (...permissions: Permission[]): MethodDecorator {

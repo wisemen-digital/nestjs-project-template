@@ -1,17 +1,17 @@
 import { after, before, describe, it } from 'node:test'
 import { randomUUID } from 'crypto'
-import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { type DataSource } from 'typeorm'
+import type { DataSource } from 'typeorm'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
-import { type TestUser } from '../../tests/setup-user.type.js'
+import type { TestUser } from '../../tests/setup-user.type.js'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
 import { ChangeUserNameCommandBuilder } from './change-user-name-command.builder.js'
 
-describe('Change password e2e test', async () => {
-  let app: INestApplication
+describe('Change password e2e test', () => {
+  let app: NestExpressApplication
   let dataSource: DataSource
   let adminUser: TestUser
   let authorizedUser: TestUser

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
-import type { User } from '../../entities/user.entity.js'
 import {
   PaginatedOffsetResponse
 } from '../../../../utils/pagination/offset/paginated-offset-response.js'
+import { UserSearchSchema } from '../../../typesense/collections/user.collections.js'
 
 class UserIndexView {
   @ApiProperty({ type: String, format: 'uuid' })
@@ -17,8 +17,8 @@ class UserIndexView {
   @ApiProperty({ type: String, nullable: true })
   lastName: string | null
 
-  constructor (user: User) {
-    this.uuid = user.uuid.toString()
+  constructor (user: UserSearchSchema) {
+    this.uuid = user.uuid
     this.email = user.email
     this.firstName = user.firstName
     this.lastName = user.lastName
@@ -29,8 +29,9 @@ export class ViewUsersResponse extends PaginatedOffsetResponse<UserIndexView> {
   @ApiProperty({ type: UserIndexView, isArray: true })
   declare items: UserIndexView[]
 
-  constructor (users: User[], total: number, limit: number, offset: number) {
+  constructor (users: UserSearchSchema[], total: number, limit: number, offset: number) {
     const userViews = users.map(user => new UserIndexView(user))
+
     super(userViews, total, limit, offset)
   }
 }
