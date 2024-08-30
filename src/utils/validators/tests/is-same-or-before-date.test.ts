@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { validate } from 'class-validator'
 import { expect } from 'expect'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import { setupTest } from '../../test-setup/setup.js'
+import { setupTest } from '../../../../test/setup/test-setup.js'
 import { IsSameOrBeforeDateString } from '../is-same-or-before-date.js'
 
 class TestClass {

@@ -3,7 +3,7 @@ import dayjs from 'dayjs'
 import { validate } from 'class-validator'
 import { expect } from 'expect'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import { setupTest } from '../../test-setup/setup.js'
+import { setupTest } from '../../../../test/setup/test-setup.js'
 import { IsDateWithoutTimeString } from '../is-date-without-time-string.validator.js'
 
 class TestClass {

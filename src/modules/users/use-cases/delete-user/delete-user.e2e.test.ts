@@ -4,7 +4,7 @@ import request from 'supertest'
 import { expect } from 'expect'
 import type { DataSource } from 'typeorm'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import { setupTest } from '../../../../utils/test-setup/setup.js'
+import { setupTest } from '../../../../../test/setup/test-setup.js'
 import type { TestUser } from '../../tests/setup-user.type.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 
