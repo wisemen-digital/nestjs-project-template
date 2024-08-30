@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer'
 import { IsInt, IsOptional, IsPositive, Max, Min, ValidateNested } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { SearchQuery } from '../../../query/search.query.js'
+import { SearchQuery } from '../../query/search.query.js'
 
 export class PaginatedOffsetQuery {
   @ApiProperty({ minimum: 1, maximum: 100 })

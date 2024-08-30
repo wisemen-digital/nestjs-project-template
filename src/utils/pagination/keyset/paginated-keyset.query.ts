@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer'
 import { IsDateString, IsInt, IsNotEmpty, IsOptional, IsPositive, Max, ValidateNested } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
-import { SearchQuery } from '../../../query/search.query.js'
+import { SearchQuery } from '../../query/search.query.js'
 
-export class KeysetPaginationQuery {
+export class PaginatedKeysetQuery {
   @ApiProperty({ required: true })
   @Type(() => Number)
   @Max(100)
@@ -18,10 +18,10 @@ export class KeysetPaginationQuery {
   key?: string
 }
 
-export abstract class KeysetPaginationSearchQuery extends SearchQuery {
-  @ApiProperty({ type: KeysetPaginationQuery })
+export abstract class PaginatedKeysetSearchQuery extends SearchQuery {
+  @ApiProperty({ type: PaginatedKeysetQuery })
   @IsOptional()
-  @Type(() => KeysetPaginationQuery)
+  @Type(() => PaginatedKeysetQuery)
   @ValidateNested()
-  pagination?: KeysetPaginationQuery
+  pagination?: PaginatedKeysetQuery
 }

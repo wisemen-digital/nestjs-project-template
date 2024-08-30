@@ -3,7 +3,7 @@ import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
 import { FilterQuery } from '../../../../utils/query/search.query.js'
 import { Permission } from '../../../permissions/permission.enum.js'
-import { PaginatedOffsetSearchQuery } from '../../../../utils/pagination/offset/query/paginated-offset.query.js'
+import { PaginatedOffsetSearchQuery } from '../../../../utils/pagination/offset/paginated-offset.query.js'
 
 export class UsersFilterQuery extends FilterQuery {
   @ApiProperty({ enum: Permission, required: false, isArray: true })

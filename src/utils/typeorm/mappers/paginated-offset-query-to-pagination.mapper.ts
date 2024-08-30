@@ -1,4 +1,4 @@
-import { type PaginatedOffsetQuery } from '../../pagination/offset/query/paginated-offset.query.js'
+import type { PaginatedOffsetQuery } from '../../pagination/offset/paginated-offset.query.js'
 
 export interface TypeormPagination {
   skip: number
