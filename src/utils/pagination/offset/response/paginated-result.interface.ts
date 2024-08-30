@@ -1,8 +1,11 @@
-import { type Transformer } from '@appwise/transformer'
-import { type OffsetPaginationQuery } from '../../query/pagination/offset/pagination-query.dto.js'
-import { DEFAULT_LIMIT, DEFAULT_OFFSET } from '../../../modules/typesense/builder/search-params.builder.js'
+import type { Transformer } from '@appwise/transformer'
+import { DEFAULT_LIMIT, DEFAULT_OFFSET } from '../../../../modules/typesense/builder/search-params.builder.js'
+import type { PaginatedOffsetQuery } from '../query/paginated-offset.query.js'
 
-export interface OffsetPaginatedResult <T> {
+/**
+ * @deprecated User PaginatedOffsetResponse instead
+ */
+export interface OffsetPaginatedResult<T> {
   meta: {
     total: number
     offset: number
@@ -22,11 +25,11 @@ export const emptyOffsetPaginatedResult = <T>(): OffsetPaginatedResult<T> => {
   }
 }
 
-export function generatePaginatedResponse <T, S> (
+export function generatePaginatedResponse<T, S> (
   transformer: Transformer<T, S>,
   items: T[],
   count: number,
-  pagination: OffsetPaginationQuery | undefined
+  pagination: PaginatedOffsetQuery | undefined
 ): OffsetPaginatedResult<S> {
   return {
     items: transformer.array(items),

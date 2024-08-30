@@ -1,4 +1,4 @@
-import { type OffsetPaginationQuery } from '../../query/pagination/offset/pagination-query.dto.js'
+import type { PaginatedOffsetQuery } from '../query/paginated-offset.query.js'
 
 export interface TypeORMPaginationType {
   offset: number
@@ -6,7 +6,7 @@ export interface TypeORMPaginationType {
 }
 
 export function transformOffsetPaginationForTypeORM (
-  query?: OffsetPaginationQuery | null,
+  query?: PaginatedOffsetQuery | null,
   maxLimit = 25
 ): TypeORMPaginationType {
   const limit = Math.min(query?.limit ?? maxLimit, maxLimit)

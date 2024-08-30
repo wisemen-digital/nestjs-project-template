@@ -1,7 +1,7 @@
-import { type SearchParams } from 'typesense/lib/Typesense/Documents.js'
-import { type FilterField, type SearchField, type TypesenseCollection, type SortField } from '../collections/abstract-typesense.collection.js'
-import { type SortDirection } from '../../../utils/query/sort-direction.enum.js'
+import type { SearchParams } from 'typesense/lib/Typesense/Documents.js'
+import type { FilterField, SearchField, TypesenseCollection, SortField } from '../collections/abstract-typesense.collection.js'
 import { FilterOptions } from '../enums/typesense-filter-options.enum.js'
+import type { SortDirection } from '../../../utils/query/search.query.js'
 
 export const DEFAULT_LIMIT = 10
 export const DEFAULT_OFFSET = 1

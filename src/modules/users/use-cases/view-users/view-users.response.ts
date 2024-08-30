@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import type { User } from '../../entities/user.entity.js'
 import {
   PaginatedOffsetResponse
-} from '../../../../utils/pagination/offset/paginated-offset-response.js'
+} from '../../../../utils/pagination/offset/response/paginated-offset.response.js'
 
 class UserIndexView {
   @ApiProperty({ type: String, format: 'uuid' })

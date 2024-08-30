@@ -1,9 +1,9 @@
 import { Equals, IsArray, IsEnum, IsOptional, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
 import { ApiProperty } from '@nestjs/swagger'
-import { OffsetPaginatedSearchQuery } from '../../../../utils/query/pagination/offset/paginated-search-query.dto.js'
-import { FilterQuery } from '../../../../utils/query/search-query.dto.js'
+import { FilterQuery } from '../../../../utils/query/search.query.js'
 import { Permission } from '../../../permissions/permission.enum.js'
+import { PaginatedOffsetSearchQuery } from '../../../../utils/pagination/offset/query/paginated-offset.query.js'
 
 export class UsersFilterQuery extends FilterQuery {
   @ApiProperty({ enum: Permission, required: false, isArray: true })
@@ -13,7 +13,7 @@ export class UsersFilterQuery extends FilterQuery {
   permissions?: Permission[]
 }
 
-export class ViewUsersQuery extends OffsetPaginatedSearchQuery {
+export class ViewUsersQuery extends PaginatedOffsetSearchQuery {
   @Equals(undefined)
   sort?: never
 
