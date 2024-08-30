@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import dayjs from 'dayjs'
-import { type CollectionCreateSchema } from 'typesense/lib/Typesense/Collections.js'
-import { type CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
-import { type CollectionAliasSchema } from 'typesense/lib/Typesense/Aliases.js'
+import type { CollectionCreateSchema } from 'typesense/lib/Typesense/Collections.js'
+import type { CollectionSchema } from 'typesense/lib/Typesense/Collection.js'
+import type { CollectionAliasSchema } from 'typesense/lib/Typesense/Aliases.js'
 import { TypesenseClient } from '../clients/typesense.client.js'
 import { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { UserTypesenseCollection } from '../collections/user.collections.js'
@@ -21,6 +21,7 @@ export class TypesenseInitializationService {
 
   public async createCollection (collection: CollectionCreateSchema): Promise<CollectionSchema> {
     collection.name = `${collection.name}_${dayjs().toISOString()}`
+
     return await this.typesenseClient.client.collections().create(collection)
   }
 
@@ -79,9 +80,7 @@ export class TypesenseInitializationService {
       const collection = await this.createCollection(createCollection)
 
       await this.typesenseCollectionService.importToTypesense(aliasName)
-
       await this.linkAlias(aliasName, collection.name)
-
       await this.deleteUnusedCollections()
     }
   }

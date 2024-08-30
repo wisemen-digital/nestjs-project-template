@@ -1,18 +1,18 @@
 import { after, before, describe, it } from 'node:test'
 import { randomUUID } from 'crypto'
-import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { type DataSource } from 'typeorm'
+import type { DataSource } from 'typeorm'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
-import { type SetupUser } from '../../tests/setup-user.type.js'
+import type { TestUser } from '../../tests/setup-user.type.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 
-describe('Register user e2e test', async () => {
-  let app: INestApplication
+describe('Register user e2e test', () => {
+  let app: NestExpressApplication
   let dataSource: DataSource
-  let adminUser: SetupUser
-  let readonlyUser: SetupUser
+  let adminUser: TestUser
+  let readonlyUser: TestUser
   let context: TestContext
 
   before(async () => {

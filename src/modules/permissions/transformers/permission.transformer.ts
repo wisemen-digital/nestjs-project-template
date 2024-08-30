@@ -17,6 +17,7 @@ export class PermissionTransformer {
     // Loop through the input array to group actions by ID
     for (const item of input) {
       const [id, action] = item.split('.')
+
       if (permissionsMap[id] === undefined) {
         permissionsMap[id] = []
       }
@@ -27,6 +28,7 @@ export class PermissionTransformer {
 
     // Transform the permissions map into the desired format
     const permissions: PermissionObject[] = []
+
     for (const id of Object.keys(permissionsMap)) {
       permissions.push({
         id,

@@ -5,10 +5,9 @@ import {
   UserSearchTransformer,
   type UserSearchTransformerType
 } from '../../transformers/user.transformer.js'
-import { type User } from '../../../users/entities/user.entity.js'
-import { type TypesenseCollector } from './typesense-collector.factory.js'
+import type { User } from '../../../users/entities/user.entity.js'
+import type { TypesenseCollector } from './typesense-collector.factory.js'
 
-// eslint-disable-next-line unused-imports/no-unused-vars
 @Injectable()
 export class UserTypesenseCollector implements TypesenseCollector {
   constructor (

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { type User } from '../../entities/user.entity.js'
+import type { User } from '../../entities/user.entity.js'
 import { UserRepository } from '../../repositories/user.repository.js'
 
 @Injectable()

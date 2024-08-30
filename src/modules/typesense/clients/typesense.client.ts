@@ -11,8 +11,8 @@ export class TypesenseClient {
 
   private initialize (): void {
     if (
-      process.env.TYPESENSE_HOST == null ||
-      process.env.TYPESENSE_KEY == null
+      process.env.TYPESENSE_HOST == null
+      || process.env.TYPESENSE_KEY == null
     ) {
       return
     }

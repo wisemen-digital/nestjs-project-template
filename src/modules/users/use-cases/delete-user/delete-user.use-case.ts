@@ -16,6 +16,7 @@ export class DeleteUserUseCase {
 
   async delete (userUuid: string): Promise<void> {
     const user = await this.userRepository.findOneByOrFail({ uuid: userUuid })
+
     await this.typesenseService.deleteFromTypesense(TypesenseCollectionName.USER, user.uuid)
     await this.userRepository.softDelete({ uuid: user.uuid })
   }

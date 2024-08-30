@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { OAuth2Server, createOAuth2 } from '@appwise/oauth2-server'
-import { type Request, type Response } from 'express'
+import type { Request, Response } from 'express'
 import { UserService } from '../../users/services/user.service.js'
-import { type AccessTokenInterface } from '../entities/accesstoken.entity.js'
-import { type User } from '../../users/entities/user.entity.js'
+import type { AccessTokenInterface } from '../entities/accesstoken.entity.js'
+import type { User } from '../../users/entities/user.entity.js'
 import { getAuthOrFail } from '../middleware/auth.middleware.js'
 import { ClientService, scopes } from './client.service.js'
 import { TokenService } from './token.service.js'
@@ -40,6 +40,7 @@ export class AuthService {
 
   async getUserInfo (): Promise<User> {
     const userUuid = getAuthOrFail().uid
+
     return await this.userService.findOneOrFail(userUuid)
   }
 

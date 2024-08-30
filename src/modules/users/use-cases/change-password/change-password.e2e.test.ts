@@ -1,28 +1,29 @@
 import { after, before, describe, it } from 'node:test'
 import { randomUUID } from 'crypto'
-import type { INestApplication } from '@nestjs/common'
 import request from 'supertest'
 import { expect } from 'expect'
-import { type DataSource, type EntityManager } from 'typeorm'
+import type { DataSource, EntityManager } from 'typeorm'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { UserSeeder } from '../../tests/user.seeder.js'
 import { UserEntityBuilder } from '../../tests/user-entity.builder.js'
 import { TokenSeeder } from '../../../auth/tests/seeders/token.seeder.js'
 import { TestContext } from '../../../../../test/utils/test-context.js'
-import { type Client } from '../../../auth/entities/client.entity.js'
+import type { Client } from '../../../auth/entities/client.entity.js'
 import { Permission } from '../../../permissions/permission.enum.js'
-import { type Role } from '../../../roles/entities/role.entity.js'
+import type { Role } from '../../../roles/entities/role.entity.js'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
-import { type SetupUser } from '../../tests/setup-user.type.js'
+import type { TestUser } from '../../tests/setup-user.type.js'
 import { ChangePasswordCommandBuilder } from './change-password-command.builder.js'
+import { InvalidOldPasswordError } from './invalid-old-password.error.js'
 
-describe('Change password e2e test', async () => {
-  let app: INestApplication
+describe('Change password e2e test', () => {
+  let app: NestExpressApplication
   let dataSource: DataSource
   let entityManager: EntityManager
   let client: Client
   let updateUserRole: Role
-  let adminUser: SetupUser
-  let authorizedUser: SetupUser
+  let adminUser: TestUser
+  let authorizedUser: TestUser
 
   before(async () => {
     ({ app, dataSource } = await setupTest())
@@ -133,8 +134,8 @@ describe('Change password e2e test', async () => {
     expect(response).toHaveStatus(201)
   })
 
-  it('responds with an invalid password error when the old password ' +
-    'does not match the user\'s password', async () => {
+  it('responds with an invalid password error when the old password '
+  + 'does not match the user\'s password', async () => {
     const user = await new UserSeeder(entityManager).seedOne(
       new UserEntityBuilder()
         .withEmail('test7@email.com')
@@ -150,7 +151,7 @@ describe('Change password e2e test', async () => {
       .set('Authorization', `Bearer ${adminUser.token}`)
       .send(dto)
 
-    expect(response).toHaveStatus(401)
-    expect(response).toHaveErrorCode('invalid_credentials')
+    expect(response).toHaveStatus(400)
+    expect(response).toHaveApiError(new InvalidOldPasswordError())
   })
 })

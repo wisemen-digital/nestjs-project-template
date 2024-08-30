@@ -1,4 +1,5 @@
 import { Injectable, type CanActivate, type ExecutionContext } from '@nestjs/common'
+import { Request } from 'express'
 import { Permission } from '../../permissions/permission.enum.js'
 import { CacheService } from '../../cache/cache.service.js'
 import { getAuthOrFail } from '../../auth/middleware/auth.middleware.js'
@@ -11,12 +12,13 @@ export class UserIsSelfOrAdminGuard implements CanActivate {
 
   async canActivate (context: ExecutionContext): Promise<boolean> {
     const userUuid = getAuthOrFail().uid
-    const { params } = context.switchToHttp().getRequest()
+    const { params } = context.switchToHttp().getRequest<Request>()
 
     if (userUuid === params.user) {
       return true
     } else {
       const userPermissions = await this.cache.getUserPermissions(userUuid)
+
       return userPermissions.includes(Permission.ADMIN)
     }
   }

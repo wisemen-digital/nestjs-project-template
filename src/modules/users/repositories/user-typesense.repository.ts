@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common'
-import { type SearchParams } from 'typesense/lib/Typesense/Documents.js'
+import type { SearchParams } from 'typesense/lib/Typesense/Documents.js'
 import { TypesenseQueryService } from '../../typesense/services/typesense-query.service.js'
 import { TypesenseSearchParamsBuilder } from '../../typesense/builder/search-params.builder.js'
-import { UserTypesenseCollection } from '../../typesense/collections/user.collections.js'
+import { UserSearchSchema, UserTypesenseCollection } from '../../typesense/collections/user.collections.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
-import { emptyFindUuidsResponse } from '../../typesense/types/empty-find-uuids.response.js'
 import {
   TypesenseCollectionService
 } from '../../typesense/services/typesense-collection.service.js'
-import { type ViewUsersQuery } from '../use-cases/view-users/view-users.query.js'
+import type { ViewUsersQuery } from '../use-cases/view-users/view-users.query.js'
 
 @Injectable()
 export class UserTypesenseRepository {
@@ -17,9 +16,9 @@ export class UserTypesenseRepository {
     private readonly typesenseCollectionService: TypesenseCollectionService
   ) {}
 
-  async findPaginatedUuids (
+  async findPaginated (
     query: ViewUsersQuery
-  ): Promise<[items: string[], count: number] > {
+  ): Promise<[items: UserSearchSchema[], count: number] > {
     const typesenseSearchParams = this.createTypesenseSearchParams(query)
 
     const typesenseSearchedValues = await this.typesenseService.search(
@@ -27,22 +26,17 @@ export class UserTypesenseRepository {
       typesenseSearchParams
     )
 
-    const uuids = typesenseSearchedValues[TypesenseCollectionName.USER]?.items.map(
-      item => item.uuid
-    )
+    const usersResponse = typesenseSearchedValues[TypesenseCollectionName.USER]
 
-    if (uuids == null || uuids.length === 0) {
-      return emptyFindUuidsResponse
-    }
-
-    const count = typesenseSearchedValues[TypesenseCollectionName.USER]?.meta.total ?? 0
-
-    return [uuids, count]
+    return [
+      usersResponse?.items ?? [],
+      usersResponse?.meta.total ?? 0
+    ]
   }
 
   private createTypesenseSearchParams (query: ViewUsersQuery): SearchParams {
-    const searchParamBuilder =
-      new TypesenseSearchParamsBuilder(new UserTypesenseCollection())
+    const searchParamBuilder
+      = new TypesenseSearchParamsBuilder(new UserTypesenseCollection())
         .withQuery(query.search)
         .withOffset(query.pagination?.offset)
         .withLimit(query.pagination?.limit)
