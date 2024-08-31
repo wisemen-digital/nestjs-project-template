@@ -1,7 +1,7 @@
 import {
   BadRequestApiError
-} from '../../../../utils/exceptions/api-errors/bad-request.api-error.js'
-import { ApiErrorCode } from '../../../../utils/exceptions/api-errors/api-error-code.decorator.js'
+} from '../../../exceptions/api-errors/bad-request.api-error.js'
+import { ApiErrorCode } from '../../../exceptions/api-errors/api-error-code.decorator.js'
 
 export class InvalidOldPasswordError extends BadRequestApiError {
   @ApiErrorCode('invalid_old_password')

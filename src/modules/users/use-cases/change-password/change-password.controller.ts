@@ -6,7 +6,7 @@ import { UserIsSelfOrAdminGuard } from '../../guards/user-is-self-or-admin.guard
 import { UuidParam } from '../../../../utils/nest/decorators/uuid-param.js'
 import {
   ApiBadRequestErrorResponse
-} from '../../../../utils/exceptions/api-errors/api-error-response.js'
+} from '../../../exceptions/api-errors/api-error-response.js'
 import { ChangePasswordUseCase } from './change-password.use-case.js'
 import { ChangePasswordCommand } from './change-password.command.js'
 import { PasswordChangedResponse } from './password-changed.response.js'

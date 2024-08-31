@@ -11,9 +11,9 @@ import { PermissionTransformer } from '../../permissions/transformers/permission
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import type { UpdateRoleTransformedType } from '../types/update-role-transformed.type.js'
 import { TypesenseCollectionService } from '../../typesense/services/typesense-collection.service.js'
-import { NotFoundError } from '../../../utils/exceptions/generic/not-found.error.js'
 import { RoleNameAlreadyInUseError } from '../types/role-name-already-in-use.error.js'
 import { RoleNotEditableError } from '../types/role-not-editable.error.js'
+import { NotFoundError } from '../../exceptions/generic/not-found.error.js'
 
 @Injectable()
 export class RoleService {

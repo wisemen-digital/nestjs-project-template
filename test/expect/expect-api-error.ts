@@ -1,6 +1,6 @@
 import type { ExpectationResult, MatcherFunction } from 'expect'
 import { isArray } from 'class-validator'
-import type { ApiError } from '../../src/utils/exceptions/api-errors/api-error.js'
+import type { ApiError } from '../../src/modules/exceptions/api-errors/api-error.js'
 
 export const toHaveApiError: MatcherFunction<[ApiError]>
   = function (received: { body?: { errors?: unknown } }, error: ApiError): ExpectationResult {
