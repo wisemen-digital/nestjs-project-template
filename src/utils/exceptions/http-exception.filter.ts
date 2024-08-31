@@ -1,9 +1,7 @@
 import { type ExceptionFilter, Catch, type ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
 import { captureException } from '@sentry/node'
-import { EntityNotFoundError } from 'typeorm'
 import { ApiError } from './api-errors/api-error.js'
-import { NotFoundError } from './generic/not-found.error.js'
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -16,9 +14,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     this.httpAdapterHost.httpAdapter.reply(ctx.getResponse(), response, status)
   }
 
-  private getResponse (error: Error): { status: number, response: unknown } {
-    const exception = this.mapError(error)
-
+  private getResponse (exception: Error): { status: number, response: unknown } {
     if (exception instanceof ApiError) {
       return {
         status: Number(exception.status),
@@ -48,13 +44,5 @@ export class HttpExceptionFilter implements ExceptionFilter {
         }
       }
     }
-  }
-
-  private mapError (exception: Error): Error {
-    if (exception instanceof EntityNotFoundError) {
-      return new NotFoundError()
-    }
-
-    return exception
   }
 }

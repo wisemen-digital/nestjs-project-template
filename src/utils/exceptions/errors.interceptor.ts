@@ -2,14 +2,12 @@ import {
   Injectable,
   type NestInterceptor,
   type ExecutionContext,
-  type CallHandler,
-  HttpException
+  type CallHandler
 } from '@nestjs/common'
 import type { Observable } from 'rxjs'
 import { catchError } from 'rxjs/operators'
 import { EntityNotFoundError } from 'typeorm'
-
-// TODO: Add conversion to JSON API error format
+import { NotFoundError } from './generic/not-found.error.js'
 
 @Injectable()
 export class ErrorsInterceptor implements NestInterceptor {
@@ -19,11 +17,11 @@ export class ErrorsInterceptor implements NestInterceptor {
       .pipe(
         catchError((err) => {
           if (err instanceof EntityNotFoundError) {
-            throw new HttpException('not_found', 404)
+            throw new NotFoundError()
           }
+
           throw err
-        }
-        )
+        })
       )
   }
 }

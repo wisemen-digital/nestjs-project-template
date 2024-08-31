@@ -1,10 +1,9 @@
 import fs from 'node:fs'
-import { HttpAdapterHost, NestFactory } from '@nestjs/core'
+import { NestFactory } from '@nestjs/core'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { ValidationPipe, VersioningType } from '@nestjs/common'
 import { AppModule } from '../app.module.js'
 import { initSentry } from '../utils/sentry/sentry.js'
-import { HttpExceptionFilter } from '../utils/exceptions/http-exception.filter.js'
 import { WSModule } from '../modules/websocket/ws.module.js'
 import { buildDocumentationConfig } from '../utils/documentation/documentation.js'
 
@@ -48,10 +47,6 @@ async function bootstrap (): Promise<void> {
   })
 
   SwaggerModule.setup('api/docs/websockets', app, wsDocument)
-
-  const httpAdapterHost = app.get(HttpAdapterHost)
-
-  app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
 
   initSentry()
 
