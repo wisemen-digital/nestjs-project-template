@@ -4,10 +4,6 @@ import { CustomerExceptionFilter } from './exception.filter.js'
 
 @Module({
   providers: [
-    // {
-    //   provide: APP_INTERCEPTOR,
-    //   useClass: ErrorInterceptor
-    // },
     {
       provide: APP_FILTER,
       useClass: CustomerExceptionFilter
