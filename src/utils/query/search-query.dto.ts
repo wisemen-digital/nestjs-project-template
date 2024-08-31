@@ -1,7 +1,6 @@
-import { Dto } from '@appwise/express-dto-router'
 import type { SortDirection } from './sort-direction.enum.js'
 
-export abstract class Query extends Dto {}
+export abstract class Query {}
 
 export abstract class SortQuery {
   abstract key: unknown

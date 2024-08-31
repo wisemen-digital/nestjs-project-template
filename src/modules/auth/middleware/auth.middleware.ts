@@ -3,7 +3,7 @@ import { Injectable, type NestMiddleware } from '@nestjs/common'
 import type { Request, Response, NextFunction } from 'express'
 import type { AccessTokenInterface } from '../entities/accesstoken.entity.js'
 import { AuthService } from '../services/auth.service.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
+import { UnauthorizedError } from '../../../utils/exceptions/generic/unauthorized.error.js'
 
 const authStorage = new AsyncLocalStorage<AccessTokenInterface>()
 
@@ -36,7 +36,7 @@ export function getAuthOrFail (): AccessTokenInterface {
   const token = authStorage.getStore()
 
   if (token == null) {
-    throw new KnownError('unauthorized')
+    throw new UnauthorizedError()
   }
 
   return token

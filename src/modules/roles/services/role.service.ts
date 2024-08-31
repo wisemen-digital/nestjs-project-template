@@ -4,7 +4,6 @@ import { RoleRepository } from '../repositories/role.repository.js'
 import type { Role } from '../entities/role.entity.js'
 import type { CreateRoleDto } from '../dtos/create-role.dto.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
 import type { UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
 import { transaction } from '../../typeorm/utils/transaction.js'
 import { CacheService } from '../../cache/cache.service.js'
@@ -12,6 +11,9 @@ import { PermissionTransformer } from '../../permissions/transformers/permission
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
 import type { UpdateRoleTransformedType } from '../types/update-role-transformed.type.js'
 import { TypesenseCollectionService } from '../../typesense/services/typesense-collection.service.js'
+import { NotFoundError } from '../../../utils/exceptions/generic/not-found.error.js'
+import { RoleNameAlreadyInUseError } from '../types/role-name-already-in-use.error.js'
+import { RoleNotEditableError } from '../types/role-not-editable.error.js'
 
 @Injectable()
 export class RoleService {
@@ -36,13 +38,15 @@ export class RoleService {
   async create (dto: CreateRoleDto): Promise<Role> {
     let role = await this.findByName(dto.name)
 
-    if (role != null) throw new KnownError('already_exists').setDesc('Role already exists')
+    if (role != null) {
+      throw new RoleNameAlreadyInUseError(dto.name)
+    }
 
     await this.roleRepository.insert(dto)
 
     role = await this.findByName(dto.name)
 
-    if (role == null) throw new KnownError('not_found')
+    if (role == null) throw new NotFoundError('Role not found')
 
     return role
   }
@@ -50,7 +54,9 @@ export class RoleService {
   async update (uuid: string, dto: CreateRoleDto): Promise<Role> {
     const exists = await this.findByName(dto.name)
 
-    if (exists != null) throw new KnownError('already_exists').setDesc('Role already exists')
+    if (exists != null) {
+      throw new RoleNameAlreadyInUseError(dto.name)
+    }
 
     await this.roleRepository.update(uuid, dto)
 
@@ -81,7 +87,7 @@ export class RoleService {
     const role = await this.findOne(uuid)
 
     if (role.name === 'admin' || role.name === 'readonly') {
-      throw new KnownError('not_editable').setDesc('Cannot delete this role')
+      throw new RoleNotEditableError()
     }
 
     const readOnlyRole = await this.roleRepository.findOneOrFail({
