@@ -59,9 +59,6 @@ dependencies:
   '@nestjs/websockets':
     specifier: ^10.4.1
     version: 10.4.1(@nestjs/common@10.4.1)(@nestjs/core@10.4.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
-  '@ngneat/falso':
-    specifier: ^7.1.0
-    version: 7.2.0
   '@sentry/node':
     specifier: ^7.91.0
     version: 7.91.0
@@ -1546,13 +1543,6 @@ packages:
       reflect-metadata: 0.2.2
       rxjs: 7.8.1
       tslib: 2.6.3
-
-  /@ngneat/falso@7.2.0:
-    resolution: {integrity: sha512-283EXBFd05kCbGuGSXgmvhCsQYEYzvD/eJaE7lxd05qRB0tgREvZX7TRlJ1KSp8nHxoK6Ws029G1Y30mt4IVAA==}
-    dependencies:
-      seedrandom: 3.0.5
-      uuid: 8.3.2
-    dev: false
 
   /@node-oauth/formats@1.0.0:
     resolution: {integrity: sha512-DwSbLtdC8zC5B5gTJkFzJj5s9vr9SGzOgQvV9nH7tUVuMSScg0EswAczhjIapOmH3Y8AyP7C4Jv7b8+QJObWZA==}
@@ -6146,10 +6136,6 @@ packages:
       ajv: 6.12.6
       ajv-keywords: 3.5.2(ajv@6.12.6)
     dev: true
-
-  /seedrandom@3.0.5:
-    resolution: {integrity: sha512-8OwmbklUNzwezjGInmZ+2clQmExQPvomqjL7LFqOYqtmuxRgQYqOD3mHaU+MvZn5FLUeVxVfQjwLZW/n/JFuqg==}
-    dev: false
 
   /semver@7.5.4:
     resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
