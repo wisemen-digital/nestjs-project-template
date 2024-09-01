@@ -4,7 +4,7 @@ import { ModuleRef } from '@nestjs/core'
 import { PgBossService } from '../../pgboss/services/pgboss.service.js'
 import { QueueName } from '../../pgboss/types/queue-name.enum.js'
 import { JobFactory } from '../../pgboss/factories/job-factory.js'
-import { type JobSerialization } from '../../pgboss/types/job-serialization.type.js'
+import type { JobSerialization } from '../../pgboss/types/job-serialization.type.js'
 
 @Injectable()
 export class WorkerService implements OnModuleInit, OnModuleDestroy {
@@ -31,6 +31,7 @@ export class WorkerService implements OnModuleInit, OnModuleDestroy {
     console.log('Job received:', job.data)
 
     const jobInstance = JobFactory.make(job.data)
+
     await jobInstance.execute(this.moduleRef)
   }
 }

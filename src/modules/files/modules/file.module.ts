@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
-import { UserModule } from '../../users/modules/user.module.js'
+import { UserModule } from '../../users/user.module.js'
 import { S3Service } from '../services/s3.service.js'
 import { FileRepository } from '../repositories/file.repository.js'
 import { FileController } from '../controllers/file.controller.js'

@@ -13,10 +13,11 @@ export class TypesenseHealthIndicator extends HealthIndicator {
       await this.typesenseClient.ping()
 
       return this.getStatus(key, true)
-    } catch (error) {
+    } catch {
       const result = this.getStatus(key, false, {
         message: 'Typesense is not ready'
       })
+
       throw new HealthCheckError('TypesenseCheck failed', result)
     }
   }

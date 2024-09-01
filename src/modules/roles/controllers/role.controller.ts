@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Post } from '@nestjs/common'
 import { ApiOAuth2, ApiResponse, ApiTags } from '@nestjs/swagger'
 import { RoleTransformer, RoleTransformerType } from '../transformers/role.transformer.js'
 import { CreateRoleDto } from '../dtos/create-role.dto.js'
@@ -7,6 +7,7 @@ import { RoleService } from '../services/role.service.js'
 import { UpdateRolesBulkDto } from '../dtos/update-roles-bulk.dto.js'
 import { Permissions } from '../../permissions/permissions.decorator.js'
 import { Permission } from '../../permissions/permission.enum.js'
+import { UuidParam } from '../../../utils/nest/decorators/uuid-param.js'
 
 @ApiTags('Roles')
 @Controller('roles')
@@ -67,7 +68,7 @@ export class RoleController {
   })
   @Permissions(Permission.ROLE_READ)
   async getRole (
-    @Param('role', ParseUUIDPipe) uuid: string
+    @UuidParam('role') uuid: string
   ): Promise<RoleTransformerType> {
     const role = await this.roleService.findOne(uuid)
 
@@ -83,7 +84,7 @@ export class RoleController {
   @Permissions(Permission.ROLE_UPDATE)
   async updateRole (
     @Body() updateRoleDto: CreateRoleDto,
-    @Param('role', ParseUUIDPipe) uuid: string
+    @UuidParam('role') uuid: string
   ): Promise<RoleTransformerType> {
     const role = await this.roleService.update(uuid, updateRoleDto)
 
@@ -97,7 +98,7 @@ export class RoleController {
   })
   @Permissions(Permission.ROLE_DELETE)
   async deleteRole (
-    @Param('role', ParseUUIDPipe) uuid: string
+    @UuidParam('role') uuid: string
   ): Promise<void> {
     await this.roleService.delete(uuid)
   }
@@ -110,7 +111,7 @@ export class RoleController {
   })
   @Permissions(Permission.ROLE_READ)
   async getRoleCount (
-    @Param('role', ParseUUIDPipe) uuid: string
+    @UuidParam('role') uuid: string
   ): Promise<RoleCount> {
     const count = await this.roleService.count(uuid)
 

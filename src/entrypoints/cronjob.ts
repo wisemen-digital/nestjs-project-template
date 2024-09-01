@@ -1,9 +1,10 @@
 import yargs from 'yargs'
-import { initSentry } from '../helpers/sentry.js'
+import { initSentry } from '../utils/sentry/sentry.js'
 import { CronjobFactory, CronJobType } from './cronjobs/factories/cronjob.factory.js'
 
 async function bootstrap (): Promise<void> {
   initSentry()
+
   const args = await yargs(process.argv)
     .option('job', {
       alias: 'j',
@@ -16,6 +17,7 @@ async function bootstrap (): Promise<void> {
     .argv
 
   const jobName = args.job
+
   if (!Object.values(CronJobType).includes(jobName as CronJobType)) {
     throw new Error(`Job ${jobName} not found`)
   }

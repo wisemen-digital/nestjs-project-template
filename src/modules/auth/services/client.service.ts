@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
-import { type Client } from '../entities/client.entity.js'
-import { type User } from '../../users/entities/user.entity.js'
+import type { Client } from '../entities/client.entity.js'
+import type { User } from '../../users/entities/user.entity.js'
 import { ClientRepository } from '../repositories/client.repository.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 
@@ -8,7 +8,7 @@ import { UserRepository } from '../../users/repositories/user.repository.js'
 export enum Scope {
   ALL = '*',
   READ = 'read',
-  WRITE = 'write',
+  WRITE = 'write'
 }
 
 export const scopes = Object.values(Scope)
@@ -57,7 +57,7 @@ export class ClientService {
       client.grants = ['password', 'refresh_token', 'ad']
 
       return client
-    } catch (e) {
+    } catch (_e) {
       return false
     }
   }

@@ -13,10 +13,11 @@ export class RedisHealthIndicator extends HealthIndicator {
       await this.redisClient.ping()
 
       return this.getStatus(key, true)
-    } catch (error) {
+    } catch {
       const result = this.getStatus(key, false, {
         message: 'Redis is not ready'
       })
+
       throw new HealthCheckError('RedisCheck failed', result)
     }
   }

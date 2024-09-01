@@ -35,7 +35,7 @@ export class StatusController {
   @HealthCheck()
   async liveness (): Promise<HealthCheckResult> {
     return await this.health.check([
-      async () => this.appStateService.isHealthy('api')
+      () => this.appStateService.isHealthy('api')
     ])
   }
 

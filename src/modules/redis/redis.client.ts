@@ -22,7 +22,9 @@ export class RedisClient implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy (): Promise<void> {
-    await this.client.quit()
+    if (this.client !== undefined) {
+      await this.client.quit()
+    }
   }
 
   async getCachedValue (key: string): Promise<string | null> {

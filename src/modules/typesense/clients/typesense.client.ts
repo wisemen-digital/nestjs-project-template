@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import Typesense from 'typesense'
-import { type HealthResponse } from 'typesense/lib/Typesense/Health.js'
+import type { HealthResponse } from 'typesense/lib/Typesense/Health.js'
 
 @Injectable()
 export class TypesenseClient {
@@ -12,8 +12,8 @@ export class TypesenseClient {
 
   private initialize (): void {
     if (
-      process.env.TYPESENSE_HOST == null ||
-      process.env.TYPESENSE_KEY == null
+      process.env.TYPESENSE_HOST == null
+      || process.env.TYPESENSE_KEY == null
     ) {
       return
     }

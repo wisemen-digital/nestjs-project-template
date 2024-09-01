@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import type PgBoss from 'pg-boss'
-import { type EntityManager } from 'typeorm'
-import { type PgBossJob } from '../jobs/pgboss.job.js'
+import type { EntityManager } from 'typeorm'
+import type { PgBossJob } from '../jobs/pgboss.job.js'
 import { PgBossClientService } from './pgboss-client.service.js'
 
 @Injectable()
@@ -17,7 +17,7 @@ export class PgBossService {
     const options: PgBoss.ConnectionOptions = {
       db: {
         async executeSql (text, values) {
-          const result = await manager.query(text, values)
+          const result = await manager.query<object[]>(text, values)
 
           return {
             rows: result,

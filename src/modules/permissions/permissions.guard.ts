@@ -1,7 +1,8 @@
 import { Injectable, type CanActivate, type ExecutionContext } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { CacheService } from '../cache/cache.service.js'
-import { type Permission } from './permission.enum.js'
+import { getAuthOrFail } from '../auth/middleware/auth.middleware.js'
+import type { Permission } from './permission.enum.js'
 import { PERMISSIONS_KEY } from './permissions.decorator.js'
 
 @Injectable()
@@ -21,12 +22,8 @@ export class PermissionsGuard implements CanActivate {
       return true
     }
 
-    const { auth } = context.switchToHttp().getRequest()
+    const userUuid = getAuthOrFail().uid
 
-    if (auth.user != null) {
-      return await this.cache.hasPermissions(auth.user.uuid, requiredPermissions)
-    }
-
-    return false
+    return await this.cache.hasPermissions(userUuid, requiredPermissions)
   }
 }

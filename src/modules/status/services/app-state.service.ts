@@ -25,10 +25,10 @@ OnModuleInit, OnModuleDestroy, OnApplicationBootstrap {
       return this.getStatus(key, true)
     }
 
-    const result = this.getStatus('api', false, {
-      message: 'Api is not ready is unhealthy'
+    const result: HealthIndicatorResult = this.getStatus('api', false, {
+      message: 'Api is not ready'
     })
 
-    throw new HealthCheckError('Api check failed', result)
+    throw new HealthCheckError('Api is not ready', result)
   }
 }

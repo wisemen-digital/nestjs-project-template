@@ -1,18 +1,18 @@
 import { after, before, describe, it, mock } from 'node:test'
-import { type TestingModule } from '@nestjs/testing'
-import { type INestApplication } from '@nestjs/common'
+import type { TestingModule } from '@nestjs/testing'
 import { expect } from 'expect'
+import { NestExpressApplication } from '@nestjs/platform-express'
 import { ImportTypesenseJob } from '../jobs/import-typesense.job.js'
-import { globalTestSetup } from '../../../../test/setup/setup.js'
+import { setupTest } from '../../../utils/test-setup/setup.js'
 import { TypesenseInitializationService } from '../services/typesense-initialization.service.js'
 
 describe('Test import typesense job', () => {
-  let app: INestApplication
+  let app: NestExpressApplication
   let job: ImportTypesenseJob
   let moduleRef: TestingModule
 
   before(async () => {
-    ({ app, moduleRef } = await globalTestSetup())
+    ({ app, moduleRef } = await setupTest())
   })
 
   after(async () => {
