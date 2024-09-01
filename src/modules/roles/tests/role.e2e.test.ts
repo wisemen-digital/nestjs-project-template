@@ -9,9 +9,7 @@ import { UserRepository } from '../../users/repositories/user.repository.js'
 import { Permission } from '../../permissions/permission.enum.js'
 import { UserSeeder } from '../../users/tests/user.seeder.js'
 import { UserEntityBuilder } from '../../users/tests/user-entity.builder.js'
-import { TokenSeeder } from '../../auth/tests/seeders/token.seeder.js'
 import { setupTest } from '../../../utils/test-setup/setup.js'
-import { ClientSeeder } from '../../auth/tests/seeders/client.seeder.js'
 import { TestContext } from '../../../../test/utils/test-context.js'
 import type { TestUser } from '../../users/tests/setup-user.type.js'
 import { RoleSeeder } from './seeders/role.seeder.js'
@@ -31,9 +29,7 @@ describe('Roles', () => {
   let readonlyUser: TestUser
 
   before(async () => {
-    ({ app, dataSource } = await setupTest())
-
-    context = new TestContext(dataSource.manager)
+    ({ app, dataSource, context } = await setupTest())
 
     adminRole = await context.getAdminRole()
     readonlyRole = await context.getReadonlyRole()
@@ -82,8 +78,8 @@ describe('Roles', () => {
           .withRole(role)
           .build()
       )
-      const client = await new ClientSeeder(dataSource.manager).getTestClient()
-      const token = await new TokenSeeder(dataSource.manager).seedOne(user, client)
+
+      const token = context.getToken(user)
 
       const response = await request(app.getHttpServer())
         .get('/roles')

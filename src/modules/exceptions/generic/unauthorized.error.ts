@@ -5,7 +5,7 @@ import { ApiError } from '../../../modules/exceptions/api-errors/api-error.js'
 
 export class UnauthorizedError extends ApiError {
   @ApiErrorCode('unauthorized')
-  code: 'unauthorized'
+  readonly code = 'unauthorized'
 
   meta: never
 

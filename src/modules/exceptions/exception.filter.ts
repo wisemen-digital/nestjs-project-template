@@ -1,4 +1,4 @@
-import { type ExceptionFilter, Catch, type ArgumentsHost, HttpStatus } from '@nestjs/common'
+import { type ExceptionFilter, Catch, type ArgumentsHost, HttpStatus, HttpException } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
 import { captureException } from '@sentry/node'
 import { plainToInstance } from 'class-transformer'
@@ -36,6 +36,10 @@ export class CustomerExceptionFilter implements ExceptionFilter {
       return this.mapApiErrorToJsonApiError(exception)
     }
 
+    if (exception instanceof HttpException) {
+      return this.mapHttpExceptionToJsonApiError(exception)
+    }
+
     if (exception instanceof EntityNotFoundError) {
       return this.mapApiErrorToJsonApiError(
         new NotFoundError()
@@ -53,6 +57,17 @@ export class CustomerExceptionFilter implements ExceptionFilter {
         detail: exception.detail,
         status: exception.status,
         meta: exception.meta
+      }]
+    })
+  }
+
+  private mapHttpExceptionToJsonApiError (exception: HttpException): JsonApiError {
+    return plainToInstance(JsonApiError, {
+      status: exception.getStatus(),
+      errors: [{
+        status: exception.getStatus().toString(),
+        code: exception.name,
+        detail: exception.message
       }]
     })
   }

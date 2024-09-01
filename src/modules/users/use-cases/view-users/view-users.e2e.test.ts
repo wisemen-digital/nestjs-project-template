@@ -1,8 +1,8 @@
 import { after, before, describe, it } from 'node:test'
 import request from 'supertest'
 import { expect } from 'expect'
-import type { DataSource } from 'typeorm'
 import { NestExpressApplication } from '@nestjs/platform-express'
+import { TestingModule } from '@nestjs/testing'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import type { TestUser } from '../../tests/setup-user.type.js'
@@ -16,19 +16,13 @@ import {
 
 describe('View user e2e test', () => {
   let app: NestExpressApplication
-  let dataSource: DataSource
+  let moduleRef: TestingModule
+  let context: TestContext
   let adminUser: TestUser
   let readonlyUser: TestUser
 
   before(async () => {
-    const setup = await setupTest()
-
-    dataSource = setup.dataSource
-    app = setup.app
-
-    const moduleRef = setup.moduleRef
-
-    const context = new TestContext(dataSource.manager)
+    ({ app, context, moduleRef } = await setupTest())
 
     readonlyUser = await context.getReadonlyUser()
     adminUser = await context.getAdminUser()

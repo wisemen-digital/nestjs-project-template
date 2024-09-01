@@ -2,7 +2,6 @@ import { after, before, describe, it } from 'node:test'
 import { randomUUID } from 'crypto'
 import request from 'supertest'
 import { expect } from 'expect'
-import type { DataSource } from 'typeorm'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
@@ -12,14 +11,12 @@ import { ChangeUserNameCommandBuilder } from './change-user-name-command.builder
 
 describe('Change password e2e test', () => {
   let app: NestExpressApplication
-  let dataSource: DataSource
   let adminUser: TestUser
   let authorizedUser: TestUser
+  let context: TestContext
 
   before(async () => {
-    ({ app, dataSource } = await setupTest())
-
-    const context = new TestContext(dataSource.manager)
+    ({ app, context } = await setupTest())
 
     adminUser = await context.getAdminUser()
     authorizedUser = await context.getUser([Permission.USER_UPDATE])

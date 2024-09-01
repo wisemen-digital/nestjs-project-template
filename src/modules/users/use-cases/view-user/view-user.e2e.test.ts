@@ -2,7 +2,6 @@ import { after, before, describe, it } from 'node:test'
 import { randomUUID } from 'crypto'
 import request from 'supertest'
 import { expect } from 'expect'
-import type { DataSource } from 'typeorm'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
@@ -11,14 +10,12 @@ import { setupTest } from '../../../../utils/test-setup/setup.js'
 
 describe('View user e2e test', () => {
   let app: NestExpressApplication
-  let dataSource: DataSource
   let adminUser: TestUser
   let authorizedUser: TestUser
+  let context: TestContext
 
   before(async () => {
-    ({ app, dataSource } = await setupTest())
-
-    const context = new TestContext(dataSource.manager)
+    ({ app, context } = await setupTest())
 
     const [admin, user] = await Promise.all([
       context.getAdminUser(),

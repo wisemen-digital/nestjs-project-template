@@ -2,7 +2,6 @@ import { after, before, describe, it } from 'node:test'
 import { randomUUID } from 'crypto'
 import request from 'supertest'
 import { expect } from 'expect'
-import type { DataSource } from 'typeorm'
 import { NestExpressApplication } from '@nestjs/platform-express'
 import { setupTest } from '../../../../utils/test-setup/setup.js'
 import type { TestUser } from '../../tests/setup-user.type.js'
@@ -10,14 +9,12 @@ import { TestContext } from '../../../../../test/utils/test-context.js'
 
 describe('Register user e2e test', () => {
   let app: NestExpressApplication
-  let dataSource: DataSource
   let adminUser: TestUser
   let readonlyUser: TestUser
   let context: TestContext
 
   before(async () => {
-    ({ app, dataSource } = await setupTest())
-    context = new TestContext(dataSource.manager)
+    ({ app, context } = await setupTest())
 
     adminUser = await context.getAdminUser()
     readonlyUser = await context.getReadonlyUser()

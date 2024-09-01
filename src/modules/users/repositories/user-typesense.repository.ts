@@ -4,16 +4,13 @@ import { TypesenseQueryService } from '../../typesense/services/typesense-query.
 import { TypesenseSearchParamsBuilder } from '../../typesense/builder/search-params.builder.js'
 import { UserSearchSchema, UserTypesenseCollection } from '../../typesense/collections/user.collections.js'
 import { TypesenseCollectionName } from '../../typesense/enums/typesense-collection-index.enum.js'
-import {
-  TypesenseCollectionService
-} from '../../typesense/services/typesense-collection.service.js'
+
 import type { ViewUsersQuery } from '../use-cases/view-users/view-users.query.js'
 
 @Injectable()
 export class UserTypesenseRepository {
   constructor (
-    private readonly typesenseService: TypesenseQueryService,
-    private readonly typesenseCollectionService: TypesenseCollectionService
+    private readonly typesenseService: TypesenseQueryService
   ) {}
 
   async findPaginated (

@@ -1,14 +1,8 @@
-import { randomUUID } from 'crypto'
 import { Injectable } from '@nestjs/common'
 import type { User } from '../../entities/user.entity.js'
 import { UserRepository } from '../../repositories/user.repository.js'
-import { createHash } from '../../../../utils/helpers/hash.helper.js'
-import {
-  TypesenseCollectionName
-} from '../../../typesense/enums/typesense-collection-index.enum.js'
-import {
-  TypesenseCollectionService
-} from '../../../typesense/services/typesense-collection.service.js'
+
+import { UserPersistService } from '../../services/user-persist.service.js'
 import type { RegisterUserCommand } from './register-user.command.js'
 import { EmailAlreadyInUseError } from './email-already-in-use.error.js'
 
@@ -16,7 +10,7 @@ import { EmailAlreadyInUseError } from './email-already-in-use.error.js'
 export class RegisterUserUseCase {
   constructor (
     private readonly userRepository: UserRepository,
-    private readonly typesenseService: TypesenseCollectionService
+    private readonly userPersistService: UserPersistService
   ) {}
 
   async register (dto: RegisterUserCommand): Promise<User> {
@@ -26,9 +20,11 @@ export class RegisterUserUseCase {
       throw new EmailAlreadyInUseError(dto.email)
     }
 
-    const user = await this.mapDtoToUser(dto)
-
-    await this.persistUser(user)
+    const user = await this.userPersistService.create({
+      email: dto.email,
+      firstName: dto.firstName,
+      lastName: dto.lastName
+    })
 
     return user
   }
@@ -39,20 +35,5 @@ export class RegisterUserUseCase {
 
   private async emailAlreadyUsed (email: string): Promise<boolean> {
     return await this.userRepository.exist({ where: { email } })
-  }
-
-  private async mapDtoToUser (dto: RegisterUserCommand): Promise<User> {
-    return this.userRepository.create({
-      uuid: randomUUID(),
-      email: dto.email,
-      firstName: dto.firstName,
-      lastName: dto.lastName,
-      password: await createHash(dto.password)
-    })
-  }
-
-  private async persistUser (user: User): Promise<void> {
-    await this.typesenseService.importManuallyToTypesense(TypesenseCollectionName.USER, [user])
-    await this.userRepository.insert(user)
   }
 }

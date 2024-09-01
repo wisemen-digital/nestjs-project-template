@@ -9,12 +9,15 @@ import { toHaveStatus } from '../../../test/expect/expectStatus.js'
 import { isEnumValue } from '../../../test/expect/expectEnum.js'
 import { S3Service } from '../../modules/files/services/s3.service.js'
 import { toHaveApiError } from '../../../test/expect/expect-api-error.js'
+import { TestContext } from '../../../test/utils/test-context.js'
+import { AuthMiddleware } from '../../modules/auth/middleware/auth.middleware.js'
 import { compileTestModule } from './compile-test-module.js'
 
 export interface TestSetup {
   app: NestExpressApplication
   moduleRef: TestingModule
   dataSource: DataSource
+  context: TestContext
 }
 
 export async function setupTest (): Promise<TestSetup> {
@@ -28,10 +31,13 @@ export async function setupTest (): Promise<TestSetup> {
     setupTestDataSource(moduleRef)
   ])
 
+  const context = new TestContext(dataSource.manager)
+
   mockS3()
+  mockAuth(context)
   extendExpect()
 
-  return { app, moduleRef, dataSource }
+  return { app, moduleRef, dataSource, context }
 }
 
 async function setupTestDataSource (moduleRef: TestingModule): Promise<DataSource> {
@@ -64,6 +70,14 @@ function mockS3 (): void {
   })
   mock.method(S3Service.prototype, 'list', async () => {
     await Promise.resolve([])
+  })
+}
+
+function mockAuth (context: TestContext): void {
+  mock.method(AuthMiddleware.prototype, 'verify', async (token: string) => {
+    const user = context.resolveUser(token)
+
+    return Promise.resolve({ sub: user.uuid })
   })
 }
 

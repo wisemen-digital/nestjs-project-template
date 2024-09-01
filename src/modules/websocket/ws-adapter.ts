@@ -3,8 +3,7 @@ import type { IncomingMessage } from 'http'
 import { Injectable, UnauthorizedException, type INestApplicationContext } from '@nestjs/common'
 import { WsAdapter } from '@nestjs/platform-ws'
 import { WebSocketServer } from 'ws'
-import { TokenService } from '../auth/services/token.service.js'
-import { UserService } from '../users/services/user.service.js'
+import { AuthMiddleware } from '../auth/middleware/auth.middleware.js'
 
 declare module 'http' {
   interface IncomingMessage {
@@ -14,14 +13,12 @@ declare module 'http' {
 
 @Injectable()
 export class AuthenticatedWsAdapter extends WsAdapter {
-  private readonly tokenService: TokenService
-  private readonly userService: UserService
+  private readonly authMiddleware: AuthMiddleware
 
   constructor (appOrHttpServer: INestApplicationContext) {
     super(appOrHttpServer)
 
-    this.tokenService = appOrHttpServer.get(TokenService)
-    this.userService = appOrHttpServer.get(UserService)
+    this.authMiddleware = appOrHttpServer.get(AuthMiddleware)
   }
 
   public override create (
@@ -67,18 +64,8 @@ export class AuthenticatedWsAdapter extends WsAdapter {
       throw new UnauthorizedException()
     }
 
-    const isAuthorized = await this.tokenService.getAccessToken(token)
+    const payload = await this.authMiddleware.verify(token)
 
-    if (isAuthorized === false) {
-      throw new UnauthorizedException()
-    }
-
-    const user = await this.userService.findOne(isAuthorized.uid)
-
-    if (user == null) {
-      throw new UnauthorizedException()
-    }
-
-    return isAuthorized.uid
+    return payload.uuid
   }
 }

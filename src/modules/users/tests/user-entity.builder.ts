@@ -16,7 +16,6 @@ export class UserEntityBuilder {
     this.user.createdAt = new Date()
     this.user.updatedAt = new Date()
     this.user.email = 'test@mail.com'
-    this.user.password = 'Password123'
     this.user.firstName = 'John'
     this.user.lastName = 'Doe'
 
@@ -31,12 +30,6 @@ export class UserEntityBuilder {
 
   withEmail (email: string): this {
     this.user.email = email
-
-    return this
-  }
-
-  withPassword (password: string): this {
-    this.user.password = password
 
     return this
   }

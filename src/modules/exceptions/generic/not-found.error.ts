@@ -3,7 +3,7 @@ import { NotFoundApiError } from '../../../modules/exceptions/api-errors/not-fou
 
 export class NotFoundError extends NotFoundApiError {
   @ApiErrorCode('not_found')
-  code: 'not_found'
+  code = 'not_found'
 
   meta: never
 
