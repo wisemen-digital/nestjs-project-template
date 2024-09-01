@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import axios, { type AxiosInstance } from 'axios'
-import { type SendMailOptions, type MailClient } from './mail.client.js'
+import type { SendMailOptions, MailClient } from './mail.client.js'
 
 @Injectable()
 export class ScalewayMailClient implements MailClient {

@@ -1,4 +1,4 @@
-import { type ApiResponseOptions } from '@nestjs/swagger'
+import type { ApiResponseOptions } from '@nestjs/swagger'
 import { CreateFileResponse } from '../transformers/file-created.transformer.js'
 
 export const createFileApiResponse: ApiResponseOptions = {

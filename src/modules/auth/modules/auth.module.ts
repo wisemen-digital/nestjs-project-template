@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { JwtModule } from '@nestjs/jwt'
-import { UserModule } from '../../users/modules/user.module.js'
+import { UserModule } from '../../users/user.module.js'
 import { User } from '../../users/entities/user.entity.js'
 import { AuthController } from '../controllers/auth.controller.js'
 import { Client } from '../entities/client.entity.js'
@@ -16,7 +16,8 @@ import { RefreshTokenRepository } from '../repositories/refresh-token.repository
 import { PkceRepository } from '../repositories/pkce.repository.js'
 import { ClientRepository } from '../repositories/client.repository.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
-import { getPrivateKey, getPublicKey } from '../../../utils/auth/keys.js'
+import { getPrivateKey, getPublicKey } from '../keys/keys.js'
+import { AuthMiddleware } from '../middleware/auth.middleware.js'
 
 @Module({
   imports: [
@@ -41,7 +42,8 @@ import { getPrivateKey, getPublicKey } from '../../../utils/auth/keys.js'
     UserRepository,
     RefreshTokenRepository,
     ClientRepository,
-    PkceRepository
+    PkceRepository,
+    AuthMiddleware
   ],
   exports: [
     JwtModule,

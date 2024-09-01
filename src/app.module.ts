@@ -1,11 +1,11 @@
-import { type DynamicModule, Module } from '@nestjs/common'
+import { type DynamicModule, type MiddlewareConsumer, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import { AuthGuard } from './modules/auth/guards/auth.guard.js'
 import { AuthModule } from './modules/auth/modules/auth.module.js'
 import { PermissionsGuard } from './modules/permissions/permissions.guard.js'
-import { UserModule } from './modules/users/modules/user.module.js'
+import { UserModule } from './modules/users/user.module.js'
 import { TypesenseModule } from './modules/typesense/modules/typesense.module.js'
 import { MailModule } from './modules/mail/modules/mail.module.js'
 import { RoleModule } from './modules/roles/role.module.js'
@@ -19,8 +19,10 @@ import { envValidationSchema } from './config/env/env.validation.js'
 import { NatsModule } from './modules/nats/nats.module.js'
 import { CacheModule } from './modules/cache/cache.module.js'
 import { RedisModule } from './modules/redis/redis.module.js'
+import { AuthMiddleware } from './modules/auth/middleware/auth.middleware.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
+import { LocalizationModule } from './modules/localization/modules/localization.module.js'
 
 @Module({})
 export class AppModule {
@@ -64,6 +66,7 @@ export class AppModule {
         FileModule,
         StatusModule,
         NatsModule.forRoot(),
+        LocalizationModule,
         CacheModule,
 
         ...modules
@@ -84,5 +87,12 @@ export class AppModule {
         }
       ]
     }
+  }
+
+  configure (consumer: MiddlewareConsumer): void {
+    consumer
+      .apply(AuthMiddleware)
+      .exclude('auth/token')
+      .forRoutes('*')
   }
 }

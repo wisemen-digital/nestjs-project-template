@@ -2,7 +2,7 @@ import { PrimaryColumn, Column, Entity } from 'typeorm'
 import { JobState } from '../types/job-state.enum.js'
 
 @Entity({ name: 'job', schema: 'pgboss', synchronize: false })
-export abstract class Job <T> {
+export abstract class Job<T> {
   @PrimaryColumn('uuid', { name: 'id' })
   uuid: string
 

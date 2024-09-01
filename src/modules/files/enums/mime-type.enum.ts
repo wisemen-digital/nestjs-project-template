@@ -17,5 +17,5 @@ export enum MimeType {
   BMP = 'image/bmp',
   HEIC = 'image/heic',
   WEBP = 'image/webp',
-  GIF = 'image/gif',
+  GIF = 'image/gif'
 }

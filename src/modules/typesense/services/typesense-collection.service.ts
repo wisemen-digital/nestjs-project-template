@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { type TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
+import type { TypesenseCollectionName } from '../enums/typesense-collection-index.enum.js'
 import { TypesenseCollectorFactory } from './collectors/typesense-collector.factory.js'
 import { TypesenseDocumentService } from './typesense-document.service.js'
 
@@ -29,6 +29,7 @@ export class TypesenseCollectionService {
     const collector = this.collectorFactory.create(collection)
 
     const entities = await collector.fetch(uuids)
+
     await this.typesenseDocumentService.addDocuments(
       collection,
       collector.transform(entities)

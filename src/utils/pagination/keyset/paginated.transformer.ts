@@ -1,5 +1,5 @@
 import { Transformer } from '@appwise/transformer'
-import { type KeysetPaginatedResult } from './paginated-result.interface.js'
+import type { KeysetPaginatedResult } from './paginated-result.interface.js'
 
 export abstract class KeysetPaginatedTransformer<From, To> extends Transformer<From, To> {
   paginated (
@@ -21,6 +21,7 @@ export abstract class KeysetPaginatedTransformer<From, To> extends Transformer<F
     if (!(timestamp instanceof Date)) {
       throw Error(`Key:"${timestampKey.toString()}" is not a date in infinite scroll items.`)
     }
+
     return timestamp as Date
   }
 }

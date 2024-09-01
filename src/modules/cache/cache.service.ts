@@ -47,7 +47,7 @@ export class CacheService {
     const result = await this.client.getCachedValue(`${userRoleCache}.${userUuid}`)
 
     if (result != null) {
-      return JSON.parse(String(result))
+      return JSON.parse(String(result)) as string
     }
 
     const user = await this.userRepository.findOneBy({ uuid: userUuid })
@@ -64,9 +64,8 @@ export class CacheService {
 
   async getUserPermissions (userUuid: string): Promise<Permission[]> {
     const roleUuid = await this.getUserRole(userUuid)
-    const permissions = await this.getRolePermissions(roleUuid)
 
-    return permissions
+    return await this.getRolePermissions(roleUuid)
   }
 
   async hasAdminPermission (userUuid: string): Promise<boolean> {
@@ -81,11 +80,13 @@ export class CacheService {
     }
 
     const hasAdminPermission = await this.hasAdminPermission(userUuid)
+
     if (hasAdminPermission) {
       return true
     }
 
     const userPermissions = await this.getUserPermissions(userUuid)
+
     return permissions.some(permission => userPermissions.includes(permission))
   }
 }

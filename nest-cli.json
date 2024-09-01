@@ -13,6 +13,11 @@
       {
         "include": "modules/websocket/documentation.md",
         "outDir": "dist/src"
+      },
+      {
+        "include": "**/*.json",
+        "outDir": "dist/src",
+        "watchAssets": true
       }
     ],
     "deleteOutDir": true

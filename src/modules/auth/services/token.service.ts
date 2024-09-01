@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { v4 as uuidv4 } from 'uuid'
 import { JwtService } from '@nestjs/jwt'
-import { type RefreshTokenInterface, type RefreshTokenPayload } from '../entities/refreshtoken.entity.js'
-import { type AccessTokenInterface, type AccessTokenPayload } from '../entities/accesstoken.entity.js'
-import { type Client } from '../entities/client.entity.js'
-import { type User } from '../../users/entities/user.entity.js'
+import type { RefreshTokenInterface, RefreshTokenPayload } from '../entities/refreshtoken.entity.js'
+import type { AccessTokenInterface, AccessTokenPayload } from '../entities/accesstoken.entity.js'
+import type { Client } from '../entities/client.entity.js'
+import type { User } from '../../users/entities/user.entity.js'
 import { RefreshTokenRepository } from '../repositories/refresh-token.repository.js'
 
 @Injectable()
@@ -29,6 +29,7 @@ export class TokenService {
     return this.parseLifetime(process.env.REFRESH_TOKEN_LIFETIME)
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async getAccessToken (token: string): Promise<AccessTokenInterface | false> {
     try {
       const decoded = this.jwtService.verify<AccessTokenPayload>(token)
@@ -49,11 +50,12 @@ export class TokenService {
         accessToken: token,
         accessTokenExpiresAt: new Date(decoded.exp * 1000)
       }
-    } catch (e) {
+    } catch (_e) {
       return false
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async generateAccessToken (
     client: Client, user: User, scope: string[]
   ): Promise<string> {
@@ -92,11 +94,12 @@ export class TokenService {
         refreshToken: token,
         refreshTokenExpiresAt: new Date(decoded.exp * 1000)
       }
-    } catch (e) {
+    } catch (_e) {
       return false
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/require-await
   async generateRefreshToken (
     client: Client, user: User, scope: string[]
   ): Promise<string> {
