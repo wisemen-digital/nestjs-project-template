@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@appwise/express-dto-router':
-    specifier: ^1.1.5
-    version: 1.1.5
   '@appwise/oauth2-server':
     specifier: ^0.1.7
     version: 0.1.7
@@ -62,9 +59,6 @@ dependencies:
   '@sentry/tracing':
     specifier: ^7.91.0
     version: 7.91.0
-  '@types/mjml':
-    specifier: ^4.7.4
-    version: 4.7.4
   axios:
     specifier: ^1.7.5
     version: 1.7.5
@@ -86,9 +80,6 @@ dependencies:
   ejs:
     specifier: ^3.1.10
     version: 3.1.10
-  isBetween:
-    specifier: link:dayjs/plugin/isBetween
-    version: link:dayjs/plugin/isBetween
   joi:
     specifier: ^17.13.3
     version: 17.13.3
@@ -128,9 +119,6 @@ dependencies:
   uuid:
     specifier: ^10.0.0
     version: 10.0.0
-  validator:
-    specifier: ^13.12.0
-    version: 13.12.0
   ws:
     specifier: ^8.18.0
     version: 8.18.0
@@ -154,9 +142,6 @@ devDependencies:
   '@types/bcryptjs':
     specifier: ^2.4.6
     version: 2.4.6
-  '@types/cache-manager':
-    specifier: ^4.0.6
-    version: 4.0.6
   '@types/ejs':
     specifier: ^3.1.5
     version: 3.1.5
@@ -166,6 +151,9 @@ devDependencies:
   '@types/jsonwebtoken':
     specifier: ^9.0.6
     version: 9.0.6
+  '@types/mjml':
+    specifier: ^4.7.4
+    version: 4.7.4
   '@types/node':
     specifier: ^22.5.1
     version: 22.5.1
@@ -199,9 +187,6 @@ devDependencies:
   supertest:
     specifier: ^7.0.0
     version: 7.0.0
-  tsconfig-paths:
-    specifier: ^4.2.0
-    version: 4.2.0
   typescript:
     specifier: ^5.5.4
     version: 5.5.4
@@ -2199,10 +2184,6 @@ packages:
       '@types/node': 22.5.1
     dev: true
 
-  /@types/cache-manager@4.0.6:
-    resolution: {integrity: sha512-8qL93MF05/xrzFm/LSPtzNEOE1eQF3VwGHAcQEylgp5hDSTe41jtFwbSYAPfyYcVa28y1vYSjIt0c1fLLUiC/Q==}
-    dev: true
-
   /@types/connect@3.4.36:
     resolution: {integrity: sha512-P63Zd/JUGq+PdrM1lv0Wv5SBYeA2+CORvbrXbngriYY0jzLUWfQMQQxOhjONEz/wlHOAxOdY7CY65rgQdTjq2w==}
     dependencies:
@@ -2303,13 +2284,13 @@ packages:
 
   /@types/mjml-core@4.15.0:
     resolution: {integrity: sha512-jSRWTOpwRS/uHIBfGdvLl0a7MaoBZZYHKI+HhsFYChrUOKVJTnjSYsuV6wx0snv6ZaX3TUo5OP/gNsz/uzZz1A==}
-    dev: false
+    dev: true
 
   /@types/mjml@4.7.4:
     resolution: {integrity: sha512-vyi1vzWgMzFMwZY7GSZYX0GU0dmtC8vLHwpgk+NWmwbwRSrlieVyJ9sn5elodwUfklJM7yGl0zQeet1brKTWaQ==}
     dependencies:
       '@types/mjml-core': 4.15.0
-    dev: false
+    dev: true
 
   /@types/node@22.5.1:
     resolution: {integrity: sha512-KkHsxej0j9IW1KKOOAA/XBA0z08UFSrRQHErzEfA3Vgq57eXIMYboIlHJuYIfd+lwCQjtKqUu3UnmKbtUc9yRw==}

@@ -1,9 +1,6 @@
 import { type ExceptionFilter, Catch, type ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common'
 import { HttpAdapterHost } from '@nestjs/core'
-import { CustomError } from '@appwise/express-dto-router'
 import { captureException } from '@sentry/node'
-import { EntityNotFoundError } from 'typeorm'
-import { KnownError } from './errors.js'
 import { ApiError } from './api-errors/api-error.js'
 
 @Catch()
@@ -18,13 +15,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
   }
 
   private getResponse (exception: Error): { status: number, response: unknown } {
-    if (exception instanceof EntityNotFoundError) {
-      exception = new KnownError('not_found')
-    }
-
-    if (exception instanceof CustomError) {
-      return { status: exception.status ?? 400, response: exception.response }
-    } else if (exception instanceof ApiError) {
+    if (exception instanceof ApiError) {
       return {
         status: Number(exception.status),
         response: {

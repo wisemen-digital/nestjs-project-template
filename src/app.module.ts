@@ -1,7 +1,7 @@
 import { type DynamicModule, type MiddlewareConsumer, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
 import { AuthGuard } from './modules/auth/guards/auth.guard.js'
 import { AuthModule } from './modules/auth/modules/auth.module.js'
 import { PermissionsGuard } from './modules/permissions/permissions.guard.js'
@@ -23,6 +23,7 @@ import { AuthMiddleware } from './modules/auth/middleware/auth.middleware.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
 import { LocalizationModule } from './modules/localization/modules/localization.module.js'
+import { HttpExceptionFilter } from './utils/exceptions/http-exception.filter.js'
 
 @Module({})
 export class AppModule {
@@ -84,6 +85,10 @@ export class AppModule {
         {
           provide: APP_INTERCEPTOR,
           useClass: ErrorsInterceptor
+        },
+        {
+          provide: APP_FILTER,
+          useClass: HttpExceptionFilter
         }
       ]
     }
