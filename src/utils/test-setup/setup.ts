@@ -15,7 +15,7 @@ import { compileTestModule } from './compile-test-module.js'
 
 export interface TestSetup {
   app: NestExpressApplication
-  moduleRef: TestingModule
+  testModule: TestingModule
   dataSource: DataSource
   context: TestContext
 }
@@ -25,10 +25,10 @@ export async function setupTest (): Promise<TestSetup> {
     throw new Error('NODE_ENV must be set to test')
   }
 
-  const moduleRef = await compileTestModule()
+  const testModule = await compileTestModule()
   const [app, dataSource] = await Promise.all([
-    setupTestApp(moduleRef),
-    setupTestDataSource(moduleRef)
+    setupTestApp(testModule),
+    setupTestDataSource(testModule)
   ])
 
   const context = new TestContext(dataSource.manager)
@@ -37,11 +37,11 @@ export async function setupTest (): Promise<TestSetup> {
   mockAuth(context)
   extendExpect()
 
-  return { app, moduleRef, dataSource, context }
+  return { app, testModule, dataSource, context }
 }
 
-async function setupTestDataSource (moduleRef: TestingModule): Promise<DataSource> {
-  const dataSource = moduleRef.get(DataSource)
+async function setupTestDataSource (testModule: TestingModule): Promise<DataSource> {
+  const dataSource = testModule.get(DataSource)
 
   const qr = dataSource.createQueryRunner()
 
@@ -59,18 +59,10 @@ async function setupTestDataSource (moduleRef: TestingModule): Promise<DataSourc
 function mockS3 (): void {
   mock.method(S3Service.prototype, 'createTemporaryDownloadUrl', () => 'http://localhost:3000')
   mock.method(S3Service.prototype, 'createTemporaryUploadUrl', () => 'http://localhost:3000')
-  mock.method(S3Service.prototype, 'upload', async () => {
-    await Promise.resolve()
-  })
-  mock.method(S3Service.prototype, 'uploadStream', async () => {
-    await Promise.resolve()
-  })
-  mock.method(S3Service.prototype, 'delete', async () => {
-    await Promise.resolve()
-  })
-  mock.method(S3Service.prototype, 'list', async () => {
-    await Promise.resolve([])
-  })
+  mock.method(S3Service.prototype, 'upload', () => {})
+  mock.method(S3Service.prototype, 'uploadStream', () => {})
+  mock.method(S3Service.prototype, 'delete', () => {})
+  mock.method(S3Service.prototype, 'list', () => [])
 }
 
 function mockAuth (context: TestContext): void {

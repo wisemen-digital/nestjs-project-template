@@ -9,10 +9,10 @@ import { TypesenseInitializationService } from '../services/typesense-initializa
 describe('Test import typesense job', () => {
   let app: NestExpressApplication
   let job: ImportTypesenseJob
-  let moduleRef: TestingModule
+  let testModule: TestingModule
 
   before(async () => {
-    ({ app, moduleRef } = await setupTest())
+    ({ app, testModule } = await setupTest())
   })
 
   after(async () => {
@@ -26,7 +26,7 @@ describe('Test import typesense job', () => {
 
       job = ImportTypesenseJob.create()
 
-      await job.execute(moduleRef)
+      await job.execute(testModule)
 
       expect(spyImport.mock.callCount()).toBe(1)
       expect(spyMigrate.mock.callCount()).toBe(1)

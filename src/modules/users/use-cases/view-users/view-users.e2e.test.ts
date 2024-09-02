@@ -16,18 +16,18 @@ import {
 
 describe('View user e2e test', () => {
   let app: NestExpressApplication
-  let moduleRef: TestingModule
+  let testModule: TestingModule
   let context: TestContext
   let adminUser: TestUser
   let readonlyUser: TestUser
 
   before(async () => {
-    ({ app, context, moduleRef } = await setupTest())
+    ({ app, context, testModule } = await setupTest())
 
     readonlyUser = await context.getReadonlyUser()
     adminUser = await context.getAdminUser()
 
-    const typesenseCollectionService = moduleRef.get(TypesenseCollectionService)
+    const typesenseCollectionService = testModule.get(TypesenseCollectionService)
 
     await typesenseCollectionService.importManuallyToTypesense(
       TypesenseCollectionName.USER,
