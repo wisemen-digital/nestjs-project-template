@@ -26,7 +26,7 @@ describe('View user e2e test', () => {
     dataSource = setup.dataSource
     app = setup.app
 
-    const moduleRef = setup.moduleRef
+    const moduleRef = setup.testModule
 
     const context = new TestContext(dataSource.manager)
 
