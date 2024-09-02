@@ -20,9 +20,7 @@ export class RoleSeeder extends AbstractSeeder<Role> {
   }
 
   private async findRoleByName (name: string): Promise<Role | null> {
-    return await this.repository.findOne({
-      where: { name }
-    })
+    return await this.repository.findOneBy({ name })
   }
 
   private async seedRole (name: string, permissions: Permission[]): Promise<Role> {
