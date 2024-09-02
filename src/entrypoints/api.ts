@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { NestFactory } from '@nestjs/core'
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
-import { ValidationPipe, VersioningType } from '@nestjs/common'
+import { VersioningType } from '@nestjs/common'
 import { AppModule } from '../app.module.js'
 import { initSentry } from '../utils/sentry/sentry.js'
 import { WSModule } from '../modules/websocket/ws.module.js'
@@ -12,13 +12,6 @@ async function bootstrap (): Promise<void> {
     AppModule.forRoot()
   )
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true
-    })
-  )
   app.setGlobalPrefix('api', {
     exclude: []
   })

@@ -3,7 +3,7 @@ import { Injectable, type NestMiddleware } from '@nestjs/common'
 import type { Request, Response, NextFunction } from 'express'
 import type { AccessTokenInterface } from '../entities/accesstoken.entity.js'
 import { AuthService } from '../services/auth.service.js'
-import { UnauthorizedError } from '../../../utils/exceptions/generic/unauthorized.error.js'
+import { UnauthorizedError } from '../../exceptions/generic/unauthorized.error.js'
 
 const authStorage = new AsyncLocalStorage<AccessTokenInterface>()
 

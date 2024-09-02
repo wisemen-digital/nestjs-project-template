@@ -1,11 +1,8 @@
 import { mock } from 'node:test'
 import { DataSource } from 'typeorm'
-import { type INestApplication, ValidationPipe } from '@nestjs/common'
-import { HttpAdapterHost } from '@nestjs/core'
 import type { TestingModule } from '@nestjs/testing'
 import { expect } from 'expect'
 import { NestExpressApplication } from '@nestjs/platform-express'
-import { HttpExceptionFilter } from '../exceptions/http-exception.filter.js'
 import { uuid } from '../../../test/expect/expectUuid.js'
 import { toHaveErrorCode } from '../../../test/expect/expectErrorCode.js'
 import { toHaveStatus } from '../../../test/expect/expectStatus.js'
@@ -65,30 +62,9 @@ function mockS3 (): void {
 async function setupTestApp (moduleRef: TestingModule): Promise<NestExpressApplication> {
   const app = moduleRef.createNestApplication<NestExpressApplication>()
 
-  configureValidationPipeline(app)
-  configureExceptionFilter(app)
   await app.init()
 
   return app
-}
-
-function configureValidationPipeline (app: INestApplication<unknown>): void {
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true,
-      transformOptions: {
-        enableImplicitConversion: true
-      }
-    })
-  )
-}
-
-function configureExceptionFilter (app: INestApplication<unknown>): void {
-  const httpAdapterHost = app.get(HttpAdapterHost)
-
-  app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
 }
 
 function extendExpect (): void {

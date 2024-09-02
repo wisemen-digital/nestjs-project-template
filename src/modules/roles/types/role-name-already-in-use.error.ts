@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { ApiErrorCode } from '../../../utils/exceptions/api-errors/api-error-code.decorator.js'
-import { ApiErrorMeta } from '../../../utils/exceptions/api-errors/api-error-meta.decorator.js'
-import { ConflictApiError } from '../../../utils/exceptions/api-errors/conflict.api-error.js'
+import { ApiErrorCode } from '../../exceptions/api-errors/api-error-code.decorator.js'
+import { ApiErrorMeta } from '../../exceptions/api-errors/api-error-meta.decorator.js'
+import { ConflictApiError } from '../../exceptions/api-errors/conflict.api-error.js'
 
 class RoleNameAlreadyInUseErrorMeta {
   @ApiProperty({

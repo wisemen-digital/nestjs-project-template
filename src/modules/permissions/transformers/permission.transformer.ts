@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { NotFoundError } from 'rxjs'
 import { Permission } from '../permission.enum.js'
-import { NotFoundError } from '../../../utils/exceptions/generic/not-found.error.js'
 
 export class PermissionObject {
   @ApiProperty()
