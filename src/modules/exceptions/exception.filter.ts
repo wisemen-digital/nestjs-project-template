@@ -56,7 +56,7 @@ export class CustomerExceptionFilter implements ExceptionFilter {
 
   private mapCompositeApiErrorToJsonApiError (error: CompositeApiError) {
     return plainToInstance(JsonApiError, {
-      status: HttpStatus.BAD_REQUEST,
+      status: error.status,
       errors: error.errors
     })
   }
