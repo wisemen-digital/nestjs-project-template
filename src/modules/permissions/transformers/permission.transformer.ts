@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { NotFoundError } from 'rxjs'
 import { Permission } from '../permission.enum.js'
-import { KnownError } from '../../../utils/exceptions/errors.js'
 
 export class PermissionObject {
   @ApiProperty()
@@ -53,16 +53,14 @@ export class PermissionTransformer {
         this.checkIfPermissionIsValid(permission)
 
         permissions.push(permission as Permission)
+      } else {
+        for (const action of item.actions) {
+          const permission = `${item.id}.${action}`
 
-        continue
-      }
+          this.checkIfPermissionIsValid(permission)
 
-      for (const action of item.actions) {
-        const permission = `${item.id}.${action}`
-
-        this.checkIfPermissionIsValid(permission)
-
-        permissions.push(permission as Permission)
+          permissions.push(permission as Permission)
+        }
       }
     }
 
@@ -71,7 +69,7 @@ export class PermissionTransformer {
 
   private checkIfPermissionIsValid (permission: string): void {
     if (!(Object.values(Permission)).includes(permission as Permission)) {
-      throw new KnownError('invalid_data').setDesc('Invalid permission')
+      throw new NotFoundError(`Permission ${permission} not found`)
     }
   }
 }

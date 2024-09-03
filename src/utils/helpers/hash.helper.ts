@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
-import { BadRequestApiError } from '../exceptions/api-errors/bad-request.api-error.js'
-import { ApiErrorCode } from '../exceptions/api-errors/api-error-code.decorator.js'
+import { BadRequestApiError } from '../../modules/exceptions/api-errors/bad-request.api-error.js'
+import { ApiErrorCode } from '../../modules/exceptions/api-errors/api-error-code.decorator.js'
 
 export async function createHash (value: string): Promise<string> {
   return await bcrypt.hash(value, 10)

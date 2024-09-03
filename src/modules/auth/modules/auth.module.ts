@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { JwtModule } from '@nestjs/jwt'
+import { APP_GUARD } from '@nestjs/core'
 import { UserModule } from '../../users/user.module.js'
 import { User } from '../../users/entities/user.entity.js'
 import { AuthController } from '../controllers/auth.controller.js'
@@ -18,6 +19,8 @@ import { ClientRepository } from '../repositories/client.repository.js'
 import { UserRepository } from '../../users/repositories/user.repository.js'
 import { getPrivateKey, getPublicKey } from '../keys/keys.js'
 import { AuthMiddleware } from '../middleware/auth.middleware.js'
+import { CacheModule } from '../../cache/cache.module.js'
+import { PermissionsGuard } from '../../permissions/permissions.guard.js'
 
 @Module({
   imports: [
@@ -30,7 +33,8 @@ import { AuthMiddleware } from '../middleware/auth.middleware.js'
         }
       }
     }),
-    UserModule
+    UserModule,
+    CacheModule
   ],
   controllers: [AuthController],
   providers: [
@@ -43,7 +47,15 @@ import { AuthMiddleware } from '../middleware/auth.middleware.js'
     RefreshTokenRepository,
     ClientRepository,
     PkceRepository,
-    AuthMiddleware
+    AuthMiddleware,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard
+    }
   ],
   exports: [
     JwtModule,
