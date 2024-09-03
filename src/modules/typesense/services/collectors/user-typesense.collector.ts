@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { InOrIgnore } from '../../../../utils/query/in-or-ignore.js'
+import { InOrIgnore } from '../../../../utils/typeorm/operators/in-or-ignore.js'
 import { UserRepository } from '../../../users/repositories/user.repository.js'
 import {
   UserSearchTransformer,

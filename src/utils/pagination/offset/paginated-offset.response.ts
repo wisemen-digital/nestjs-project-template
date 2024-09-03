@@ -18,7 +18,7 @@ class PaginatedOffsetResponseMeta {
 }
 
 export class PaginatedOffsetResponse<T> {
-  @ApiProperty()
+  @ApiProperty({ description: 'The items for the current page', isArray: true })
   items: T[]
 
   @ApiProperty({ type: PaginatedOffsetResponseMeta })

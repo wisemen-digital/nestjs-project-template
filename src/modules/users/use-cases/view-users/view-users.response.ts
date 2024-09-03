@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import {
   PaginatedOffsetResponse
-} from '../../../../utils/pagination/offset/paginated-offset-response.js'
+} from '../../../../utils/pagination/offset/paginated-offset.response.js'
 import { UserSearchSchema } from '../../../typesense/collections/user.collections.js'
 
 class UserIndexView {
