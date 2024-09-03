@@ -80,9 +80,7 @@ export class TypesenseInitializationService {
       const collection = await this.createCollection(createCollection)
 
       await this.typesenseCollectionService.importToTypesense(aliasName)
-
       await this.linkAlias(aliasName, collection.name)
-
       await this.deleteUnusedCollections()
     }
   }

@@ -1,9 +1,8 @@
 import type { ExpectationResult, MatcherFunction } from 'expect'
-import type { knownErrors } from '../../src/utils/exceptions/errors.js'
 
-export const toHaveErrorCode: MatcherFunction<[code: keyof typeof knownErrors]> = function (
+export const toHaveErrorCode: MatcherFunction<[code: string]> = function (
   response: { status?: unknown, body?: { errors?: Array<{ code?: unknown }> } },
-  code: keyof typeof knownErrors
+  code: string
 ): ExpectationResult {
   const errors = response.body?.errors
   const errorCodes = Array.from(new Set(errors?.map(error => error.code) ?? []))
@@ -32,13 +31,13 @@ declare module 'expect' {
      * Validate whether the value is a string that
      * represents a uuid.
      */
-    toHaveErrorCode: (code: keyof typeof knownErrors) => ExpectationResult
+    toHaveErrorCode: (code: string) => ExpectationResult
   }
   interface Matchers<R> {
     /**
      * Validate whether the value is a string that
      * represents a uuid.
      */
-    toHaveErrorCode: (code: keyof typeof knownErrors) => R
+    toHaveErrorCode: (code: string) => R
   }
 }

@@ -1,10 +1,7 @@
 import { type DynamicModule, type MiddlewareConsumer, Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule } from '@nestjs/config'
-import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core'
-import { AuthGuard } from './modules/auth/guards/auth.guard.js'
 import { AuthModule } from './modules/auth/modules/auth.module.js'
-import { PermissionsGuard } from './modules/permissions/permissions.guard.js'
 import { UserModule } from './modules/users/user.module.js'
 import { TypesenseModule } from './modules/typesense/modules/typesense.module.js'
 import { MailModule } from './modules/mail/modules/mail.module.js'
@@ -13,7 +10,6 @@ import { PermissionModule } from './modules/permissions/permissions.module.js'
 import configuration from './config/env/configuration.js'
 import { StatusModule } from './modules/status/modules/status.module.js'
 import { FileModule } from './modules/files/modules/file.module.js'
-import { ErrorsInterceptor } from './utils/exceptions/errors.interceptor.js'
 import { PgBossModule } from './modules/pgboss/modules/pgboss.module.js'
 import { envValidationSchema } from './config/env/env.validation.js'
 import { NatsModule } from './modules/nats/nats.module.js'
@@ -23,6 +19,8 @@ import { AuthMiddleware } from './modules/auth/middleware/auth.middleware.js'
 import { mainMigrations } from './config/sql/migrations/index.js'
 import { sslHelper } from './config/sql/utils/typeorm.js'
 import { LocalizationModule } from './modules/localization/modules/localization.module.js'
+import { ValidationModule } from './modules/validation/validation.module.js'
+import { ExceptionModule } from './modules/exceptions/exception.module.js'
 
 @Module({})
 export class AppModule {
@@ -48,6 +46,8 @@ export class AppModule {
           migrationsRun: true,
           autoLoadEntities: true
         }),
+        ExceptionModule,
+        ValidationModule,
 
         // Auth
         AuthModule,
@@ -70,21 +70,6 @@ export class AppModule {
         CacheModule,
 
         ...modules
-      ],
-      controllers: [],
-      providers: [
-        {
-          provide: APP_GUARD,
-          useClass: AuthGuard
-        },
-        {
-          provide: APP_GUARD,
-          useClass: PermissionsGuard
-        },
-        {
-          provide: APP_INTERCEPTOR,
-          useClass: ErrorsInterceptor
-        }
       ]
     }
   }

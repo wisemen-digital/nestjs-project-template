@@ -1,20 +1,12 @@
-import { HttpAdapterHost, NestFactory } from '@nestjs/core'
-import { ValidationPipe, VersioningType } from '@nestjs/common'
+import { NestFactory } from '@nestjs/core'
+import { VersioningType } from '@nestjs/common'
 import { AppModule } from '../app.module.js'
 import { initSentry } from '../utils/sentry/sentry.js'
-import { HttpExceptionFilter } from '../utils/exceptions/http-exception.filter.js'
 import { addApiDocumentation, addWebSocketDocumentation } from '../utils/swagger/swagger.js'
 
 async function bootstrap (): Promise<void> {
   const app = await NestFactory.create(AppModule.forRoot())
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      forbidNonWhitelisted: true,
-      transform: true
-    })
-  )
   app.setGlobalPrefix('api', {
     exclude: []
   })
@@ -28,10 +20,6 @@ async function bootstrap (): Promise<void> {
 
   addApiDocumentation(app, 'api/docs')
   addWebSocketDocumentation(app, 'api/docs/websockets')
-
-  const httpAdapterHost = app.get(HttpAdapterHost)
-
-  app.useGlobalFilters(new HttpExceptionFilter(httpAdapterHost))
 
   initSentry()
 

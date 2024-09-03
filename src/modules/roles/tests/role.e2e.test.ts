@@ -147,7 +147,7 @@ describe('Roles', () => {
         .send(roleDto)
 
       expect(response).toHaveStatus(409)
-      expect(response).toHaveErrorCode('already_exists')
+      expect(response).toHaveErrorCode('role_name_already_in_use')
     })
 
     it('should not create role with invalid name', async () => {
@@ -243,8 +243,8 @@ describe('Roles', () => {
         .delete(`/roles/${adminRole.uuid}`)
         .set('Authorization', `Bearer ${adminUser.token}`)
 
-      expect(response.body.errors[0].code).toBe('not_editable')
-      expect(response.body.errors[0].detail).toBe('Cannot delete this role')
+      expect(response.body.errors[0].code).toBe('role_not_editable')
+      expect(response.body.errors[0].detail).toBe('This role is not editable')
 
       expect(response).toHaveStatus(400)
     })

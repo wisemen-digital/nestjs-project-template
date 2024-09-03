@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@appwise/express-dto-router':
-    specifier: ^1.1.5
-    version: 1.1.5
   '@appwise/oauth2-server':
     specifier: ^0.1.7
     version: 0.1.7
@@ -40,7 +37,7 @@ dependencies:
     version: 10.2.0(@nestjs/common@10.4.1)
   '@nestjs/mapped-types':
     specifier: '*'
-    version: 2.0.4(@nestjs/common@10.4.1)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)
+    version: 2.0.5(@nestjs/common@10.4.1)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)
   '@nestjs/platform-express':
     specifier: ^10.4.1
     version: 10.4.1(@nestjs/common@10.4.1)(@nestjs/core@10.4.1)
@@ -62,9 +59,6 @@ dependencies:
   '@sentry/tracing':
     specifier: ^7.91.0
     version: 7.91.0
-  '@types/mjml':
-    specifier: ^4.7.4
-    version: 4.7.4
   axios:
     specifier: ^1.7.5
     version: 1.7.5
@@ -86,9 +80,6 @@ dependencies:
   ejs:
     specifier: ^3.1.10
     version: 3.1.10
-  isBetween:
-    specifier: link:dayjs/plugin/isBetween
-    version: link:dayjs/plugin/isBetween
   joi:
     specifier: ^17.13.3
     version: 17.13.3
@@ -124,13 +115,10 @@ dependencies:
     version: 0.3.20(pg@8.12.0)(redis@4.7.0)
   typesense:
     specifier: ^1.8.2
-    version: 1.8.2(@babel/runtime@7.25.0)
+    version: 1.8.2(@babel/runtime@7.25.4)
   uuid:
     specifier: ^10.0.0
     version: 10.0.0
-  validator:
-    specifier: ^13.12.0
-    version: 13.12.0
   ws:
     specifier: ^8.18.0
     version: 8.18.0
@@ -154,9 +142,6 @@ devDependencies:
   '@types/bcryptjs':
     specifier: ^2.4.6
     version: 2.4.6
-  '@types/cache-manager':
-    specifier: ^4.0.6
-    version: 4.0.6
   '@types/ejs':
     specifier: ^3.1.5
     version: 3.1.5
@@ -166,6 +151,9 @@ devDependencies:
   '@types/jsonwebtoken':
     specifier: ^9.0.6
     version: 9.0.6
+  '@types/mjml':
+    specifier: ^4.7.4
+    version: 4.7.4
   '@types/node':
     specifier: ^22.5.1
     version: 22.5.1
@@ -199,9 +187,6 @@ devDependencies:
   supertest:
     specifier: ^7.0.0
     version: 7.0.0
-  tsconfig-paths:
-    specifier: ^4.2.0
-    version: 4.2.0
   typescript:
     specifier: ^5.5.4
     version: 5.5.4
@@ -1006,8 +991,8 @@ packages:
       regenerator-runtime: 0.14.0
     dev: false
 
-  /@babel/runtime@7.25.0:
-    resolution: {integrity: sha512-7dRy4DwXwtzBrPbZflqxnvfxLF8kdZXPkhymtDeFoFqE6ldzjQFgYTtYIFARcLEYDrqfBfYcZt1WqFxRoyC9Rw==}
+  /@babel/runtime@7.25.4:
+    resolution: {integrity: sha512-DSgLeL/FNcpXuzav5wfYvHCGvynXkJbn3Zvc3823AEe9nPwW9IK4UoCSS5yGymmQzN0pCPvivtgS6/8U2kkm1w==}
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
@@ -1294,25 +1279,6 @@ packages:
       '@nestjs/common': 10.4.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
       '@types/jsonwebtoken': 9.0.5
       jsonwebtoken: 9.0.2
-    dev: false
-
-  /@nestjs/mapped-types@2.0.4(@nestjs/common@10.4.1)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2):
-    resolution: {integrity: sha512-xl+gUSp0B+ln1VSNoUftlglk8dfpUes3DHGxKZ5knuBxS5g2H/8p9/DSBOYWUfO5f4u9s6ffBPZ71WO+tbe5SA==}
-    peerDependencies:
-      '@nestjs/common': ^8.0.0 || ^9.0.0 || ^10.0.0
-      class-transformer: ^0.4.0 || ^0.5.0
-      class-validator: ^0.13.0 || ^0.14.0
-      reflect-metadata: ^0.1.12
-    peerDependenciesMeta:
-      class-transformer:
-        optional: true
-      class-validator:
-        optional: true
-    dependencies:
-      '@nestjs/common': 10.4.1(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1)
-      class-transformer: 0.5.1
-      class-validator: 0.14.1
-      reflect-metadata: 0.2.2
     dev: false
 
   /@nestjs/mapped-types@2.0.5(@nestjs/common@10.4.1)(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2):
@@ -2218,10 +2184,6 @@ packages:
       '@types/node': 22.5.1
     dev: true
 
-  /@types/cache-manager@4.0.6:
-    resolution: {integrity: sha512-8qL93MF05/xrzFm/LSPtzNEOE1eQF3VwGHAcQEylgp5hDSTe41jtFwbSYAPfyYcVa28y1vYSjIt0c1fLLUiC/Q==}
-    dev: true
-
   /@types/connect@3.4.36:
     resolution: {integrity: sha512-P63Zd/JUGq+PdrM1lv0Wv5SBYeA2+CORvbrXbngriYY0jzLUWfQMQQxOhjONEz/wlHOAxOdY7CY65rgQdTjq2w==}
     dependencies:
@@ -2322,13 +2284,13 @@ packages:
 
   /@types/mjml-core@4.15.0:
     resolution: {integrity: sha512-jSRWTOpwRS/uHIBfGdvLl0a7MaoBZZYHKI+HhsFYChrUOKVJTnjSYsuV6wx0snv6ZaX3TUo5OP/gNsz/uzZz1A==}
-    dev: false
+    dev: true
 
   /@types/mjml@4.7.4:
     resolution: {integrity: sha512-vyi1vzWgMzFMwZY7GSZYX0GU0dmtC8vLHwpgk+NWmwbwRSrlieVyJ9sn5elodwUfklJM7yGl0zQeet1brKTWaQ==}
     dependencies:
       '@types/mjml-core': 4.15.0
-    dev: false
+    dev: true
 
   /@types/node@22.5.1:
     resolution: {integrity: sha512-KkHsxej0j9IW1KKOOAA/XBA0z08UFSrRQHErzEfA3Vgq57eXIMYboIlHJuYIfd+lwCQjtKqUu3UnmKbtUc9yRw==}
@@ -4023,7 +3985,7 @@ packages:
       '@nodelib/fs.walk': 1.2.8
       glob-parent: 5.1.2
       merge2: 1.4.1
-      micromatch: 4.0.5
+      micromatch: 4.0.8
     dev: true
 
   /fast-json-stable-stringify@2.1.0:
@@ -4628,7 +4590,7 @@ packages:
       '@types/stack-utils': 2.0.1
       chalk: 4.1.2
       graceful-fs: 4.2.11
-      micromatch: 4.0.5
+      micromatch: 4.0.8
       pretty-format: 29.7.0
       slash: 3.0.0
       stack-utils: 2.0.6
@@ -4934,8 +4896,8 @@ packages:
     resolution: {integrity: sha512-iclAHeNqNm68zFtnZ0e+1L2yUIdvzNoauKU4WBA3VvH/vPFieF7qfRlwUZU+DA9P9bPXIS90ulxoUoCH23sV2w==}
     engines: {node: '>= 0.6'}
 
-  /micromatch@4.0.5:
-    resolution: {integrity: sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA==}
+  /micromatch@4.0.8:
+    resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
     dependencies:
       braces: 3.0.3
@@ -6578,13 +6540,13 @@ packages:
     hasBin: true
     dev: true
 
-  /typesense@1.8.2(@babel/runtime@7.25.0):
+  /typesense@1.8.2(@babel/runtime@7.25.4):
     resolution: {integrity: sha512-aBpePjA99Qvo+OP2pJwMpvga4Jrm1Y2oV5NsrWXBxlqUDNEUCPZBIksPv2Hq0jxQxHhLLyJVbjXjByXsvpCDVA==}
     engines: {node: '>=18'}
     peerDependencies:
       '@babel/runtime': ^7.23.2
     dependencies:
-      '@babel/runtime': 7.25.0
+      '@babel/runtime': 7.25.4
       axios: 1.7.5
       loglevel: 1.9.1
     transitivePeerDependencies:
