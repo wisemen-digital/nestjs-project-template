@@ -3,7 +3,7 @@ import { Body, Controller, Post } from '@nestjs/common'
 import { Public } from '../../../permissions/permissions.decorator.js'
 import {
   ApiConflictErrorResponse
-} from '../../../exceptions/api-errors/api-error-response.js'
+} from '../../../exceptions/api-errors/api-error-response.decorator.js'
 import { RegisterUserCommand } from './register-user.command.js'
 import { UserRegisteredResponse } from './user-registered.response.js'
 import { RegisterUserUseCase } from './register-user.use-case.js'
