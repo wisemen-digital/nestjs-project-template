@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Post, UseGuards } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
 import { Permission } from '../../../permissions/permission.enum.js'
@@ -6,14 +6,12 @@ import { UserIsSelfOrAdminGuard } from '../../guards/user-is-self-or-admin.guard
 import { UuidParam } from '../../../../utils/nest/decorators/uuid-param.js'
 
 import {
-  ApiCompositeErrorResponse
-} from '../../../exceptions/api-errors/composite-api-error-response.decorator.js'
-import {
-  ExampleCompositeApiError
-} from '../../../exceptions/api-errors/example-composite.api-error.js'
+  ApiBadRequestErrorResponse
+} from '../../../exceptions/api-errors/api-error-response.decorator.js'
 import { ChangePasswordUseCase } from './change-password.use-case.js'
 import { ChangePasswordCommand } from './change-password.command.js'
 import { PasswordChangedResponse } from './password-changed.response.js'
+import { InvalidOldPasswordError } from './invalid-old-password.error.js'
 
 @ApiTags('User')
 @Controller('users/:user/password')
@@ -29,9 +27,7 @@ export class ChangePasswordController {
     description: 'The user\'s password has been successfully changed.',
     type: PasswordChangedResponse
   })
-  // @ApiBadRequestErrorResponse(InvalidOldPasswordError, InvalidPasswordError)
-  // @ApiBadRequestResponse({ type: ExampleCompositeApiError })
-  @ApiCompositeErrorResponse(HttpStatus.BAD_REQUEST, ExampleCompositeApiError)
+  @ApiBadRequestErrorResponse(InvalidOldPasswordError)
   async updateUserPassword (
     @UuidParam('user') userUuid: string,
     @Body() changePasswordCommand: ChangePasswordCommand
