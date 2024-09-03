@@ -1,6 +1,7 @@
-import { DocumentBuilder, type OpenAPIObject } from '@nestjs/swagger'
+import { DocumentBuilder } from '@nestjs/swagger'
+import { OpenApiDocument } from './open-api-document.js'
 
-export function buildDocumentationConfig (): Omit<OpenAPIObject, 'paths'> {
+export function buildApiDocumentation (): OpenApiDocument {
   return new DocumentBuilder()
     .setTitle('API Documentation')
     .setDescription('The API documentation description')
