@@ -90,7 +90,8 @@ export class WSNatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     for await (const msg of subscription) {
       try {
-        client.send(msg.data.toString())
+        const data = new TextDecoder().decode(msg.data)
+        client.send(data)
       } catch (e) {
         captureException(e)
       }
