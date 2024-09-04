@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import Typesense from 'typesense'
+import type { HealthResponse } from 'typesense/lib/Typesense/Health.js'
 
 @Injectable()
 export class TypesenseClient {
@@ -33,5 +34,14 @@ export class TypesenseClient {
     }
 
     return this._client
+  }
+
+  public async ping (): Promise<HealthResponse> {
+    if (this._client == null) {
+      return { ok: false }
+    }
+
+    // Note: this does not check api_key validity
+    return await this._client.health.retrieve()
   }
 }
