@@ -6,6 +6,7 @@ import { EntityNotFoundError } from 'typeorm'
 import { JsonApiError } from './types/json-api-error.type.js'
 import { NotFoundError } from './generic/not-found.error.js'
 import { ApiError } from './api-errors/api-error.js'
+import { CompositeApiError } from './api-errors/composite.api-error.js'
 
 @Catch()
 export class CustomerExceptionFilter implements ExceptionFilter {
@@ -32,6 +33,10 @@ export class CustomerExceptionFilter implements ExceptionFilter {
       return exception
     }
 
+    if (exception instanceof CompositeApiError) {
+      return this.mapCompositeApiErrorToJsonApiError(exception)
+    }
+
     if (exception instanceof ApiError) {
       return this.mapApiErrorToJsonApiError(exception)
     }
@@ -47,6 +52,13 @@ export class CustomerExceptionFilter implements ExceptionFilter {
     }
 
     return this.mapUnknownErrorToJsonApiError(exception)
+  }
+
+  private mapCompositeApiErrorToJsonApiError (error: CompositeApiError) {
+    return plainToInstance(JsonApiError, {
+      status: error.status,
+      errors: error.errors
+    })
   }
 
   private mapApiErrorToJsonApiError (exception: ApiError): JsonApiError {

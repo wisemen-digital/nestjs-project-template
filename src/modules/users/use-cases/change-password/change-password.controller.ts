@@ -4,9 +4,10 @@ import { Permissions } from '../../../permissions/permissions.decorator.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { UserIsSelfOrAdminGuard } from '../../guards/user-is-self-or-admin.guard.js'
 import { UuidParam } from '../../../../utils/nest/decorators/uuid-param.js'
+
 import {
   ApiBadRequestErrorResponse
-} from '../../../exceptions/api-errors/api-error-response.js'
+} from '../../../exceptions/api-errors/api-error-response.decorator.js'
 import { ChangePasswordUseCase } from './change-password.use-case.js'
 import { ChangePasswordCommand } from './change-password.command.js'
 import { PasswordChangedResponse } from './password-changed.response.js'
