@@ -1,4 +1,4 @@
-import type { OffsetPaginatedResult } from '../../../utils/pagination/offset/paginated-result.interface.js'
+import type { PaginatedOffsetResponse } from '../../../utils/pagination/offset/paginated-offset.response.js'
 import type { UserSearchSchema } from '../collections/user.collections.js'
 
 export enum TypesenseCollectionName {
@@ -6,5 +6,5 @@ export enum TypesenseCollectionName {
 }
 
 export interface MultiSearchResult {
-  [TypesenseCollectionName.USER]?: OffsetPaginatedResult<UserSearchSchema>
+  [TypesenseCollectionName.USER]?: PaginatedOffsetResponse<UserSearchSchema>
 }

@@ -1,5 +1,5 @@
 import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger'
-import { HttpStatus } from '@nestjs/common'
+import { applyDecorators, HttpStatus } from '@nestjs/common'
 import type { ClassConstructor } from 'class-transformer'
 import type { ApiError } from './api-error.js'
 import type { ConflictApiError } from './conflict.api-error.js'
@@ -17,17 +17,14 @@ export function ApiConflictErrorResponse (
   return ApiErrorResponse(HttpStatus.CONFLICT, errors)
 }
 
-function ApiErrorResponse (
+export function ApiErrorResponse (
   status: HttpStatus,
   errors: Array<ClassConstructor<ApiError>>
 ): MethodDecorator {
-  const extraModelFunction = ApiExtraModels(...errors)
-  const fooFunction = createApiResponseDecorator(status, errors)
-
-  return function (target: object, key: string, descriptor: TypedPropertyDescriptor<unknown>) {
-    extraModelFunction(target, key, descriptor)
-    fooFunction(target, key, descriptor)
-  }
+  return applyDecorators(
+    ApiExtraModels(...errors),
+    createApiResponseDecorator(status, errors)
+  )
 }
 
 function createApiResponseDecorator (

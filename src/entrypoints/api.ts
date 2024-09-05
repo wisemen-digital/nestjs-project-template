@@ -1,16 +1,11 @@
-import fs from 'node:fs'
 import { NestFactory } from '@nestjs/core'
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { VersioningType } from '@nestjs/common'
 import { AppModule } from '../app.module.js'
 import { initSentry } from '../utils/sentry/sentry.js'
-import { WSModule } from '../modules/websocket/ws.module.js'
-import { buildDocumentationConfig } from '../utils/documentation/documentation.js'
+import { addApiDocumentation, addWebSocketDocumentation } from '../utils/swagger/swagger.js'
 
 async function bootstrap (): Promise<void> {
-  const app = await NestFactory.create(
-    AppModule.forRoot()
-  )
+  const app = await NestFactory.create(AppModule.forRoot())
 
   app.setGlobalPrefix('api', {
     exclude: []
@@ -23,23 +18,8 @@ async function bootstrap (): Promise<void> {
     exposedHeaders: ['Content-Disposition']
   })
 
-  const config = buildDocumentationConfig()
-  const document = SwaggerModule.createDocument(app, config)
-
-  SwaggerModule.setup('api/docs', app, document)
-
-  const configWs = new DocumentBuilder()
-    .setTitle('WS Documentation')
-    .setDescription(fs.readFileSync('./dist/src/modules/websocket/documentation.md').toString())
-    .setVersion('1.0')
-    .build()
-  const wsDocument = SwaggerModule.createDocument(app, configWs, {
-    include: [
-      WSModule
-    ]
-  })
-
-  SwaggerModule.setup('api/docs/websockets', app, wsDocument)
+  addApiDocumentation(app, 'api/docs')
+  addWebSocketDocumentation(app, 'api/docs/websockets')
 
   initSentry()
 
