@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import { ConfigModule } from '@nestjs/config'
 import { S3Service } from '../services/s3.service.js'
 import { FileRepository } from '../repositories/file.repository.js'
 import { FileController } from '../controllers/file.controller.js'
@@ -13,8 +12,7 @@ import { FileFlowService } from '../services/file.flows.service.js'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([File, FileLink]),
-    ConfigModule
+    TypeOrmModule.forFeature([File, FileLink])
     // PGBossModule.forJobs([
     //   RemoveUnusedMediaJob
     // ])

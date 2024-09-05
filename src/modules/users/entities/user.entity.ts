@@ -17,7 +17,7 @@ export class User {
   uuid: string
 
   @Column({ type: 'varchar', unique: true })
-  sub: string
+  subject: string
 
   @CreateDateColumn({ precision: 3 })
   createdAt: Date

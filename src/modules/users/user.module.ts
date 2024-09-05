@@ -4,6 +4,7 @@ import { TypesenseModule } from '../typesense/modules/typesense.module.js'
 import { RoleRepository } from '../roles/repositories/role.repository.js'
 import { CacheModule } from '../cache/cache.module.js'
 import { RoleModule } from '../roles/role.module.js'
+import { RedisModule } from '../redis/redis.module.js'
 import { User } from './entities/user.entity.js'
 import { UserRepository } from './repositories/user.repository.js'
 import { UserTypesenseRepository } from './repositories/user-typesense.repository.js'
@@ -31,7 +32,8 @@ import { UserPersistService } from './services/user-persist.service.js'
     TypeOrmModule.forFeature([User]),
     CacheModule,
     TypesenseModule,
-    RoleModule
+    RoleModule,
+    RedisModule.forRoot()
   ],
   controllers: [
     ChangeUserNameController,

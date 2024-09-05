@@ -1,5 +1,4 @@
 import type { DynamicModule } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ArchivedJob } from '../entities/archive.entity.js'
 import { Job } from '../entities/job.entity.js'
@@ -13,7 +12,6 @@ export class PgBossModule {
     return {
       module: PgBossModule,
       imports: [
-        ConfigModule,
         TypeOrmModule.forFeature([Job, ArchivedJob])
       ],
       providers: [

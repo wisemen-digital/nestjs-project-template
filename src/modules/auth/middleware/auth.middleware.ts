@@ -32,14 +32,16 @@ export class AuthMiddleware implements NestMiddleware {
       return
     }
 
+    if (!req.headers.authorization.startsWith('Bearer ')) {
+      throw new UnauthorizedError()
+    }
+
     const token = req.headers.authorization.split(' ')[1]
 
     try {
       const content = await this.verify(token)
 
-      authStorage.run(content, () => {
-        next()
-      })
+      authStorage.run(content, next)
     } catch (_error) {
       next()
     }
@@ -50,7 +52,7 @@ export class AuthMiddleware implements NestMiddleware {
       audience: this.configService.getOrThrow('AUTH_AUDIENCE')
     })
 
-    return await this.userAuthService.findOneBySub(payload.sub)
+    return await this.userAuthService.findOneBySubject(payload.sub)
   }
 }
 
