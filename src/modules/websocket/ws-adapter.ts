@@ -1,14 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import type { IncomingMessage } from 'http'
+import { AsyncResource } from 'async_hooks'
 import { Injectable, UnauthorizedException, type INestApplicationContext } from '@nestjs/common'
 import { WsAdapter } from '@nestjs/platform-ws'
 import { WebSocketServer } from 'ws'
-import { AuthMiddleware } from '../auth/middleware/auth.middleware.js'
+import { MessageMappingProperties } from '@nestjs/websockets'
+import { filter, first, fromEvent, mergeMap, Observable, share, takeUntil } from 'rxjs'
+import {
+  CLOSE_EVENT
+} from '@nestjs/websockets/constants.js'
+import { WebSocket } from 'ws'
+import { isNil } from '@nestjs/common/utils/shared.utils.js'
+import { AuthMiddleware, authStorage } from '../auth/middleware/auth.middleware.js'
 
 declare module 'http' {
   interface IncomingMessage {
     userUuid: string
   }
+}
+
+enum READY_STATE {
+  CONNECTING_STATE = 0,
+  OPEN_STATE = 1,
+  CLOSING_STATE = 2,
+  CLOSED_STATE = 3
 }
 
 @Injectable()
@@ -44,9 +59,9 @@ export class AuthenticatedWsAdapter extends WsAdapter {
       } else {
         this.verifyAuthorization(authToken)
           .then((userUuid) => {
-            info.req.userUuid = userUuid
-
-            cb(true)
+            authStorage.run({ uuid: userUuid }, () => {
+              cb(true)
+            })
           })
           .catch(() => {
             cb(false)
@@ -55,6 +70,40 @@ export class AuthenticatedWsAdapter extends WsAdapter {
     }
 
     return wss
+  }
+
+  public override bindMessageHandlers (
+    client: WebSocket,
+    handlers: MessageMappingProperties[],
+    transform: (data: any) => Observable<any>
+  ) {
+    const asyncResource = new AsyncResource('WebSocket')
+    const handlersMap = new Map<string, MessageMappingProperties>()
+
+    handlers.forEach(handler => handlersMap.set(handler.message as string, handler))
+
+    const close$ = fromEvent(client, CLOSE_EVENT).pipe(share(), first())
+    const source$ = fromEvent(client, 'message').pipe(
+      mergeMap<{ data: string }, Observable<any>>(data =>
+        // this.bindMessageHandler(data, handlersMap, transform).pipe(
+        //   filter(result => !isNil(result))
+        // )
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        asyncResource.runInAsyncScope(this.bindMessageHandler, this, data, handlersMap, transform)
+          .pipe(filter(result => !isNil(result)))
+
+      ),
+      takeUntil(close$)
+    )
+    const onMessage = (response: any) => {
+      if (client.readyState !== READY_STATE.OPEN_STATE) {
+        return
+      }
+
+      client.send(JSON.stringify(response))
+    }
+
+    source$.subscribe(onMessage)
   }
 
   private async verifyAuthorization (header: string): Promise<string> {
