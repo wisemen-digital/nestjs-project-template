@@ -32,7 +32,7 @@
     "worker": {
       "type": "application",
       "root": "src",
-      "entryFile": "entrypoints/pgboss-worker",
+      "entryFile": "entrypoints/worker",
       "sourceRoot": "src"
     },
     "cronjob": {
