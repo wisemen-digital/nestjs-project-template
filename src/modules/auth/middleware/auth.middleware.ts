@@ -10,7 +10,7 @@ interface TokenContent {
   sub: string
 }
 
-export const authStorage = new AsyncLocalStorage<AuthContent>()
+const authStorage = new AsyncLocalStorage<AuthContent>()
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {

@@ -1,16 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
-import { getAuthOrFail } from '../auth/middleware/auth.middleware.js'
+import type { WebSocket } from 'ws'
 import { NatsTopics } from './topic.enum.js'
 
 @Injectable()
 export class WsTopicValidator {
-  validate (topic: string): void {
+  validate (topic: string, client: WebSocket): void {
     if (topic.startsWith(NatsTopics.EXAMPLE)) {
       const userUuid = topic.split('.')[1]
 
-      const authenticatedUserUuid = getAuthOrFail().uuid
-
-      if (userUuid !== authenticatedUserUuid) {
+      if (userUuid !== client.userUuid) {
         throw new UnauthorizedException()
       }
     }
