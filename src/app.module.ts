@@ -16,11 +16,12 @@ import { NatsModule } from './modules/nats/nats.module.js'
 import { CacheModule } from './modules/cache/cache.module.js'
 import { RedisModule } from './modules/redis/redis.module.js'
 import { AuthMiddleware } from './modules/auth/middleware/auth.middleware.js'
-import { mainMigrations } from './config/sql/migrations/index.js'
-import { sslHelper } from './config/sql/utils/typeorm.js'
+import { mainMigrations } from './config/typeorm/migrations/migrations.js'
+import { sslHelper } from './config/typeorm/utils/typeorm.js'
 import { LocalizationModule } from './modules/localization/modules/localization.module.js'
 import { ValidationModule } from './modules/validation/validation.module.js'
 import { ExceptionModule } from './modules/exceptions/exception.module.js'
+import { SnakeNamingStrategy } from './config/typeorm/naming-strategy/snake-case-naming-strategy.js'
 
 @Module({})
 export class AppModule {
@@ -44,7 +45,8 @@ export class AppModule {
           synchronize: false,
           migrations: mainMigrations,
           migrationsRun: true,
-          autoLoadEntities: true
+          autoLoadEntities: true,
+          namingStrategy: new SnakeNamingStrategy()
         }),
         ExceptionModule,
         ValidationModule,

@@ -20,7 +20,7 @@
     "test:run": "pnpm build && pnpm test",
     "test:pipeline": "pnpm test:setup && pnpm test",
     "test:setup": "pnpm build && node --env-file=.env.test dist/src/utils/test-setup/global-setup.js",
-    "typeorm": "pnpm clean && pnpm build && node --env-file=.env ./node_modules/typeorm/cli -d ./dist/src/config/sql/sources/main.js"
+    "typeorm": "pnpm clean && pnpm build && node --env-file=.env ./node_modules/typeorm/cli -d ./dist/src/config/typeorm/sources/main.js"
   },
   "dependencies": {
     "@appwise/oauth2-server": "^0.1.7",
