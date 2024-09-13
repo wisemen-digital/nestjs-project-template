@@ -1,4 +1,4 @@
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
@@ -8,6 +8,7 @@ import { ViewUserUseCase } from './view-user.use-case.js'
 import { ViewUserResponse } from './view-user.response.js'
 
 @ApiTags('User')
+@ApiOAuth2([])
 @Controller('users/:user')
 export class ViewUserController {
   constructor (

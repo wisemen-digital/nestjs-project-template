@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
 import { UuidParam } from '../../../../utils/nest/decorators/uuid-param.js'
@@ -7,6 +7,7 @@ import { ChangeUserRoleUseCase } from './change-user-role.use-case.js'
 import { ChangeUserRoleCommand } from './change-user-role.command.js'
 
 @ApiTags('User')
+@ApiOAuth2([])
 @Controller('users/:user/role')
 export class ChangeUserRoleController {
   constructor (
