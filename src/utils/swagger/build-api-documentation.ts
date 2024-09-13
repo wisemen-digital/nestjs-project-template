@@ -15,12 +15,9 @@ export function buildApiDocumentation (): OpenApiDocument {
       type: 'oauth2',
       flows: {
         password: {
-          tokenUrl: 'http://localhost:3000/api/auth/token',
-          refreshUrl: 'http://localhost:3000/api/auth/token',
-          scopes: {
-            read: 'Read access',
-            write: 'Write access'
-          }
+          tokenUrl: 'api/auth/token',
+          refreshUrl: 'api/auth/token',
+          scopes: {}
         }
       }
     })
