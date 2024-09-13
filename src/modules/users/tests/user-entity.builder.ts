@@ -55,6 +55,7 @@ export class UserEntityBuilder {
 
   withRole (role: Role): this {
     this.user.role = role
+    this.user.roleUuid = role.uuid
 
     return this
   }

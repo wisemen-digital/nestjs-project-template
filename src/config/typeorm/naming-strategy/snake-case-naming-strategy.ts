@@ -1,4 +1,4 @@
-import { DefaultNamingStrategy, Table } from 'typeorm'
+import { DefaultNamingStrategy } from 'typeorm'
 import { snakeCase } from '../../../utils/strings/snake-case.js'
 
 export class SnakeNamingStrategy extends DefaultNamingStrategy {
@@ -46,50 +46,5 @@ export class SnakeNamingStrategy extends DefaultNamingStrategy {
     columnName?: string
   ): string {
     return snakeCase(tableName + '_' + (columnName ?? propertyName))
-  }
-
-  primaryKeyName (tableOrName: Table | string): string {
-    return 'PK_' + this.getSnakeTableName(tableOrName)
-  }
-
-  foreignKeyName (
-    tableOrName: Table | string,
-    columnNames: string[],
-    referencedTablePath?: string,
-    referencedColumnNames?: string[]
-  ): string {
-    const snakeTableName = this.getSnakeTableName(tableOrName)
-    const referencedTableName = snakeCase(referencedTablePath ?? '')
-    const referencingColumns = columnNames.map(snakeCase).join('_')
-    const referencedColumns = (referencedColumnNames ?? []).map(snakeCase).join('_')
-
-    return `FK_${snakeTableName}_${referencingColumns}_REFERENCES_${referencedTableName}_${referencedColumns}`
-  }
-
-  uniqueConstraintName (
-    tableOrName: Table | string,
-    columnNames: string[]
-  ): string {
-    return `UQ_${this.getSnakeTableName(tableOrName)}_${columnNames.map(snakeCase).join('_')}`
-  }
-
-  indexName (
-    tableOrName: Table | string,
-    columnNames: string[],
-    where?: string
-  ): string {
-    const tableName = this.getSnakeTableName(tableOrName)
-    let key = `${tableName}_${columnNames.map(snakeCase).join('_')}`
-
-    if (where !== undefined) key += `_${where}}`
-
-    return 'IDX_' + key
-  }
-
-  private getSnakeTableName (tableOrName: Table | string): string {
-    const tableName = this.getTableName(tableOrName)
-    const replacedTableName = tableName.replace('.', '_')
-
-    return snakeCase(replacedTableName)
   }
 }

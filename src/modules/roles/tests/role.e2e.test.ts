@@ -291,6 +291,7 @@ describe('Roles', () => {
       })
 
       usersAfter.forEach((user) => {
+        console.log(user)
         expect(user.role?.name).toBe('readonly')
       })
     })

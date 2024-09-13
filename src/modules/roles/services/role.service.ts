@@ -107,6 +107,7 @@ export class RoleService {
 
       users.forEach((user) => {
         user.roleUuid = readOnlyRole.uuid
+        console.log(user)
       })
 
       await this.roleRepository.remove(role)

@@ -41,7 +41,7 @@ export class AppModule {
           url: process.env.DATABASE_URI,
           ssl: sslHelper(process.env.DATABASE_SSL),
           extra: { max: 50 },
-          logging: false,
+          logging: true,
           synchronize: false,
           migrations: mainMigrations,
           migrationsRun: true,
