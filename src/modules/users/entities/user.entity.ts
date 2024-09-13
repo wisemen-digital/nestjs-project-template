@@ -46,7 +46,7 @@ export class User {
   roleUuid: string | null
 
   @ManyToOne(() => Role, role => role.users, { onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'roleUuid' })
+  @JoinColumn({ name: 'role_uuid' })
   role?: Relation<Role> | null
 
   @OneToMany(() => Client, client => client.user)

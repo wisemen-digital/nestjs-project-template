@@ -1,8 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Column, OneToMany, type Relation } from 'typeorm'
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Column,
+  OneToMany,
+  type Relation,
+  Index
+} from 'typeorm'
 import { Permission } from '../../permissions/permission.enum.js'
 import { User } from '../../users/entities/user.entity.js'
 
 @Entity()
+@Index(['createdAt', 'uuid'])
 export class Role {
   @PrimaryGeneratedColumn('uuid')
   uuid: string
