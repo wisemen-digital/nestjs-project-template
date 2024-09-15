@@ -68,7 +68,7 @@ export class CustomerExceptionFilter implements ExceptionFilter {
         code: exception.code,
         detail: exception.detail,
         status: exception.status,
-        meta: exception.meta
+        meta: Object.assign({}, exception.meta)
       }]
     })
   }
