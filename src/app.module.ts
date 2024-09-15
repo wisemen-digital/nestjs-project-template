@@ -26,8 +26,11 @@ import { EventModule } from './modules/events/eventModule.js'
 @Module({})
 export class AppModule {
   static forRoot (
-    modules: DynamicModule[] = []
+    modules: DynamicModule[] = [],
+    forTest: boolean = false
   ): DynamicModule {
+    const testDisabledModules = forTest ? [] : [EventModule.forRoot()]
+
     return {
       module: AppModule,
       imports: [
@@ -59,8 +62,6 @@ export class AppModule {
         // PG Boss
         PgBossModule.forRoot(),
 
-        EventModule.forRoot(),
-
         // Utils
         MailModule,
         // NatsModule.forRoot(),
@@ -72,7 +73,8 @@ export class AppModule {
         LocalizationModule,
         CacheModule,
 
-        ...modules
+        ...modules,
+        ...testDisabledModules
       ]
     }
   }

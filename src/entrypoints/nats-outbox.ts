@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { initSentry } from '../utils/sentry/sentry.js'
-import { NatsOutboxModule } from '../modules/nats/nats-outbox.module.js'
+import { NatsOutboxModule } from '../modules/nats/outbox/nats-outbox.module.js'
 
 async function bootstrap (): Promise<void> {
   initSentry()

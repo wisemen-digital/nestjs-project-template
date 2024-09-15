@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { EntityManager } from 'typeorm'
-import { TypeOrmRepository } from '../typeorm/utils/transaction.js'
-import { NatsEventOutbox, NatsEventOutboxState } from './models/nats-event-outbox.js'
+import { EntityManager, In } from 'typeorm'
+import { TypeOrmRepository } from '../../typeorm/utils/transaction.js'
+import { NatsOutboxEvent, NatsEventOutboxState } from './nats-outbox-event.js'
 
 @Injectable()
-export class NatsOutboxRepository extends TypeOrmRepository<NatsEventOutbox> {
+export class NatsOutboxRepository extends TypeOrmRepository<NatsOutboxEvent> {
   constructor (entityManager: EntityManager) {
-    super(NatsEventOutbox, entityManager)
+    super(NatsOutboxEvent, entityManager)
   }
 
-  async findAndLockUnsentEvents (limit: number = 100): Promise<NatsEventOutbox[]> {
+  async findAndLockUnsentEvents (limit: number = 100): Promise<NatsOutboxEvent[]> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const [events, _] = await this.manager.query(`
       WITH next as (
@@ -28,10 +28,13 @@ export class NatsOutboxRepository extends TypeOrmRepository<NatsEventOutbox> {
       RETURNING *  
     `)
 
-    return events as NatsEventOutbox[]
+    return events as NatsOutboxEvent[]
   }
 
-  async complete (events: NatsEventOutbox[]): Promise<void> {
-    await this.upsert(events, { conflictPaths: { uuid: true } })
+  async complete (events: NatsOutboxEvent[]): Promise<void> {
+    await this.update(
+      { uuid: In(events.map(event => event.uuid)) },
+      { sentAt: new Date(), state: NatsEventOutboxState.SENT }
+    )
   }
 }

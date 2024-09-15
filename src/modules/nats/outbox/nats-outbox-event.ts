@@ -8,7 +8,7 @@ export enum NatsEventOutboxState {
 
 @Entity()
 @Index(['state', 'createdAt'], { where: `"state" = '${NatsEventOutboxState.PENDING}'` })
-export class NatsEventOutbox {
+export class NatsOutboxEvent {
   @PrimaryGeneratedColumn('uuid')
   uuid: string
 
