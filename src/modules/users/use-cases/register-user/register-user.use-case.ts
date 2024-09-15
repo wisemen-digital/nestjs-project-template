@@ -1,5 +1,6 @@
 import { randomUUID } from 'crypto'
 import { Injectable } from '@nestjs/common'
+import { DataSource } from 'typeorm'
 import type { User } from '../../entities/user.entity.js'
 import { UserRepository } from '../../repositories/user.repository.js'
 import { createHash } from '../../../../utils/helpers/hash.helper.js'
@@ -9,12 +10,17 @@ import {
 import {
   TypesenseCollectionService
 } from '../../../typesense/services/typesense-collection.service.js'
+import { EventEmitter } from '../../../events/event-emitter.js'
+import { transaction } from '../../../typeorm/utils/transaction.js'
 import type { RegisterUserCommand } from './register-user.command.js'
 import { EmailAlreadyInUseError } from './email-already-in-use.error.js'
+import { UserRegisteredEvent } from './user-registered.event.js'
 
 @Injectable()
 export class RegisterUserUseCase {
   constructor (
+    private readonly dataSource: DataSource,
+    private readonly eventEmitter: EventEmitter,
     private readonly userRepository: UserRepository,
     private readonly typesenseService: TypesenseCollectionService
   ) {}
@@ -28,7 +34,15 @@ export class RegisterUserUseCase {
 
     const user = await this.mapDtoToUser(dto)
 
-    await this.persistUser(user)
+    await transaction(this.dataSource, async () => {
+      await this.persistUser(user)
+
+      const event = new UserRegisteredEvent(user)
+
+      console.log('Before fired events')
+      await this.eventEmitter.emit(event)
+      console.log('After fired events')
+    })
 
     return user
   }

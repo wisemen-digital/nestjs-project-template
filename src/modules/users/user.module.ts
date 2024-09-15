@@ -4,6 +4,7 @@ import { TypesenseModule } from '../typesense/modules/typesense.module.js'
 import { RoleRepository } from '../roles/repositories/role.repository.js'
 import { CacheModule } from '../cache/cache.module.js'
 import { RoleModule } from '../roles/role.module.js'
+import { EventModule } from '../events/eventModule.js'
 import { UserService } from './services/user.service.js'
 import { User } from './entities/user.entity.js'
 import { UserRepository } from './repositories/user.repository.js'
@@ -34,7 +35,8 @@ import { DeleteUserUseCase } from './use-cases/delete-user/delete-user.use-case.
     TypeOrmModule.forFeature([User]),
     CacheModule,
     TypesenseModule,
-    RoleModule
+    RoleModule,
+    EventModule.forRoot()
   ],
   controllers: [
     ChangeUserNameController,

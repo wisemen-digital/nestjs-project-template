@@ -21,6 +21,7 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
 import { LocalizationModule } from './modules/localization/modules/localization.module.js'
 import { ValidationModule } from './modules/validation/validation.module.js'
 import { ExceptionModule } from './modules/exceptions/exception.module.js'
+import { EventModule } from './modules/events/eventModule.js'
 
 @Module({})
 export class AppModule {
@@ -57,6 +58,8 @@ export class AppModule {
 
         // PG Boss
         PgBossModule.forRoot(),
+
+        EventModule.forRoot(),
 
         // Utils
         MailModule,
