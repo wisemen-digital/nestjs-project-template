@@ -15,7 +15,7 @@ export class CustomExceptionFilter implements ExceptionFilter {
   ) {}
 
   public catch (exception: Error, host: ArgumentsHost): void {
-    const jsonApiError = this.handleException(exception)
+    const { status, errors } = this.handleException(exception)
 
     const { httpAdapter } = this.httpAdapterHost
 
@@ -23,8 +23,8 @@ export class CustomExceptionFilter implements ExceptionFilter {
 
     httpAdapter.reply(
       ctx.getResponse(),
-      { errors: jsonApiError.errors },
-      jsonApiError.status
+      { errors },
+      status
     )
   }
 
