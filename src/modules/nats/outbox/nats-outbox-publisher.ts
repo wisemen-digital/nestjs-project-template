@@ -3,8 +3,9 @@ import { DataSource } from 'typeorm'
 import { captureError } from 'rxjs/internal/util/errorContext'
 import { InjectDataSource } from '@nestjs/typeorm'
 import { Codec, StringCodec } from 'nats'
-import { transaction } from '../../typeorm/utils/transaction.js'
 import { NatsClient } from '../nats.client.js'
+import { transaction } from '../../typeorm/utils/transaction.js'
+import { createHash } from '../../../utils/helpers/hash.helper.js'
 import { NatsOutboxRepository } from './nats-outbox.repository.js'
 import { NatsOutboxEvent } from './nats-outbox-event.js'
 
@@ -23,16 +24,23 @@ export class NatsOutboxPublisher {
   @Interval(200)
   @Timeout(180)
   async publishOutbox (): Promise<void> {
+    const events = await this.outbox.findAndLockUnsentEvents(NatsOutboxPublisher.BATCH_SIZE)
+
+    console.log(await createHash('password'))
+
+    if (events.length === 0) {
+      return
+    }
+
+    const publishedEvents = this.publishEvents(events)
+    const publishedEventUuids = new Set(publishedEvents.map(event => event.uuid))
+    const unpublishedEvents = events.filter(event => !publishedEventUuids.has(event.uuid))
+
     await transaction(this.dataSource, async () => {
-      const events = await this.outbox.findAndLockUnsentEvents(NatsOutboxPublisher.BATCH_SIZE)
-
-      if (events.length === 0) {
-        return
-      }
-
-      const publishedEvents = this.publishEvents(events)
-
-      await this.outbox.complete(publishedEvents)
+      await Promise.all([
+        this.outbox.complete(publishedEvents),
+        this.outbox.reset(unpublishedEvents)
+      ])
     })
   }
 
