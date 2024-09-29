@@ -20,9 +20,7 @@ describe('File', () => {
   let adminUser: TestUser
 
   before(async () => {
-    ({ app, dataSource } = await setupTest())
-
-    context = new TestContext(dataSource.manager)
+    ({ app, dataSource, context } = await setupTest())
 
     adminUser = await context.getAdminUser()
   })

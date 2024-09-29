@@ -1,38 +1,62 @@
 import { AsyncLocalStorage } from 'async_hooks'
 import { Injectable, type NestMiddleware } from '@nestjs/common'
 import type { Request, Response, NextFunction } from 'express'
-import type { AccessTokenInterface } from '../entities/accesstoken.entity.js'
-import { AuthService } from '../services/auth.service.js'
+import { createRemoteJWKSet, jwtVerify } from 'jose'
+import { ConfigService } from '@nestjs/config'
 import { UnauthorizedError } from '../../exceptions/generic/unauthorized.error.js'
+import { AuthContent, UserAuthService } from '../../users/services/user-auth.service.js'
 
-const authStorage = new AsyncLocalStorage<AccessTokenInterface>()
+interface TokenContent {
+  sub: string
+}
+
+export const authStorage = new AsyncLocalStorage<AuthContent>()
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
-  constructor (
-    private readonly authService: AuthService
-  ) {}
+  private readonly jwks: ReturnType<typeof createRemoteJWKSet>
 
-  public async use (req: Request, res: Response, next: NextFunction): Promise<void> {
+  constructor (
+    private readonly configService: ConfigService,
+    private readonly userAuthService: UserAuthService
+  ) {
+    this.jwks = createRemoteJWKSet(
+      new URL(this.configService.getOrThrow('AUTH_JWKS_ENDPOINT'))
+    )
+  }
+
+  public async use (req: Request, _res: Response, next: NextFunction): Promise<void> {
     if (req.headers.authorization == null) {
       next()
 
       return
     }
 
-    try {
-      const authentication = await this.authService.authenticate(req, res)
+    if (!req.headers.authorization.startsWith('Bearer ')) {
+      throw new UnauthorizedError()
+    }
 
-      authStorage.run(authentication, () => {
-        next()
-      })
+    const token = req.headers.authorization.split(' ')[1]
+
+    try {
+      const content = await this.verify(token)
+
+      authStorage.run(content, next)
     } catch (_error) {
       next()
     }
   }
+
+  public async verify (token: string): Promise<AuthContent> {
+    const { payload } = await jwtVerify<TokenContent>(token, this.jwks, {
+      audience: this.configService.getOrThrow('AUTH_AUDIENCE')
+    })
+
+    return await this.userAuthService.findOneBySubject(payload.sub)
+  }
 }
 
-export function getAuthOrFail (): AccessTokenInterface {
+export function getAuthOrFail (): AuthContent {
   const token = authStorage.getStore()
 
   if (token == null) {

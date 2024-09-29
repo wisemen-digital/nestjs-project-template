@@ -1,6 +1,4 @@
-import type { IncomingMessage } from 'http'
 import { WebSocketGateway, SubscribeMessage, type OnGatewayConnection, type OnGatewayDisconnect, WebSocketServer, WsException, BaseWsExceptionFilter } from '@nestjs/websockets'
-// import { AuthGuard } from './auth.guard'
 import { WebSocket, WebSocketServer as WSS } from 'ws'
 import type { Subscription } from 'nats'
 import { type ArgumentsHost, Catch, UsePipes, ValidationPipe, UseFilters, UnauthorizedException } from '@nestjs/common'
@@ -14,7 +12,6 @@ import { WsTopicValidator } from './ws-topic.validator.js'
 declare module 'ws' {
   interface WebSocket {
     uuid: string
-    userUuid: string
   }
 }
 
@@ -34,7 +31,7 @@ export class WsExceptionFilter extends BaseWsExceptionFilter {
     }))
   }
 }
-@WebSocketGateway(3002, {
+@WebSocketGateway(3000, {
   wsEngine: 'ws',
   transports: ['websocket']
 })
@@ -50,9 +47,8 @@ export class WSNatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: WSS
 
-  handleConnection (client: WebSocket, ...args: IncomingMessage[]): void {
+  handleConnection (client: WebSocket): void {
     client.uuid = uuidv4()
-    client.userUuid = args[0].userUuid
     this.clients.set(client.uuid, client)
     this.subscriptions.set(client.uuid, new Map<string, Subscription>())
   }
@@ -82,7 +78,7 @@ export class WSNatsGateway implements OnGatewayConnection, OnGatewayDisconnect {
       return
     }
 
-    this.topicValidator.validate(payload.topic, client)
+    this.topicValidator.validate(payload.topic)
 
     const subscription = this.natsClient.subscribe(payload.topic)
 

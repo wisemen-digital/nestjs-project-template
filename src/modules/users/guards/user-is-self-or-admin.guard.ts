@@ -11,7 +11,7 @@ export class UserIsSelfOrAdminGuard implements CanActivate {
   ) {}
 
   async canActivate (context: ExecutionContext): Promise<boolean> {
-    const userUuid = getAuthOrFail().uid
+    const userUuid = getAuthOrFail().uuid
     const { params } = context.switchToHttp().getRequest<Request>()
 
     if (userUuid === params.user) {

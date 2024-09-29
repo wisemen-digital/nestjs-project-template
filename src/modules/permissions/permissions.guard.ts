@@ -22,7 +22,7 @@ export class PermissionsGuard implements CanActivate {
       return true
     }
 
-    const userUuid = getAuthOrFail().uid
+    const userUuid = getAuthOrFail().uuid
 
     return await this.cache.hasPermissions(userUuid, requiredPermissions)
   }

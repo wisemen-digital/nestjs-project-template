@@ -4,7 +4,7 @@ import type { SortDirection } from '../../../utils/query/search.query.js'
 import { FilterOptions } from '../enums/typesense-filter-options.enum.js'
 
 export const DEFAULT_LIMIT = 10
-export const DEFAULT_OFFSET = 1
+export const DEFAULT_OFFSET = 0
 
 export class TypesenseSearchParamsBuilder<Collection extends TypesenseCollection> {
   private readonly filters: string[] = []
