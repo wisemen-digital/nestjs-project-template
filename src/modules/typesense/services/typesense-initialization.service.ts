@@ -79,8 +79,8 @@ export class TypesenseInitializationService {
     if (fresh || !exists) {
       const collection = await this.createCollection(createCollection)
 
-      await this.typesenseCollectionService.importToTypesense(aliasName)
       await this.linkAlias(aliasName, collection.name)
+      await this.typesenseCollectionService.importToTypesense(aliasName)
       await this.deleteUnusedCollections()
     }
   }

@@ -20,7 +20,7 @@ export class ImportTypesenseCronjob extends JobContainer {
     const job = ImportTypesenseJob.create()
 
     await scheduler.scheduleJobs(dataSource.manager, [job])
-
-    await app.close()
   }
 }
+
+const _importTypesenseCronjob = new ImportTypesenseCronjob()

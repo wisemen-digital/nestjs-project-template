@@ -34,7 +34,8 @@ export class AppModule {
         ConfigModule.forRoot({
           envFilePath: process.env.ENV_FILE,
           load: [configuration],
-          validationSchema: envValidationSchema
+          validationSchema: envValidationSchema,
+          isGlobal: true
         }),
         TypeOrmModule.forRoot({
           type: 'postgres',
