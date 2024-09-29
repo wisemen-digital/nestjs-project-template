@@ -35,16 +35,16 @@
       "entryFile": "entrypoints/worker",
       "sourceRoot": "src"
     },
-    "cronjob": {
-      "type": "application",
-      "root": "src",
-      "entryFile": "entrypoints/cronjob",
-      "sourceRoot": "src"
-    },
     "websocket-server": {
       "type": "application",
       "root": "src",
       "entryFile": "entrypoints/websocket-server",
+      "sourceRoot": "src"
+    },
+    "playground": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/playground",
       "sourceRoot": "src"
     }
   }
