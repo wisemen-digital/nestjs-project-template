@@ -21,6 +21,7 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
 import { LocalizationModule } from './modules/localization/modules/localization.module.js'
 import { ValidationModule } from './modules/validation/validation.module.js'
 import { ExceptionModule } from './modules/exceptions/exception.module.js'
+import { TwilioModule } from './modules/twilio/twilio.module.js'
 
 @Module({})
 export class AppModule {
@@ -61,6 +62,7 @@ export class AppModule {
 
         // Utils
         MailModule,
+        TwilioModule,
         // NatsModule.forRoot(),
         RedisModule.forRoot(),
         TypesenseModule,
