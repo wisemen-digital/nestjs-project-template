@@ -116,6 +116,9 @@ importers:
       rxjs:
         specifier: ^7.8.1
         version: 7.8.1
+      twilio:
+        specifier: ^5.3.1
+        version: 5.3.1
       typeorm:
         specifier: ^0.3.20
         version: 0.3.20(pg@8.12.0)(redis@4.7.0)
@@ -3031,6 +3034,9 @@ packages:
     resolution: {integrity: sha512-pN/yOAvcC+5rQ5nERGuwrjLlYvLTbCibnZ1I7B1LaiAz9BRBlE9GMgE/eqV30P7aJQUf7Ddimy/RsbYO/GrVGg==}
     engines: {node: '>= 10.13.0'}
 
+  scmp@2.1.0:
+    resolution: {integrity: sha512-o/mRQGk9Rcer/jEEw/yw4mwo3EU/NvYvp577/Btqrym9Qy5/MdWGBqipbALgd2lrdWTJ5/gqDusxfnQBxOxT2Q==}
+
   semver@7.5.4:
     resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
     engines: {node: '>=10'}
@@ -3272,6 +3278,10 @@ packages:
   tweetnacl@1.0.3:
     resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
 
+  twilio@5.3.1:
+    resolution: {integrity: sha512-angX6IpoUcoehtArCJsUqbBklw2df/FgtzjTyx9fRQU/RPZsULMEGYcs4iNqLj486Iz8cxs6iP69990F9KxCMg==}
+    engines: {node: '>=14.0'}
+
   type-check@0.4.0:
     resolution: {integrity: sha512-XleUoc9uwGXqjWwXaUTZAmzMcFZ5858QA2vvx1Ur5xIcixXIP+8LnFDgRplU30us6teqdlskFfu+ae4K79Ooew==}
     engines: {node: '>= 0.8.0'}
@@ -3503,6 +3513,10 @@ packages:
         optional: true
       utf-8-validate:
         optional: true
+
+  xmlbuilder@13.0.2:
+    resolution: {integrity: sha512-Eux0i2QdDYKbdbA6AM6xE4m6ZTZr4G4xF9kahI2ukSEMCzwce2eX9WlTI5J3s+NU7hpasFsr8hWIONae7LluAQ==}
+    engines: {node: '>=6.0'}
 
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
@@ -7305,6 +7319,8 @@ snapshots:
       ajv: 6.12.6
       ajv-keywords: 3.5.2(ajv@6.12.6)
 
+  scmp@2.1.0: {}
+
   semver@7.5.4:
     dependencies:
       lru-cache: 6.0.0
@@ -7549,6 +7565,19 @@ snapshots:
 
   tweetnacl@1.0.3: {}
 
+  twilio@5.3.1:
+    dependencies:
+      axios: 1.7.5
+      dayjs: 1.11.13
+      https-proxy-agent: 5.0.1
+      jsonwebtoken: 9.0.2
+      qs: 6.11.2
+      scmp: 2.1.0
+      xmlbuilder: 13.0.2
+    transitivePeerDependencies:
+      - debug
+      - supports-color
+
   type-check@0.4.0:
     dependencies:
       prelude-ls: 1.2.1
@@ -7737,6 +7766,8 @@ snapshots:
   wrappy@1.0.2: {}
 
   ws@8.18.0: {}
+
+  xmlbuilder@13.0.2: {}
 
   xtend@4.0.2: {}
 
