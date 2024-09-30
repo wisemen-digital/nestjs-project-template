@@ -4,7 +4,7 @@ import type { SortDirection } from '../../../utils/query/search.query.js'
 import { FilterOptions } from '../enums/typesense-filter-options.enum.js'
 
 export const DEFAULT_LIMIT = 10
-export const DEFAULT_OFFSET = 1
+export const DEFAULT_OFFSET = 0
 
 export class TypesenseSearchParamsBuilder<Collection extends TypesenseCollection> {
   private readonly filters: string[] = []
@@ -75,7 +75,9 @@ export class TypesenseSearchParamsBuilder<Collection extends TypesenseCollection
     if (this.queries.length > 0) {
       queryBy = this.queries.join(',')
     } else {
-      queryBy = this.collection.searchableFields.join(',')
+      queryBy = this.collection.searchableFields
+        .map(field => field.name)
+        .join(',')
     }
 
     const searchParams: SearchParams = {
