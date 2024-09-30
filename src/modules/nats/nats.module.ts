@@ -1,7 +1,5 @@
 import { type DynamicModule, Module, type Provider } from '@nestjs/common'
-import { ConfigModule } from '@nestjs/config'
 import { TypeOrmModule } from '@nestjs/typeorm'
-import configuration from '../../config/env/configuration.js'
 import { NatsClient } from './nats.client.js'
 import { NatsOutboxSubscriber } from './outbox/nats-outbox.subscriber.js'
 import { ExamplePublisher } from './publishers/example.publisher.js'

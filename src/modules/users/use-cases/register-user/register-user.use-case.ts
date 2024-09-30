@@ -39,9 +39,7 @@ export class RegisterUserUseCase {
 
       const event = new UserRegisteredEvent(user)
 
-      console.log('Before fired events')
       await this.eventEmitter.emit(event)
-      console.log('After fired events')
     })
 
     return user
