@@ -1,5 +1,6 @@
-import { BaseEvent, EventVisibility } from '../../../../utils/events/base-event.js'
+import { WiseEvent } from '../../../events/wise-event.js'
 import { User } from '../../entities/user.entity.js'
+import { EventVisibility } from '../../../events/event-visibility.enum.js'
 
 export class UserRegisteredEventContent {
   public readonly userUuid: string
@@ -11,14 +12,22 @@ export class UserRegisteredEventContent {
   }
 }
 
-export class UserRegisteredEvent extends BaseEvent<UserRegisteredEventContent> {
-  static TOPIC = 'user.registered'
+export class UserRegisteredEvent extends WiseEvent<UserRegisteredEventContent> {
+  static VERSION = 1
+  static TYPE = 'user.registered'
 
   constructor (user: User) {
-    super(
-      UserRegisteredEvent.TOPIC,
-      EventVisibility.EXTERNAL,
-      new UserRegisteredEventContent(user)
-    )
+    super({
+      topic: UserRegisteredEvent.createTopic(user),
+      version: UserRegisteredEvent.VERSION,
+      content: new UserRegisteredEventContent(user),
+      visibility: EventVisibility.EXTERNAL,
+      type: UserRegisteredEvent.TYPE,
+      source: 'api'
+    })
+  }
+
+  private static createTopic (forUser: User): string {
+    return `users.${forUser.uuid}.registered`
   }
 }

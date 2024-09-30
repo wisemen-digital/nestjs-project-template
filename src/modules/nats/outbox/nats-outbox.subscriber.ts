@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common'
-import { BaseEvent } from '../../../utils/events/base-event.js'
+import { WiseEvent } from '../../events/wise-event.js'
 import { SubscribeToAll } from '../../events/subscribe.decorator.js'
 import { NatsOutboxRepository } from './nats-outbox.repository.js'
+import { NatsOutboxEventSerializer } from './nats-outbox-event.serializer.js'
 
 @Injectable()
 export class NatsOutboxSubscriber {
   constructor (
-    private readonly outbox: NatsOutboxRepository
+    private readonly outbox: NatsOutboxRepository,
+    private readonly serializer: NatsOutboxEventSerializer
   ) {}
 
   @SubscribeToAll()
-  async handleEventFired (event: BaseEvent): Promise<void> {
-    console.log('event received')
-
+  async handleEventFired (event: WiseEvent): Promise<void> {
     if (event.isExternal) {
-      await this.outbox.insert(new Array(500).fill({
+      await this.outbox.insert({
         topic: event.topic,
-        serializedMessage: event.serialize()
-      }))
+        serializedMessage: this.serializer.serialize(event)
+      })
     }
   }
 }

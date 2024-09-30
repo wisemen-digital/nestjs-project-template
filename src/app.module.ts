@@ -21,7 +21,7 @@ import { sslHelper } from './config/sql/utils/typeorm.js'
 import { LocalizationModule } from './modules/localization/modules/localization.module.js'
 import { ValidationModule } from './modules/validation/validation.module.js'
 import { ExceptionModule } from './modules/exceptions/exception.module.js'
-import { EventModule } from './modules/events/eventModule.js'
+import { EventModule } from './modules/events/event.module.js'
 
 @Module({})
 export class AppModule {

@@ -7,6 +7,7 @@ import { NatsOutboxSubscriber } from './outbox/nats-outbox.subscriber.js'
 import { ExamplePublisher } from './publishers/example.publisher.js'
 import { NatsOutboxRepository } from './outbox/nats-outbox.repository.js'
 import { NatsOutboxEvent } from './outbox/nats-outbox-event.js'
+import { NatsOutboxEventSerializer } from './outbox/nats-outbox-event.serializer.js'
 
 @Module({})
 export class NatsModule {
@@ -25,6 +26,7 @@ export class NatsModule {
         ExamplePublisher,
         NatsOutboxSubscriber,
         NatsOutboxRepository,
+        NatsOutboxEventSerializer,
         ...providers
       ],
       exports: [
