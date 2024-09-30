@@ -5,7 +5,6 @@ import { InjectDataSource } from '@nestjs/typeorm'
 import { Codec, StringCodec } from 'nats'
 import { NatsClient } from '../nats.client.js'
 import { transaction } from '../../typeorm/utils/transaction.js'
-import { createHash } from '../../../utils/helpers/hash.helper.js'
 import { NatsOutboxRepository } from './nats-outbox.repository.js'
 import { NatsOutboxEvent } from './nats-outbox-event.js'
 
@@ -25,8 +24,6 @@ export class NatsOutboxPublisher {
   @Timeout(180)
   async publishOutbox (): Promise<void> {
     const events = await this.outbox.findAndLockUnsentEvents(NatsOutboxPublisher.BATCH_SIZE)
-
-    console.log(await createHash('password'))
 
     if (events.length === 0) {
       return
