@@ -15,10 +15,6 @@ export class NatsModule {
     return {
       module: NatsModule,
       imports: [
-        ConfigModule.forRoot({
-          envFilePath: process.env.ENV_FILE,
-          load: [configuration]
-        }),
         TypeOrmModule.forFeature([NatsOutboxEvent])
       ],
       providers: [

@@ -1,31 +1,33 @@
 import { NestFactory } from '@nestjs/core'
-import { VersioningType } from '@nestjs/common'
+import { INestApplicationContext, VersioningType } from '@nestjs/common'
+import { ExpressAdapter } from '@nestjs/platform-express'
+import { ApiContainer } from '@wisemen/app-container'
 import { AppModule } from '../app.module.js'
-import { initSentry } from '../utils/sentry/sentry.js'
 import { addApiDocumentation, addWebSocketDocumentation } from '../utils/swagger/swagger.js'
 
-async function bootstrap (): Promise<void> {
-  const app = await NestFactory.create(AppModule.forRoot())
+class Api extends ApiContainer {
+  async bootstrap (adapter: ExpressAdapter): Promise<INestApplicationContext> {
+    const app = await NestFactory.create(
+      AppModule.forRoot(),
+      adapter
+    )
 
-  app.setGlobalPrefix('api', {
-    exclude: []
-  })
-  app.enableVersioning({
-    type: VersioningType.URI,
-    defaultVersion: '1'
-  })
-  app.enableCors({
-    exposedHeaders: ['Content-Disposition']
-  })
+    app.setGlobalPrefix('api', {
+      exclude: []
+    })
+    app.enableVersioning({
+      type: VersioningType.URI,
+      defaultVersion: '1'
+    })
+    app.enableCors({
+      exposedHeaders: ['Content-Disposition']
+    })
 
-  addApiDocumentation(app, 'api/docs')
-  addWebSocketDocumentation(app, 'api/docs/websockets')
+    addApiDocumentation(app, 'api/docs')
+    addWebSocketDocumentation(app, 'api/docs/websockets')
 
-  initSentry()
-
-  app.enableShutdownHooks()
-
-  await app.listen(3000)
+    return app
+  }
 }
 
-await bootstrap()
+const _api = new Api()
