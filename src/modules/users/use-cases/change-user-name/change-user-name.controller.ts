@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
 import { UserIsSelfOrAdminGuard } from '../../guards/user-is-self-or-admin.guard.js'
@@ -9,6 +9,7 @@ import { ChangeUserNameUseCase } from './change-user-name.use-case.js'
 import { UserNameChangedResponse } from './user-name-changed.response.js'
 
 @ApiTags('User')
+@ApiOAuth2([])
 @Controller('users/:user/name')
 export class ChangeUserNameController {
   constructor (

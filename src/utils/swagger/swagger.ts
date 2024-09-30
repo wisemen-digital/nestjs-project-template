@@ -1,4 +1,4 @@
-import { SwaggerModule } from '@nestjs/swagger'
+import { SwaggerCustomOptions, SwaggerModule } from '@nestjs/swagger'
 import { INestApplication } from '@nestjs/common'
 import { WSModule } from '../../modules/websocket/ws.module.js'
 import { buildApiDocumentation } from './build-api-documentation.js'
@@ -8,7 +8,14 @@ export function addApiDocumentation (toApp: INestApplication<unknown>, onRoute: 
   const documentation = buildApiDocumentation()
   const document = SwaggerModule.createDocument(toApp, documentation)
 
-  SwaggerModule.setup(onRoute, toApp, document)
+  const options: SwaggerCustomOptions = {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tagsSorter: 'alpha'
+    }
+  }
+
+  SwaggerModule.setup(onRoute, toApp, document, options)
 }
 
 export function addWebSocketDocumentation (

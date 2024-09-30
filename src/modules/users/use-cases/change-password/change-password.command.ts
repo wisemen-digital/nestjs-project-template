@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNotEmpty, IsString, MinLength } from 'class-validator'
+import { PASSWORD_MIN_LENGTH } from '../../constants/password.constant.js'
 
 export class ChangePasswordCommand {
   @ApiProperty()
@@ -7,8 +8,8 @@ export class ChangePasswordCommand {
   @IsNotEmpty()
   oldPassword: string
 
-  @ApiProperty()
+  @ApiProperty({ example: 'password', minLength: PASSWORD_MIN_LENGTH })
   @IsString()
-  @MinLength(6)
+  @MinLength(PASSWORD_MIN_LENGTH)
   newPassword: string
 }

@@ -1,5 +1,5 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common'
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiOAuth2, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { Permissions } from '../../../permissions/permissions.decorator.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import { UserIsSelfOrAdminGuard } from '../../guards/user-is-self-or-admin.guard.js'
@@ -14,6 +14,7 @@ import { PasswordChangedResponse } from './password-changed.response.js'
 import { InvalidOldPasswordError } from './invalid-old-password.error.js'
 
 @ApiTags('User')
+@ApiOAuth2([])
 @Controller('users/:user/password')
 export class ChangePasswordController {
   constructor (
