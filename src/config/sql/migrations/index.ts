@@ -4,7 +4,7 @@ import { InitialNestMigration1704190107578 } from './1704190107578-InitialNestMi
 import { UpdateUserRoles1707828496634 } from './1707828496634-UpdateUserRoles.js'
 import { AddFiles1715334515089 } from './1715334515089-AddFiles.js'
 import { AddDeletedAtColumnOnUser1723664868518 } from './1723664868518-AddDeletedAtColumnOnUser.js'
-import { CreateNatsOutboxEvent1726395050638 } from './1726395050638-CreateNatsOutboxEvent.js'
+import { AddNatsOutboxEvent1727801404516 } from './1727801404516-AddNatsOutboxEvent.js'
 
 export const mainMigrations = [
   InitialMigration1639661527387,
@@ -13,5 +13,5 @@ export const mainMigrations = [
   UpdateUserRoles1707828496634,
   AddFiles1715334515089,
   AddDeletedAtColumnOnUser1723664868518,
-  CreateNatsOutboxEvent1726395050638
+  AddNatsOutboxEvent1727801404516
 ]

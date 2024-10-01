@@ -15,5 +15,5 @@ export const mainModels = {
   User,
   File,
   FileLink,
-  NatsEventOutbox: NatsOutboxEvent
+  NatsOutboxEvent
 }
