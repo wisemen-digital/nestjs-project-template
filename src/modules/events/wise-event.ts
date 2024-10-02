@@ -34,6 +34,6 @@ export class WiseEvent<Content extends object = object> {
   }
 
   get isExternal (): boolean {
-    return !this.isInternal
+    return this.visibility === EventVisibility.EXTERNAL
   }
 }
