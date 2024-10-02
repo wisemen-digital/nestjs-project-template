@@ -19,7 +19,8 @@ export class NatsOutboxModule {
         ScheduleModule.forRoot(),
         ConfigModule.forRoot({
           envFilePath: process.env.ENV_FILE,
-          load: [configuration]
+          load: [configuration],
+          isGlobal: true
         }),
         TypeOrmModule.forRoot({
           type: 'postgres',

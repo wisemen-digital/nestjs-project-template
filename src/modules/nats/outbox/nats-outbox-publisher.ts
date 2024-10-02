@@ -3,27 +3,33 @@ import { DataSource } from 'typeorm'
 import { captureError } from 'rxjs/internal/util/errorContext'
 import { InjectDataSource } from '@nestjs/typeorm'
 import { Codec, StringCodec } from 'nats'
+import { Inject } from '@nestjs/common'
 import { NatsClient } from '../nats.client.js'
 import { transaction } from '../../typeorm/utils/transaction.js'
 import { NatsOutboxRepository } from './nats-outbox.repository.js'
 import { NatsOutboxEvent } from './nats-outbox-event.js'
+import natsOutboxPublisherConfig, {
+  NatsOutboxPublisherConfig
+} from './nats-outbox-publisher.config.js'
 
 export class NatsOutboxPublisher {
-  private static BATCH_SIZE = 200
-  private encoder: Codec<string>
+  private readonly batchSize: number
+  private readonly encoder: Codec<string>
 
   constructor (
     @InjectDataSource() private readonly dataSource: DataSource,
     private readonly outbox: NatsOutboxRepository,
-    private readonly natsClient: NatsClient
+    private readonly natsClient: NatsClient,
+    @Inject(natsOutboxPublisherConfig.KEY) private readonly config: NatsOutboxPublisherConfig
   ) {
     this.encoder = StringCodec()
+    this.batchSize = this.parseBatchSize(config)
   }
 
   @Interval(200)
   @Timeout(180)
   async publishOutbox (): Promise<void> {
-    const events = await this.outbox.findAndLockUnsentEvents(NatsOutboxPublisher.BATCH_SIZE)
+    const events = await this.outbox.findAndLockUnsentEvents(this.batchSize)
 
     if (events.length === 0) {
       return
@@ -54,5 +60,15 @@ export class NatsOutboxPublisher {
     }
 
     return publishedEvents
+  }
+
+  private parseBatchSize (config: NatsOutboxPublisherConfig): number {
+    const batchSize = Number(config.batchSize)
+
+    if (isNaN(batchSize) || batchSize < 0 || batchSize > 100000) {
+      return 200
+    } else {
+      return batchSize
+    }
   }
 }
