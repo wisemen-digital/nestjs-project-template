@@ -1,1 +1,1 @@
-export const ALL_TOPICS = '**'
+export const ALL_TYPES = '**'

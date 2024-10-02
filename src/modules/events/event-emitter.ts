@@ -9,6 +9,6 @@ export class EventEmitter {
   ) {}
 
   async emit (event: WiseEvent): Promise<unknown[]> {
-    return await this.emitter.emitAsync(event.topic, event) as unknown[]
+    return await this.emitter.emitAsync(event.type, event) as unknown[]
   }
 }

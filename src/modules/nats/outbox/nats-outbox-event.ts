@@ -15,7 +15,7 @@ export class NatsOutboxEvent {
   @CreateDateColumn({ precision: 3 })
   createdAt: Date
 
-  @Column({ enum: NatsEventOutboxState, default: NatsEventOutboxState.PENDING })
+  @Column({ type: 'enum', enum: NatsEventOutboxState, default: NatsEventOutboxState.PENDING })
   state: NatsEventOutboxState
 
   @Column({ type: 'timestamp', precision: 3, nullable: true })
