@@ -1,14 +1,12 @@
 import { NestFactory } from '@nestjs/core'
-import { initSentry } from '../utils/sentry/sentry.js'
+import { WorkerContainer } from '@wisemen/app-container'
+import { INestApplicationContext } from '@nestjs/common'
 import { NatsOutboxModule } from '../modules/nats/outbox/nats-outbox.module.js'
 
-async function bootstrap (): Promise<void> {
-  initSentry()
-
-  const app = await NestFactory.createApplicationContext(NatsOutboxModule.forRoot())
-
-  app.enableShutdownHooks()
-  await app.init()
+class Worker extends WorkerContainer {
+  async bootstrap (): Promise<INestApplicationContext> {
+    return await NestFactory.createApplicationContext(NatsOutboxModule.forRoot())
+  }
 }
 
-await bootstrap()
+const _worker = new Worker()
