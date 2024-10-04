@@ -21,7 +21,7 @@ export class ViewUsersQuery extends PaginatedOffsetSearchQuery {
   @IsOptional()
   @Type(() => UsersFilterQuery)
   @ValidateNested()
-  filter?: UsersFilterQuery
+  filters?: UsersFilterQuery
 
   @ApiProperty({ type: String, required: false })
   @IsOptional()

@@ -6,7 +6,7 @@ import { NestExpressApplication } from '@nestjs/platform-express'
 import { TestContext } from '../../../../../test/utils/test-context.js'
 import { Permission } from '../../../permissions/permission.enum.js'
 import type { TestUser } from '../../tests/setup-user.type.js'
-import { setupTest } from '../../../../utils/test-setup/setup.js'
+import { migrateTypesense, setupTest } from '../../../../utils/test-setup/setup.js'
 import {
   TypesenseCollectionService
 } from '../../../typesense/services/typesense-collection.service.js'
@@ -32,6 +32,8 @@ describe('View user e2e test', () => {
 
     readonlyUser = await context.getReadonlyUser()
     adminUser = await context.getAdminUser()
+
+    await migrateTypesense(moduleRef)
 
     const typesenseCollectionService = moduleRef.get(TypesenseCollectionService)
 
@@ -61,7 +63,7 @@ describe('View user e2e test', () => {
           limit: 10,
           offset: 0
         },
-        'filter[permissions][0]': Permission.READ_ONLY
+        'filters[permissions][0]': Permission.READ_ONLY
       })
 
     expect(response).toHaveStatus(200)

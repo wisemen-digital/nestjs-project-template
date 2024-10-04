@@ -41,7 +41,7 @@ export class UserTypesenseRepository {
         .withOffset(query.pagination?.offset)
         .withLimit(query.pagination?.limit)
         .addSearchOn(['firstName', 'lastName'])
-        .addFilterOn('permissions', query.filter?.permissions)
+        .addFilterOn('permissions', query.filters?.permissions)
 
     return searchParamBuilder.build()
   }

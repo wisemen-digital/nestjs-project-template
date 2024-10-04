@@ -14,6 +14,6 @@ export abstract class FilterQuery {
 
 export abstract class SearchQuery {
   abstract sort?: SortQuery[]
-  abstract filter?: FilterQuery
+  abstract filters?: FilterQuery
   abstract search?: string
 }
