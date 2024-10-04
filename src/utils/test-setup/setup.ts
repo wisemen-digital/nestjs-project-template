@@ -9,6 +9,8 @@ import { toHaveStatus } from '../../../test/expect/expectStatus.js'
 import { isEnumValue } from '../../../test/expect/expectEnum.js'
 import { S3Service } from '../../modules/files/services/s3.service.js'
 import { toHaveApiError } from '../../../test/expect/expect-api-error.js'
+import { TypesenseInitializationService } from '../../modules/typesense/services/typesense-initialization.service.js'
+import { TypesenseCollectionName } from '../../modules/typesense/enums/typesense-collection-index.enum.js'
 import { compileTestModule } from './compile-test-module.js'
 
 export interface TestSetup {
@@ -32,6 +34,12 @@ export async function setupTest (): Promise<TestSetup> {
   extendExpect()
 
   return { app, testModule, dataSource }
+}
+
+export async function migrateTypesense (moduleRef: TestingModule): Promise<void> {
+  const typesenseImportService = moduleRef.get(TypesenseInitializationService)
+
+  await typesenseImportService.migrate(true, Object.values(TypesenseCollectionName))
 }
 
 async function setupTestDataSource (testModule: TestingModule): Promise<DataSource> {
