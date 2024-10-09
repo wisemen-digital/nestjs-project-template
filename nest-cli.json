@@ -32,19 +32,19 @@
     "worker": {
       "type": "application",
       "root": "src",
-      "entryFile": "entrypoints/pgboss-worker",
-      "sourceRoot": "src"
-    },
-    "cronjob": {
-      "type": "application",
-      "root": "src",
-      "entryFile": "entrypoints/cronjob",
+      "entryFile": "entrypoints/worker",
       "sourceRoot": "src"
     },
     "websocket-server": {
       "type": "application",
       "root": "src",
       "entryFile": "entrypoints/websocket-server",
+      "sourceRoot": "src"
+    },
+    "playground": {
+      "type": "application",
+      "root": "src",
+      "entryFile": "entrypoints/playground",
       "sourceRoot": "src"
     }
   }
