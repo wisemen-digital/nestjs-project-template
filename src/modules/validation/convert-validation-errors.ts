@@ -18,8 +18,8 @@ function convertValidationError (errors: ValidationError[], path = '$'): JsonApi
 
         convertedErrors.push({
           source: { pointer: jsonpath },
-          code: 'validation_error_' + camelToSnakeCase(validationConstraintName),
-          detail: Object.values(error.constraints)[0]
+          code: 'validation_error.' + camelToSnakeCase(validationConstraintName),
+          detail: error.constraints !== undefined ? Object.values(error.constraints)[0] : undefined
         })
       }
     } else {
